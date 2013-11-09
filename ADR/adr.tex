@@ -1,0 +1,146 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+
+\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Analyse des risques} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Version} & & \version\\
+	& & \\
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{Relu par} & & \checked \\
+	& & \\
+	\bfseries{Approuvé par} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+\newpage
+
+%Tableau de mises à jour
+\vspace*{1cm}
+\begin{center}
+\textbf{\huge{MISES À JOUR}}\\
+\vspace*{3cm}
+	\begin{tabularx}{16cm}{|c|c|X|}
+	\hline
+	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
+	\hline
+	X & X & X\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+%La table des matières
+\clearpage
+\tableofcontents
+\clearpage
+\section{Objet}
+Document réunissant les différents risques qui pourraient arriver pendant ce projet ainsi que des plans d'actions pour les risques MAJEUR/CRITIQUE.
+
+\section{Terminologie et sigles utilisés}
+\begin{itemize}
+\item Calcul de la criticité :\\
+{\centering CRITICITÉ = PROBABILITÉ $\times$ IMPACT}
+\item Table des correspondances PROBABILITÉ/valeur et IMPACT/valeur :
+
+\begin{center}
+\begin{tabular}{|l|l|c|l|l|}
+\hline
+\textbf{Nom probabilité}&\textbf{Valeur}&&\textbf{Nom impact}&\textbf{Valeur}\\
+\hline
+FAIBLE&2&&MINEUR&4\\
+\hline
+MAJEUR&3&&MAJEUR&5\\
+\hline
+FORT&4&&CRITIQUE&6\\
+\hline
+\end{tabular}
+\end{center}
+\item []
+\item Env: environnement
+\item RH : ressources humaines
+\end{itemize}
+\section{Registre des risques}
+
+\begin{center}
+\begin{tabular}{|c|p{3cm}|p{3cm}|l|l|l|c|}
+\hline
+\textbf{Réf.} & \textbf{Description} & \textbf{Facteurs} & \textbf{Type} & \textbf{Probabilité} & \textbf{Impact} & \textbf{Criticité} \\
+\hline
+Rx& & & & & &\\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Plans d'actions}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Réf.}&\textbf{Action(s) prévue(s)}&\textbf{Action effectuée}&\textbf{Date}\\
+\hline
+Rx & & & \\
+\hline
+\end{tabular}
+\end{center}
+\end{document}

@@ -1,0 +1,217 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+
+\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Spécification technique des besoins} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+\newcommand{\fiche}[9] {
+	\noindent
+\begin{tabular}{|p{4cm}| p{2cm} | p{4cm} | p{.5cm} | p{7cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Nom}} & \multicolumn{3}{l|}{\color{white}\bfseries{#1}}\\
+\hline
+\multicolumn{2}{|l|}{\bfseries{Acteurs concernés}} & \multicolumn{3}{m{10.5cm}|}{#2}\\
+\hline
+\multicolumn{2}{|l|}{\bfseries{Description}} & \multicolumn{3}{m{10.5cm}|}{#3}\\
+\hline
+\multicolumn{2}{|l|}{\bfseries{Préconditions}} & \multicolumn{3}{m{10.5cm}|}{#4}\\
+\hline
+\multicolumn{2}{|l|}{\bfseries{Evénements déclenchants}} & \multicolumn{3}{m{10.5cm}|}{#5}\\
+\hline
+\multicolumn{2}{|l|}{\bfseries{Conditions d'arrêt}} & \multicolumn{3}{m{10.5cm}|}{#6}\\
+\hline
+\rowcolor{gray}
+\multicolumn{5}{|c|}{\bfseries{Description du flot d'événements principal}}\\
+\hline
+\rowcolor{gray}
+\multicolumn{3}{|c|}{\bfseries{Acteur(s)}} & \multicolumn{2}{c|}{\bfseries{Système}}\\
+\hline
+\multicolumn{3}{|p{7.5cm}|}{#7} & \multicolumn{2}{p{7.5cm}|}{#8}\\
+\hline
+\multicolumn{2}{|l}{\bfseries{Flots d'exceptions}} & \multicolumn{3}{|p{11.5cm}|}{#9}\\
+\hline
+\end{tabular}
+\\
+}
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Version} & & \version\\
+	& & \\
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{Relu par} & & \checked \\
+	& & \\
+	\bfseries{Approuvé par} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+\newpage
+
+%Tableau de mises à jour
+\vspace*{1cm}
+\begin{center}
+\textbf{\huge{MISES À JOUR}}\\
+\vspace*{3cm}
+	\begin{tabularx}{16cm}{|c|c|X|}
+	\hline
+	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
+	\hline
+	X & X & X\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+%La table des matières
+\clearpage
+\tableofcontents
+\clearpage
+
+% OBJET
+\section{Objet}
+
+
+% DOCUMENTS APPLICABLES ET DE RÉFÉRENCE
+\section{Documents applicables et de référence}
+\begin{itemize}
+\item x
+\end{itemize}
+
+% TERMINOLOGIE
+\section{Terminologie et sigles utilisés}
+\begin{itemize}
+\item \textbf{x} : xx
+\end{itemize}
+
+% EXIGENCES FONCTIONNELLES
+\section{Exigences fonctionnelles}
+\subsection{Présentation de la mission du produit logiciel}
+\begin{itemize}
+\item [EF.x] : xxx ;
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\bfseries{Id} & \bfseries{Intitulé} & \bfseries{Acteur(s)} & \bfseries{Priorité}\\
+\hline
+UC.X &  &  & \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{itemize}
+\item [RG.X] xxx
+\end{itemize}
+\subsection{UC X : xxx}
+
+\fiche
+	{} %nom
+	{} %acteurs concernés
+	{} %description
+	{} %préconditions
+	{} % événements déclenchants
+	{} %conditions d'arret
+	{\begin{itemize}  %flot d'événements (acteurs)
+		\item [1.] xx
+	 \end{itemize}
+	} 
+	{\begin{itemize}  %flot d'événements (systeme)
+		\item []
+		\item [2.] xxx
+	\end{itemize}
+	 }
+	{} %Flots d'exceptions (RG)
+
+
+\section{Diagrammes de cas d'utilisation}
+
+\subsection{UC X}
+
+\begin{tikzpicture}
+\end{tikzpicture}
+
+\section{Exigences opérationnelles}
+\begin{enumerate}
+\item [EO.X] : xxx
+\end{enumerate}
+
+\section{Exigences d'interface}
+\begin{enumerate}
+\item [EI.X] : xxx
+\end{enumerate}
+
+\section{Exigences de qualité}
+\begin{enumerate}
+\item [EQ.X] : xxx
+\end{enumerate}
+
+\section{Exigences de réalisation}
+\begin{enumerate}
+\item [ER.X] : xxx
+\end{enumerate}
+
+
+\end{document}

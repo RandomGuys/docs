@@ -1,0 +1,290 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+\usepackage{tikz-uml}
+\usepackage{fancyhdr}   % Required for custom headers
+\usepackage{lastpage}   % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx}   % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage[toc,page]{appendix} 
+\usepackage{pgfplots}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+\usepackage{cmbright}
+
+\geometry{a4paper,textwidth=17cm,textheight=27cm} 
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
+ \tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle, dashed,
+           rounded corners,
+           draw=black, very thin,
+           minimum height=2em,
+           minimum width = 2cm,
+           text centered},
+    square/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height=.5cm,
+           minimum width = 1cm,
+           text centered},
+    data/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height= 2cm,
+           minimum width = 2cm,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=1pt,
+           shorten >=1pt,},
+    asym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           red!100},
+    sym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           blue!100}
+}
+
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Document d'architecture logicielle} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Version} & & \version\\
+	& & \\
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{Relu par} & & \checked \\
+	& & \\
+	\bfseries{Approuvé par} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+\newpage
+
+%Tableau de mises à jour
+\vspace*{1cm}
+\begin{center}
+\textbf{\huge{MISES À JOUR}}\\
+\vspace*{3cm}
+	\begin{tabularx}{16cm}{|c|c|X|}
+	\hline
+	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
+	\hline
+	X & X & X\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+%La table des matières
+\clearpage
+\tableofcontents
+\clearpage
+%--------------------------------------------------
+\section{Objet}
+
+%-------------------------------------------------
+\section{Documents applicables et de référence}
+
+%-------------------------------------------------
+\section{Terminologie et sigles utilisés}
+
+%-------------------------------------------------
+\section{Configuration requise}
+
+%-------------------------------------------------
+
+\section{Architecture statique}
+
+\subsection{Structure}
+
+\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=1.8,every node/.style={transform shape}]
+		\node[square, text width=1.5cm, fill=white!100] (appclient) at (0,0) {Application client};
+		\node[square, text width=2cm, fill=white!100] (modclientsec) at (4,0) {Module client sécurisé};
+		\begin{pgfonlayer}{background} 
+		\node[punkt, fit=(appclient)(modclientsec), fill=blue!20] (groupclient) {};
+		\end{pgfonlayer}
+		
+		\node[square, text width=1cm, fill=white!100] (PKI) at (2.5,-1.5) {PKI};
+		\node[square, text width=1cm, fill=white!100] (serveur) at (0,-2.5) {Serveur};
+		\node[square, text width=1.5cm, fill=white!100] (serveurs) at (4,-2.5) {Serveur sécurisé};
+		\begin{pgfonlayer}{background} 
+		\node[punkt, fit=(PKI)(serveur)(serveurs), fill=green!20] (groupserveur) {};
+		\end{pgfonlayer}
+
+		\node[text width=.7cm] (imgbd1) at (0,-4) {\includegraphics[height=3em]{computer-database.png}};
+		\node[square, text width=.5cm, below=of imgbd1, fill=white!100] (bd1){BDD};
+		\node[text width=.7cm] (imgfichiers) at (2.5,-4) {\includegraphics[height=3em]{computer-database.png}};
+		\node[square, text width=.7cm, below=of imgfichiers, fill=white!100] (fichiers){BDD};
+		\node[text width=.7cm] (imgbd2) at (4,-4) {\includegraphics[height=3em]{computer-database.png}};
+		\node[square, text width=.5cm, below=of imgbd2, fill=white!100] (bd2){BDD};
+
+		\begin{pgfonlayer}{background} 
+		\node[punkt, fit=(imgbd1) (bd1) (imgbd2) (bd2) (imgfichiers) (fichiers), fill=orange!20] (stock) {};
+		\end{pgfonlayer}
+
+
+		\draw (appclient.east) edge[<->] (modclientsec.west);
+		\draw (appclient.south) edge[<->] (serveur.north);
+		\draw (modclientsec.south west) edge[<->] (PKI.north);
+		\draw (modclientsec.south) edge[<->] (serveurs.north);
+		
+		\draw (serveur.south) edge[<->] (imgbd1.north);
+		\draw (serveurs.south) edge[<->] (imgbd2.north);
+		\draw (PKI.south) edge[<->] (imgfichiers.north);
+		\draw (PKI.south east) edge[<->] (serveurs.north);
+		
+		\draw (PKI.west) edge[->, loop left = 90] (PKI.west);
+
+		\begin{pgfonlayer}{background} 
+		\node[minimum width=2.5cm, minimum height=6.3cm,rectangle, draw=black!60!green, very thick, fit=(appclient) (serveur) (imgbd1) (bd1)] (groupeclassic) {};
+		\node[minimum width=4cm, minimum height=6.3cm,rectangle, draw=black!30!red, very thick, fit=(modclientsec) (PKI) (serveurs) (imgbd2) (bd2) (imgfichiers) (fichiers)] (groupesec) {};
+		\end{pgfonlayer}
+		
+		\node[below=of groupeclassic, color=black!60!green] (legendgpeclassic) {Chat classique};		
+		\node[below=of groupesec, color=black!30!red] (legendgpesec) {Partie sécurisée};
+
+		\node[right=of modclientsec, minimum width=3cm] (lgdappcl) {Application client};
+		
+		\node[right=of groupserveur, minimum width=3cm] (lgsrv) {Serveurs};
+		
+		\node[right=of stock, minimum width=4cm, anchor=west] (lgbdd) {Bases de données};
+
+		\end{tikzpicture}
+
+\vspace{0.5cm}
+\subsection{Description des constituants}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|r|}{\textbf{Constituant}}\\
+	\hline
+	R\^ole &  \\
+	\hline
+	Propriétés et attributs de caractérisation & \\
+	\hline
+	Dépendances avec d'autres constituants & \\
+	\hline
+	Langages de programmation & \\
+	\hline
+	Procédé de développement & \\
+	\hline
+	Taille complexité & \\
+	\hline
+	\end{tabularx}
+\end{center}
+
+%-------------------------------------------------
+\section{Fonctionnement dynamique}
+\subsection{UC.X: xxx}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.X: xxx}}\\
+	\hline
+	\textbf{Composants mis en jeu} & \\
+	\hline
+	\textbf{Intervenants} & \\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{}\\
+	\hline
+	\end{tabularx}
+\end{center}
+\vspace{2cm}
+\begin{tikzpicture}[remember picture,transform shape,scale=0.6]
+\begin{umlseqdiag} 
+\umlactor[class=]{User}
+\umlobject[class=]{Client} 
+\umlobject[class=]{ClientS}
+\umlobject[class=]{ServerS}
+\umlobject[class=]{AR}
+\umlobject[class=]{AC}
+\umlobject[class=]{LDD}
+\begin{umlcallself}[op={GenerateKeys()}]{User} 
+\begin{umlcall}[op={SendRequête(id,keys)}]{User}{AR} 
+\begin{umlcallself}[op={VerifRules()}]{AR} \end{umlcallself}
+\begin{umlcall}[op={SendId()}]{AR}{AC} 
+\begin{umlcallself}[op={CreateCertif()}]{AC} 
+\begin{umlcall}[op={SendCertif()}]{AC}{Client} 
+\begin{umlcall}[op={ChangeSatus()}]{Client}{ClientS} \end{umlcall}
+\end{umlcall}
+\end{umlcallself}
+\end{umlcall}
+\end{umlcall}
+\begin{umlcall}[op={SaveCertif()}]{AC}{LDD} \end{umlcall}
+\end{umlcallself} 
+\end{umlseqdiag} 
+\end{tikzpicture}
+
+
+\end{document}
