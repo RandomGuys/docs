@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+message_file = ARGV[0]
+message = File.read(message_file)
+
+#starts with # then number, space, and at least 5 words no more than 200
+$regex = /\[[0-9]+\]$/
+
+if !$regex.match(message)
+puts "Le message de commit doit contenir le numero de tache [XXX] a la fin"
+exit 1
+end
