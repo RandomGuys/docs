@@ -34,12 +34,12 @@
 
 \newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
 \newcommand{\hmwkClass}{Master 2 SSI } % Course/class
-\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkAuthorName}{Claire \sc{SMETS}} % Your name
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Spécification technique des besoins} % Document name
 
-\newcommand{\version}{X} % Document version
-\newcommand{\docDate}{X} % Document date
+\newcommand{\version}{0.1} % Document version
+\newcommand{\docDate}{\today} % Document date
 \newcommand{\checked}{X} % Checker name
 \newcommand{\approved}{X} % Approver name
 
@@ -118,6 +118,8 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
+	0.1 & 02/12/2013 & Création du Document\\
+	\hline
 	X & X & X\\
 	\hline
 	\end{tabularx}
@@ -130,18 +132,35 @@
 
 % OBJET
 \section{Objet}
+Le projet s'inscrit dans un cadre relatif à un fait d'actualité récemment mis à jour, lié aux révélations de Snowden sur les pratiques de la NSA. Le monde de la cryptographie est en proie à de grandes incertitudes suite à ces révélations et remet en question tous les systèmes jusqu'alors développ és. Notons que ce ne sont pas les algorithmes des systèmes cryptographiques qui sont remis en cause, mais leur développ ement machine qui n'est pas (ou plus) considéré comme nécessairement sûr. La NSA a par exemple très bien pu intro duire des backdoors, ou faiblesses dans les logiciels, de telle sorte qu'ils puissent accéder aux données claires sans diffcultés. On p eut par exemple remettre en questions les outils développ és par des lab oratoires tels que RSAlabs, ou même encore des standards prop osés par des agences comme le NIST (Op enssl, AES, sont-ils vraiment sûrs ?)
 
+\textbf{Objectif technique : }\\
+\begin{itemize}
+	\item coder un outil permettant de récupérer un grand nombre de certificats
+	\item coder un outil permettant de trouver d'éventuels facteurs communs aux certificats récupérés
+	\item  d'implémenter un système serveur permettant l'audit des clients. (éventuellement, selon le temps restant)
+\end{itemize}
+
+\textbf{Résultat attendu : }\\
+Une étude sur les certificats utilisés sur internet, ainsi que l'imlantation d'OpenSSL très utilisé.
 
 % DOCUMENTS APPLICABLES ET DE RÉFÉRENCE
 \section{Documents applicables et de référence}
 \begin{itemize}
-\item x
+	\item Appel d'offre : Audit des implantations SSL/TLS
+	\item les standards cryptographiques
 \end{itemize}
 
 % TERMINOLOGIE
 \section{Terminologie et sigles utilisés}
 \begin{itemize}
-\item \textbf{x} : xx
+	\item \textbf{Appli RC} : Application de Récupération des Certificats
+	\item \textbf{Appli F} : Application de Factorisation
+	\item \textbf{Machine D} : Machine Distante
+	\item \textbf{Machine L} : Machine Locale
+	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
+	\item \textbf{Audit} : Procédure consistant à s'assurer du caractère complet, sincère et régulier des comptes d'une entreprise, à s'en porter garant auprès des divers partenaires intéressés de la firme et, plus généralement, à porter un jugement sur la qualité et la rigueur de sa gestion. Ici ce n'est pas une entreprise qui en sera la cible mais un programme : OpenSSL.
+	\item \textbf{Modulus} : En mathématiques et plus précisément en théorie algébrique des nombres, l’arithmétique modulaire est un ensemble de méthodes permettant la résolution de problèmes sur les nombres entiers. Ces méthodes dérivent de l’étude du reste obtenu par une division euclidienne.
 \end{itemize}
 
 % EXIGENCES FONCTIONNELLES
@@ -156,7 +175,11 @@
 \hline
 \bfseries{Id} & \bfseries{Intitulé} & \bfseries{Acteur(s)} & \bfseries{Priorité}\\
 \hline
-UC.X &  &  & \\
+UC.1 & Récupération des certificats & Appli RC, Machine D & Indispensable\\
+\hline
+UC.2 & Factoridation des moduli des certificats & Appli F & Indispensable\\
+\hline
+UC.3 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 \hline
 \end{tabular}
 \end{center}
@@ -165,22 +188,74 @@ UC.X &  &  & \\
 \begin{itemize}
 \item [RG.X] xxx
 \end{itemize}
-\subsection{UC X : xxx}
+\subsection{UC 1 : Récupération des certificats}
 
 \fiche
-	{} %nom
-	{} %acteurs concernés
-	{} %description
-	{} %préconditions
-	{} % événements déclenchants
-	{} %conditions d'arret
+	{Récupération des certificats} %nom
+	{Appli RC, Machine D} %acteurs concernés
+	{Récupérer une liste des certificats sur les adresses et les ports ouverts, scannés par ZMAP} %description
+	{Avoir une liste de machines distantes dont les ports sont ouverts} %préconditions
+	{L'administrateur lance l'application} % événements déclenchants
+	{La liste est parcourue en entier} %conditions d'arret
 	{\begin{itemize}  %flot d'événements (acteurs)
-		\item [1.] xx
+		\item [1.] Lire la liste
+		\item [2.] Se connecter à la machine distante
+		\item [3.] Échanger les certificats
+		\item [4.] Stocker le certificat
 	 \end{itemize}
 	} 
 	{\begin{itemize}  %flot d'événements (systeme)
 		\item []
-		\item [2.] xxx
+		\item []
+		\item [3.] Échanger les certificats
+	\end{itemize}
+	 }
+	{Coupure de connexion : retenter une deuxième fois si la Machine distante ne répond pas} %Flots d'exceptions (RG)
+
+
+\subsection{UC 2 : Factorisation des moduli des certificats}
+
+\fiche
+	{Factorisation des moduli des certificats} %nom
+	{Appli F} %acteurs concernés
+	{Pour chaque certificat obtenu, on essaie de lui trouver des facteurs communs dans son modulus} %description
+	{Avoir une liste de certificats et donc leurs moduli} %préconditions
+	{L'application est lancée} % événements déclenchants
+	{La liste est parcourue en entier} %conditions d'arret
+	{\begin{itemize}  %flot d'événements (acteurs)
+		\item [1.] Prendre les moduli
+		\item [2.] Construire l'arbre des produits
+		\item [3.] Construire l'arbre des restes
+		\item [4.] Sortir la liste des facteurs communs
+		\item [5.] Sortir la liste des moduli vulnérables trouvés
+	 \end{itemize}
+	} 
+	{\begin{itemize}  %flot d'événements (systeme)
+		\item []
+		\item []
+	\end{itemize}
+	 }
+	{Pas assez de ressources : Stocker l'arbre en dur au fur et à mesure.} %Flots d'exceptions (RG)
+
+
+\subsection{UC 3 : Présentation des résultats}
+
+\fiche
+	{} %nom
+	{Utilisateur} %acteurs concernés
+	{Affiche les résultats produits par les précédentes fonctions} %description
+	{Des résultats ont été produits} %préconditions
+	{Demande d'affchage des ces résultats} % événements déclenchants
+	{Demande d'arrêt d'affichage des résultats} %conditions d'arret
+	{\begin{itemize}  %flot d'événements (acteurs)
+		\item [1.] Ouvrir la page web
+		\item [2.] Sélectionner et filtrer les données affchées
+		\item [3.] Exporter les données
+	 \end{itemize}
+	} 
+	{\begin{itemize}  %flot d'événements (systeme)
+		\item []
+		\item []
 	\end{itemize}
 	 }
 	{} %Flots d'exceptions (RG)
@@ -188,11 +263,78 @@ UC.X &  &  & \\
 
 \section{Diagrammes de cas d'utilisation}
 
-\subsection{UC X}
+\subsection{UC 1}
+
+\setlength{\fboxrule}{0.1mm}
 
 \begin{tikzpicture}
+\umlactor{Appli RC}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=3, y=4, width=3cm]{Lire}
+\umlusecase[x=3, y=1, width=3cm]{Se connecter}
+\umlusecase[x=10, y=2, width=3cm]{Échanger les certificats}
+\umlusecase[x=10, y=-1]{Stocker les certificats}
+
+%\umlusecase[x=10, width=3cm]{Envoi message privé}
+%\umlusecase[x=10, y=-2, width=3cm]{Envoi message au salon général}
+%\umlusecase[x=7, y=-3]{Déconnexion}
+
+\umltrans{Appli RC}{usecase-1}
+\umltrans{Appli RC}{usecase-2}
+%\umltrans{User}{usecase-3}
+\umltrans{Appli RC}{usecase-4}
+
+\umlinclude{usecase-1}{usecase-2}
+\umlextend{usecase-3}{usecase-2}
+
+\umlinclude{usecase-4}{usecase-3}
 \end{tikzpicture}
 
+\subsection{UC 2}
+
+\begin{tikzpicture}
+\umlactor{Appli F}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=4, y=4, width=3cm]{Prendre les moduli}
+\umlusecase[x=5, y=2, width=3cm]{Construire l'arbre des produits}
+\umlusecase[x=5, y=0, width=3cm]{Construire l'arbre des restes}
+\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
+\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{Appli F}{usecase-5}
+\umltrans{Appli F}{usecase-6}
+\umltrans{Appli F}{usecase-7}
+\umltrans{Appli F}{usecase-8}
+
+\umlinclude{usecase-6}{usecase-7}
+\umlextend{usecase-5}{usecase-6}
+\umlextend{usecase-8}{usecase-7}
+\umlinclude{usecase-8}{usecase-9}
+%\umlinclude{usecase-4}{usecase-3}
+\end{tikzpicture}
+
+\subsection{UC 3}
+\begin{tikzpicture}
+
+\umlactor{User}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=4, y=2, width=3cm]{Ouvrir la page web}
+\umlusecase[x=4, y=0, width=3cm]{Sélectionner et filtrer les données affichées}
+\umlusecase[x=12, y=0, width=3cm]{Exporter les données}
+%\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
+%\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{User}{usecase-10}
+\umltrans{User}{usecase-11}
+
+\umlextend{usecase-12}{usecase-11}
+
+\end{tikzpicture}
+
+\newpage
 \section{Exigences opérationnelles}
 \begin{enumerate}
 \item [EO.X] : xxx
