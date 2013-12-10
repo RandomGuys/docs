@@ -166,9 +166,9 @@ Une étude sur les certificats utilisés sur internet, ainsi que l'imlantation d
 % EXIGENCES FONCTIONNELLES
 \section{Exigences fonctionnelles}
 \subsection{Présentation de la mission du produit logiciel}
-\begin{itemize}
-\item [EF.x] : xxx ;
-\end{itemize}
+%\begin{itemize}
+%\item [EF.x] : xxx ;
+%\end{itemize}
 
 \begin{center}
 \begin{tabular}{|l|p{6cm}|p{6cm}|l|}
@@ -179,15 +179,17 @@ UC.1 & Récupération des certificats & Appli RC, Machine D & Indispensable\\
 \hline
 UC.2 & Factoridation des moduli des certificats & Appli F & Indispensable\\
 \hline
-UC.3 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
+UC.3 & Présentation des résultats & Utilisateur & Indispensable\\
+\hline
+UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 \hline
 \end{tabular}
 \end{center}
 
 
-\begin{itemize}
-\item [RG.X] xxx
-\end{itemize}
+%\begin{itemize}
+%\item [RG.X] xxx
+%\end{itemize}
 \subsection{UC 1 : Récupération des certificats}
 
 \fiche
@@ -260,6 +262,8 @@ UC.3 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 	 }
 	{} %Flots d'exceptions (RG)
 
+\subsection{UC 4 : Audit d'OpenSSL}
+Suivant le temps restant, il nous est proposé d'implémenter un système serveur permettant l'audit des clients. Le logiciel sur le serveur doit évaluer la sécurité du client suivant un protocole établi, en analysant son système et/ou lui prop osant des challenges spécifiques, en particulier autour de SSL. Le logiciel devra rendre un diagnostic et un rapport sur les différents éléments analysés, afin de permettre au client de constater des problèmes lorsqu'il y en a, et d'en connaître leur provenance.
 
 \section{Diagrammes de cas d'utilisation}
 
