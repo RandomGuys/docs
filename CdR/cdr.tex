@@ -29,19 +29,74 @@
 
 \newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
 \newcommand{\hmwkClass}{Master 2 SSI } % Course/class
-\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkAuthorName}{Boisseleau W. et Latimier M.} % Your name
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Cahier de recettes} % Document name
 
-\newcommand{\version}{X} % Document version
-\newcommand{\docDate}{X} % Document date
-\newcommand{\checked}{X} % Checker name
+\newcommand{\version}{1.1} % Document version
+\newcommand{\docDate}{10.12.13} % Document date
+\newcommand{\checked}{-} % Checker name
 \newcommand{\approved}{X} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
 \author{\hmwkAuthorName}
 \date{} % Insert date here if you want it to appear below your name
+
+
+
+\newcommand{\fiche}[7] {
+	\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{#1} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{#2} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : #3} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure num. #4} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+%#5 & #6 & \multicolumn{2}{p{6cm}|}{#7} & #8 & #9\\
+#5\\
+\hline
+#6\\
+\hline
+#7\\
+\hline
+
+\end{tabular}
+
+}
+
+
+
+%\newcommand{\fiche2}[14] {
+%	\noindent
+%\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{6cm} | p{1.5cm}| p{1.5cm}|} 
+%\hline
+%\rowcolor{blue}
+%\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{#1} }} & 
+%\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{#2} }}\\
+%\hline
+%\multicolumn{6}{|l|}{\textbf{Objectif de test : #3} }\\
+%\hline
+%\multicolumn{6}{|l|}{\textbf{Procédure num. #4} }\\
+%\hline
+%\textbf{N.} & \textbf{Actions} & \multicolumn{2}{l|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+%\hline
+%#5 & #6 & \multicolumn{2}{l|}{#7} & #8 & #9\\
+%\hline
+%#10 & #11 & \multicolumn{2}{l|}{#12} & #13 & #14\\
+%\hline
+%\end{tabular}
+%\\
+%}
+
+
+
 
 
 \begin{document}
@@ -81,7 +136,8 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
-	X & X & X\\
+	1.1 & 10.12.13 & Création et complétion du cahier de recette \\
+	1.2 & 10.12.13 & Complétion du cahier de recette \\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -94,6 +150,8 @@
 % OBJET
 \section{Objet}
 
+L'objet de ce cahier de recettes est de lister les tests praticables et pratiqués sur les différentes fonctionnalités liées au projet avant le lancement de celui-ci et sa livraison au client. 
+
 \section{Documents applicables et de référence}
 
 \section{Environnement de test}
@@ -102,8 +160,206 @@
 
 \section{Stratégie de tests}
 
-\section{Gestion des anomalies}
+
+% \section{Gestion des anomalies}
+% Créer un dossier gestion des anomalies , en rapport ou non avec le cahier des charge.
+%
+
 
 \section{Procédures de test}
+\subsection{ZMAP}
+\subsubsection*{Terminologie}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+	\item \texttt{R} : réseau virtuel fixé représentant toutes les configurations réseau envisageables,
+	\item \texttt{R'} : réseau virtuel altéré de \texttt{R},
+	\item \texttt{lA} : liste d'adresses prédéfinie de machines de \texttt{R},
+	\item \texttt{A1} : liste d'adresses de machines ayant des ports SSH ouverts sur \texttt{R},
+	\item \texttt{A2} : liste d'adresses de machines ayant des ports SSH protégés et fermés sur \texttt{R},
+	\item \texttt{A1'} : liste d'adresses de machines ayant des ports SSH ouverts sur \texttt{R'},
+	\item \texttt{A2'} : liste d'adresses de machines ayant des ports SSH protégés et fermés sur \texttt{R'},
+	\item \texttt{VA1} : liste d'adresses de machines attendues ayant des ports SSH ouverts sur \texttt{R},
+	\item \texttt{VA2} : liste d'adresses de machines attendues ayant des ports SSH protégés et fermés sur \texttt{R},
+	\item \texttt{VA1'} : liste d'adresses de machines attendues ayant des ports SSH ouverts sur \texttt{R'},
+	\item \texttt{VA2'} : liste d'adresses de machines attendues ayant des ports SSH protégés et fermés sur \texttt{R'}.
+\end{itemize}
+
+
+\subsubsection*{Procédures}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : ZMAP reconnaît port O/F/N-A} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P1 : TestPortsZMAP(ZMAP,R,R',lA,VA1,VA2,VA1',VA2')} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \textit{A1=VA1} et \textit{A2=VA2}. } &  & / \\
+\hline
+2 & On relance ZMAP sur \texttt{R'} avec \texttt{A2} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \textit{A1'} et \textit{A2'}. On vérifie que \textit{A1'=VA1'} et \textit{A2'=VA2'}. } & &  / \\
+\hline
+\end{tabular}
+
+
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Tester la portabilité du résultat de ZMAP pour l'application RC} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P2 : Portabilité(ZMAP,lA,R)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & Sur le système Linux, on lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée. On récupère A1 et A2. On relance ZMAP sur A1 et A2 & \multicolumn{2}{p{6cm}|}{ZMAP s'exécute correctement sur A1 à A2} & P1 & / \\
+\hline
+2 & Même procédé sur le système Windows & \multicolumn{2}{p{6cm}|}{ZMAP se termine correctement sur A1 à A2} & P1 & / \\
+\hline
+\end{tabular}
+
+
+\subsection{RC}
+\subsubsection*{Terminologie}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item \texttt{LAd} : liste d'adresses de machines ayant des ports ouverts générées par ZMAP,
+\item \texttt{$M_i$} : machine $i$ de la \texttt{LAd},
+\item \texttt{$C_i$} : certificat ou chaine de certification de la machine $i$ selon RC,
+\item \texttt{$VC_i$} : certificat ou chaine de certification de la machine $i$ selon $M_i$,
+\item \texttt{$C_i'$} : certificat ou chaine de certification de la machine $i$ selon RC,
+\item \texttt{$VC_i'$} : certificat ou chaine de certification de la machine $i$ après stockage.
+\end{itemize}
+
+\subsubsection*{Procédures}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{RC} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Établissement de connexion avec RC} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P3 : conRC(RC,lA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P2 & / \\
+\hline
+\end{tabular}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{RC} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Récupération des certificats } }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P4 : recCertifRC(RC,lA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P3 & / \\
+\hline
+2 & RC stocke dans une base de données le certificat s'il existe & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P3 & / \\
+\hline
+\end{tabular}
+
+\subsection{SD}
+\subsubsection*{Terminologie}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item \texttt{B} base de données contenant des certificats uniques et des certificats identiques,
+\item \texttt{BA} base de données B après suppression des doublons selon SD,
+\item \texttt{VBA} base de données B sans doublons
+\end{itemize}
+
+\subsubsection*{Procédure}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{SD} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Tests de suppression de doublons } }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P4 : supD(SD,B,VBA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & SD s'exécute sur B & \multicolumn{2}{p{6cm}|}{SD s'exécute correctement et BA=VBA} & & / \\
+\hline
+\end{tabular}
+
+
+\subsection{F}
+\subsubsection*{Terminologie}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item $lA_1$ : liste de taille impaire d'entiers de même taille binaire,
+\item $lA_2$ : liste de taille paire d'entiers de même taille binaire, 
+\item $F1$ : section de l'algorithme de  $F$ calculant l'arbre des produits,
+\item $F2$ : $F-F1$ section de l'algorithme de  $F$ calculant l'arbre des restes,
+\item $lF_1$ : liste des fils de $lA_1$ calculée suivant $F1$ sur $lA_1$,
+\item $lF_2$ : liste des fils de $lA_2$ calculée suivant $F1$ sur $lA_2$,
+\item $VlF_1$ : liste des fils attendue pour $lA_1$,
+\item $VlF_2$ : liste des fils attendue pour $lA_2$,
+\item $P$ : entier produit de facteurs après lancement de $F1$ sur $lA_A$,
+\item $modP1$ : élément gauche après calcul du modulo de $P$ suivant $F2$,
+\item $modP2$ : élément droite après calcul du modulo de $P$ suivant $F2$,
+\item $VmodP1$ : élément gauche modulo de $P$ suivant $F2$,
+\item $VmodP2$ : élément droite modulo de $P$ suivant $F2$.
+\end{itemize}
+
+\subsubsection*{Procédures}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{F} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Calcul des fils selon $F1$ suivant une liste} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P5 : calcF1($F1$,$lA_1$,$lA_2$,$VlF_1$,$VlF_2$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement et $lF_1=VlF_1$} & & / \\
+\hline
+2 & On calcule $F1(lA_2)=lF_2$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement et $lF_2=VlF_2$} & & / \\
+\hline
+\end{tabular}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{F} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Calcul des modulos fils avec  $F2$ suivant P} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P6 : calcF2($F2$,$P$,$VmodP1$,$VmodP2$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On calcule $F2(P)=(modP1,modP2)$ & \multicolumn{2}{p{6cm}|}{$F2$ s'exécute correctement et $modP1=VmodP1$ et $modP2=VmodP2$} & P5 & / \\
+\hline
+
+\end{tabular}
 
 \end{document}
