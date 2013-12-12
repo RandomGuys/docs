@@ -38,10 +38,10 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Spécification technique des besoins} % Document name
 
-\newcommand{\version}{0.1} % Document version
+\newcommand{\version}{1.0} % Document version
 \newcommand{\docDate}{\today} % Document date
-\newcommand{\checked}{X} % Checker name
-\newcommand{\approved}{X} % Approver name
+\newcommand{\checked}{Edouard PASCAL} % Checker name
+\newcommand{\approved}{Mr Otmani} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
@@ -120,7 +120,7 @@
 	\hline
 	0.1 & 02/12/2013 & Création du Document\\
 	\hline
-	X & X & X\\
+	1.0 & 12/12/2013 & Présentation de la première version\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -181,7 +181,9 @@ UC.2 & Factoridation des moduli des certificats & Appli F & Indispensable\\
 \hline
 UC.3 & Présentation des résultats & Utilisateur & Indispensable\\
 \hline
-UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
+UC.4 & Audit d'OpenSSL & Utilisateur & Indispensable\\
+\hline
+UC.5 & Test d'un client & Client et Serveur & Optionnel\\
 \hline
 \end{tabular}
 \end{center}
@@ -263,6 +265,13 @@ UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 	{} %Flots d'exceptions (RG)
 
 \subsection{UC 4 : Audit d'OpenSSL}
+\begin{enumerate}
+ 	\item Nous étudierons tout d'abord les recommandations et les standards actuels (cf. PKCS) sous forme d'état de l'art, et nous en choisirons de façon argumentée un standard sur lequel nous baserons nos analyses.
+	\item Nous analyserons dans un deuxième temps le co de source d'Op enSSL, en particulier sa partie développant la génération d'éléments aléatoires et ses primitives cryptographiques. Nous en ferons de plus une description détaillée. Nous comparerons ensuite nos résultats avec les recommandations choisies, puis nous conclurons en déterminant si cette génération est efficace.
+\end{enumerate}
+
+
+\subsection{UC 5 : Test d'un client}
 Suivant le temps restant, il nous est proposé d'implémenter un système serveur permettant l'audit des clients. Le logiciel sur le serveur doit évaluer la sécurité du client suivant un protocole établi, en analysant son système et/ou lui prop osant des challenges spécifiques, en particulier autour de SSL. Le logiciel devra rendre un diagnostic et un rapport sur les différents éléments analysés, afin de permettre au client de constater des problèmes lorsqu'il y en a, et d'en connaître leur provenance.
 
 \section{Diagrammes de cas d'utilisation}
@@ -338,26 +347,52 @@ Suivant le temps restant, il nous est proposé d'implémenter un système serveu
 
 \end{tikzpicture}
 
-\newpage
+\subsection{UC 5}
+\begin{tikzpicture}
+
+\umlactor{Client}
+\umlactor[x=15, y=-1]{Serveur}
+
+\umlusecase[x=4, y=2, width=3cm]{Se connecter sur le serveur}
+\umlusecase[x=10, y=2, width=3cm]{Établit la connexion}
+\umlusecase[x=10, y=-1, width=3cm]{Analyser le niveau de sécurité du navigateur}
+\umlusecase[x=10, y=-4]{Afficher les résultats}
+%\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{Client}{usecase-13}
+\umltrans{Serveur}{usecase-14}
+\umltrans{Serveur}{usecase-15}
+\umltrans{Serveur}{usecase-16}
+
+\umlinclude{usecase-13}{usecase-14}
+\umlinclude{usecase-14}{usecase-15}
+\umlinclude{usecase-15}{usecase-16}
+
+\end{tikzpicture}
+
+
 \section{Exigences opérationnelles}
-\begin{enumerate}
-\item [EO.X] : xxx
-\end{enumerate}
+%\begin{enumerate}
+%\item [EO.X] : xxx
+%\end{enumerate}
+Lors de la récupération des certificats, les protocoles visés seront SSH et SSL/TLS (cf UC1)
 
 \section{Exigences d'interface}
-\begin{enumerate}
-\item [EI.X] : xxx
-\end{enumerate}
+%\begin{enumerate}
+%\item [EI.X] : xxx
+%\end{enumerate}
+Présentation des résultats de manière claire lisible.
 
 \section{Exigences de qualité}
-\begin{enumerate}
-\item [EQ.X] : xxx
-\end{enumerate}
+%\begin{enumerate}
+%\item [EQ.X] : xxx
+%\end{enumerate}
+Aucune exigence de qualité n'a été détéctée.
 
 \section{Exigences de réalisation}
-\begin{enumerate}
-\item [ER.X] : xxx
-\end{enumerate}
-
+%\begin{enumerate}
+%\item [ER.X] : xxx
+%\end{enumerate}
+Aucune exigence de réalisation n'a été détectée.
 
 \end{document}
