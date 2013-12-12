@@ -3,7 +3,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[francais]{babel} 
-\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm, includeheadfoot]{geometry} %pour les marges
+\usepackage[top=1cm, bottom=2cm, left=2cm, right=2cm, includeheadfoot]{geometry} %pour les marges
 \usepackage{lmodern}
 \usepackage{pict2e}
 \usepackage{tikz}	
@@ -20,7 +20,8 @@
 \usepackage{rotating}
 \usepackage{array}
 \usepackage{cmbright}
-
+\usepackage[hidelinks]{hyperref}
+\usepackage[french]{algorithm2e}
 \geometry{a4paper,textwidth=17cm,textheight=27cm} 
 
 \usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
@@ -66,7 +67,7 @@
            shorten >=1pt,
            blue!100}
 }
-
+\tikzumlset{font=\footnotesize} 
 \usepgflibrary{arrows} % for pgf-umlsd
 
 \linespread{1.1} % Line spacing
@@ -85,12 +86,12 @@
 
 \newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
 \newcommand{\hmwkClass}{Master 2 SSI } % Course/class
-\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkAuthorName}{Julien Legras} % Your name
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Document d'architecture logicielle} % Document name
 
-\newcommand{\version}{X} % Document version
-\newcommand{\docDate}{X} % Document date
+\newcommand{\version}{0.1} % Document version
+\newcommand{\docDate}{12/12/2013} % Document date
 \newcommand{\checked}{X} % Checker name
 \newcommand{\approved}{X} % Approver name
 
@@ -126,8 +127,8 @@
 }
 \end{center}
 
-\newpage
 
+\pagebreak
 %Tableau de mises à jour
 \vspace*{1cm}
 \begin{center}
@@ -137,7 +138,7 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
-	X & X & X\\
+	0.1 & 12/12/2013 & Création du document\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -148,77 +149,64 @@
 \clearpage
 %--------------------------------------------------
 \section{Objet}
+Ce document présente l'architecture utilisée pour réaliser les outils nécessaires à notre audit SSL :
+\begin{itemize}
+\item Récupération des certificats : Application RC;
+\item Factorisation : Application F.
+\end{itemize}
 
 %-------------------------------------------------
 \section{Documents applicables et de référence}
+\begin{itemize}
+\item STB (Spécification Technique des Besoins);
+\item N. Heninger, Z. Durumeric, E. Wustrow, J. A. Halderman. Mining Your Ps and Qs : Detection of
+Widespread Weak Keys in Network Devices. Proceedings of the 21st USENIX Security Symposium.
+2012.
+\end{itemize}
 
 %-------------------------------------------------
 \section{Terminologie et sigles utilisés}
-
+\begin{itemize}
+	\item \textbf{Appli RC} : Application de Récupération des Certificats
+	\item \textbf{Appli F} : Application de Factorisation
+	\item \textbf{Machine D} : Machine Distante
+	\item \textbf{Machine L} : Machine Locale
+	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
+	\item \textbf{Audit} : Procédure consistant à s'assurer du caractère complet, sincère et régulier des comptes d'une entreprise, à s'en porter garant auprès des divers partenaires intéressés de la firme et, plus généralement, à porter un jugement sur la qualité et la rigueur de sa gestion. Ici ce n'est pas une entreprise qui en sera la cible mais un programme : OpenSSL.
+	\item \textbf{Modulus} : En mathématiques et plus précisément en théorie algébrique des nombres, l’arithmétique modulaire est un ensemble de méthodes permettant la résolution de problèmes sur les nombres entiers. Ces méthodes dérivent de l’étude du reste obtenu par une division euclidienne.
+\end{itemize}
 %-------------------------------------------------
 \section{Configuration requise}
+\subsection{Machine de récupération de certificats}
+\begin{itemize}
+\item accès aux ports 22 et 443 en destination
+\item bande passante importante
+\item espace disque pour stockage des certificats : 20 Go
+\item système : Ubuntu Server 13.10
+\end{itemize}
 
+\subsection{Machine de factorisation}
+\begin{itemize}
+\item au moins 8 Go de RAM
+\item processeur quatre cœurs
+\item espace disque pour stockage : 20 Go
+\item système : Ubuntu Server 13.10
+\end{itemize}
 %-------------------------------------------------
 
 \section{Architecture statique}
 
 \subsection{Structure}
-
-\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=1.8,every node/.style={transform shape}]
-		\node[square, text width=1.5cm, fill=white!100] (appclient) at (0,0) {Application client};
-		\node[square, text width=2cm, fill=white!100] (modclientsec) at (4,0) {Module client sécurisé};
-		\begin{pgfonlayer}{background} 
-		\node[punkt, fit=(appclient)(modclientsec), fill=blue!20] (groupclient) {};
-		\end{pgfonlayer}
-		
-		\node[square, text width=1cm, fill=white!100] (PKI) at (2.5,-1.5) {PKI};
-		\node[square, text width=1cm, fill=white!100] (serveur) at (0,-2.5) {Serveur};
-		\node[square, text width=1.5cm, fill=white!100] (serveurs) at (4,-2.5) {Serveur sécurisé};
-		\begin{pgfonlayer}{background} 
-		\node[punkt, fit=(PKI)(serveur)(serveurs), fill=green!20] (groupserveur) {};
-		\end{pgfonlayer}
-
-		\node[text width=.7cm] (imgbd1) at (0,-4) {\includegraphics[height=3em]{computer-database.png}};
-		\node[square, text width=.5cm, below=of imgbd1, fill=white!100] (bd1){BDD};
-		\node[text width=.7cm] (imgfichiers) at (2.5,-4) {\includegraphics[height=3em]{computer-database.png}};
-		\node[square, text width=.7cm, below=of imgfichiers, fill=white!100] (fichiers){BDD};
-		\node[text width=.7cm] (imgbd2) at (4,-4) {\includegraphics[height=3em]{computer-database.png}};
-		\node[square, text width=.5cm, below=of imgbd2, fill=white!100] (bd2){BDD};
-
-		\begin{pgfonlayer}{background} 
-		\node[punkt, fit=(imgbd1) (bd1) (imgbd2) (bd2) (imgfichiers) (fichiers), fill=orange!20] (stock) {};
-		\end{pgfonlayer}
-
-
-		\draw (appclient.east) edge[<->] (modclientsec.west);
-		\draw (appclient.south) edge[<->] (serveur.north);
-		\draw (modclientsec.south west) edge[<->] (PKI.north);
-		\draw (modclientsec.south) edge[<->] (serveurs.north);
-		
-		\draw (serveur.south) edge[<->] (imgbd1.north);
-		\draw (serveurs.south) edge[<->] (imgbd2.north);
-		\draw (PKI.south) edge[<->] (imgfichiers.north);
-		\draw (PKI.south east) edge[<->] (serveurs.north);
-		
-		\draw (PKI.west) edge[->, loop left = 90] (PKI.west);
-
-		\begin{pgfonlayer}{background} 
-		\node[minimum width=2.5cm, minimum height=6.3cm,rectangle, draw=black!60!green, very thick, fit=(appclient) (serveur) (imgbd1) (bd1)] (groupeclassic) {};
-		\node[minimum width=4cm, minimum height=6.3cm,rectangle, draw=black!30!red, very thick, fit=(modclientsec) (PKI) (serveurs) (imgbd2) (bd2) (imgfichiers) (fichiers)] (groupesec) {};
-		\end{pgfonlayer}
-		
-		\node[below=of groupeclassic, color=black!60!green] (legendgpeclassic) {Chat classique};		
-		\node[below=of groupesec, color=black!30!red] (legendgpesec) {Partie sécurisée};
-
-		\node[right=of modclientsec, minimum width=3cm] (lgdappcl) {Application client};
-		
-		\node[right=of groupserveur, minimum width=3cm] (lgsrv) {Serveurs};
-		
-		\node[right=of stock, minimum width=4cm, anchor=west] (lgbdd) {Bases de données};
-
-		\end{tikzpicture}
-
-\vspace{0.5cm}
+Les principales parties à développer sont :
+\begin{itemize}
+\item Application récupération de certificats
+\item Application de factorisation de grands entiers RSA
+\item Données :
+\begin{itemize}
+\item adresses IP fournies par ZMap
+\item clefs publiques RSA récupérées par l'application RC
+\end{itemize}
+\end{itemize}
 \subsection{Description des constituants}
 \begin{center}
 	\vspace*{0.7cm}
@@ -241,50 +229,330 @@
 	\end{tabularx}
 \end{center}
 
-%-------------------------------------------------
-\section{Fonctionnement dynamique}
-\subsection{UC.X: xxx}
 \begin{center}
 	\vspace*{0.7cm}
 	\begin{tabularx}{16cm}{|l|X|}
 	\hline
-	\multicolumn{2}{|l|}{\textbf{UC.X: xxx}}\\
+	\multicolumn{2}{|r|}{\textbf{Application RC SSH}}\\
 	\hline
-	\textbf{Composants mis en jeu} & \\
+	R\^ole & Récupération et stockage des certificats SSH \\
+	\hline
+	Propriétés et attributs de caractérisation & Permet d'obtenir des certificats SSH en tentant une connexion  \\
+	\hline
+	Dépendances avec d'autres constituants & ZMap : liste des adresses IP ayant le port 22 ouvert\\
+	\hline
+	Langages de programmation & C \\
+	\hline
+	Procédé de développement & \begin{enumerate} \item client SSH simple \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
+	\hline
+	Taille complexité & 20\% du projet\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|r|}{\textbf{Application RC SSL/TLS}}\\
+	\hline
+	R\^ole & Récupération et stockage des certificats SSL/TLS \\
+	\hline
+	Propriétés et attributs de caractérisation & Permet d'obtenir des certificats SSL/TLS en tentant une connexion  \\
+	\hline
+	Dépendances avec d'autres constituants & ZMap : liste des adresses IP ayant le port 443 ouvert\\
+	\hline
+	Langages de programmation & C \\
+	\hline
+	Procédé de développement & \begin{enumerate} \item client SSL/TLS simple \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
+	\hline
+	Taille complexité & 20\% du projet\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|r|}{\textbf{Application F}}\\
+	\hline
+	R\^ole & Trouver des facteurs communs des clefs récupérées\\
+	\hline
+	Propriétés et attributs de caractérisation & ???\\
+	\hline
+	Dépendances avec d'autres constituants & Application RC SSH et SSL/TLS\\
+	\hline
+	Langages de programmation & C\\
+	\hline
+	Procédé de développement & \begin{enumerate} \item Arbre des produits \item Arbre des restes \item Exploitation des résultats \end{enumerate}\\
+	\hline
+	Taille complexité & 10\%\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|r|}{\textbf{Serveur web}}\\
+	\hline
+	R\^ole & Affiche les résultats de l'audit \\
+	\hline
+	Propriétés et attributs de caractérisation & Pages statiques et dynamiques qui affichent sous forme graphique les résultats de l'audit \\
+	\hline
+	Dépendances avec d'autres constituants & Appli RC, F \\
+	\hline
+	Langages de programmation & HTML, PHP, JS\\
+	\hline
+	Procédé de développement & \begin{enumerate} \item Affichage clefs récupérées \item Affichage des facteurs communs \item Documentation audit OpenSSL\end{enumerate}\\
+	\hline
+	Taille complexité & 10\%\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\newpage
+%-------------------------------------------------
+\section{Fonctionnement dynamique}
+
+\subsection{UC.1: Récupération des certificats}
+
+\subsubsection{UC.1.2 : Récupération des certificats SSH}
+\begin{center}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.1.2: Récupération des certificats SSH}}\\
+	\hline
+	\textbf{Composants mis en jeu} & Appli RC SSH\\
+	\hline
+	\textbf{Intervenants} & Utilisateur, Machine D\\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{
+    Pour toutes les adresses IP ayant un port 22 ouvert :
+	\begin{enumerate}
+	\item Établissement de la connexion TCP entre Appli RC SSH et Machine D
+	\item Échange des clefs/certificats entre Appli RC SSH et Machine D
+	\item Appli RC SSH stocke la clef/le certificat de Machine D dans un répertoire \verb+keys_ssh+ sous forme de fichier dont le nom est l'adresse IP de Machine D (si la clef n'est pas déjà présente)
+	\item Fermeture de la connexion
+	\end{enumerate}
+	}\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\begin{center}
+
+\begin{tikzpicture}[remember picture,transform shape,scale=1]
+\begin{umlseqdiag} 
+\umlactor[class=Utilisateur]{U}
+\umlobject[class=Appli RC SSH,x=6]{A} 
+\umlactor[class=Machine D,x=12]{M}
+
+\begin{umlcall}[op={collectSSHKeys()},return={}]{U}{A}
+
+\begin{umlcallself}[op={readAddresses()}]{A}\end{umlcallself} 
+
+\begin{umlfragment}[type=loop, label=For each address, inner xsep=3,inner ysep=6]
+
+\begin{umlfragment}[type=alt, label=accept,inner xsep=5, inner ysep=2] 
+\begin{umlcall}[op={connect()},return={accept}]{A}{M}\end{umlcall}
+
+\begin{umlcall}[op={sendSSHKey()},return={serverSSHKey}]{A}{M}\end{umlcall}
+
+\begin{umlcallself}[op={storeServerSSHKeyIfNew()}]{A}\end{umlcallself} 
+
+\begin{umlcall}[op={close()}]{A}{M}\end{umlcall}
+
+\end{umlfragment}
+\end{umlfragment}
+\end{umlcall}
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+
+\subsubsection{UC.1.2 : Récupération des certificats SSL/TLS}
+\begin{center}
+
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.1.2: Récupération des certificats SSL/TLS}}\\
+	\hline
+	\textbf{Composants mis en jeu} & Appli RC SSL/TLS\\
+	\hline
+	\textbf{Intervenants} & Utilisateur, Machine D\\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{
+    Pour toutes les adresses IP ayant un port 443 ouvert :
+	\begin{enumerate}
+	\item Établissement de la connexion TCP entre Appli RC SSL/TLS et Machine D
+	\item Échange des clefs/certificats entre Appli RC SSL/TLS et Machine D
+	\item Appli RC SSL/TLS stocke la clef/le certificat de Machine D dans un répertoire \verb+keys_ssl+ sous forme de fichier dont le nom est l'adresse IP de Machine D (si la clef n'est pas déjà présente)
+	\item Fermeture de la connexion
+	\end{enumerate}
+	}\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\begin{center}
+
+\begin{tikzpicture}[remember picture,transform shape,scale=1]
+\begin{umlseqdiag} 
+\umlactor[class=Utilisateur]{U}
+\umlobject[class=Appli RC SSL/TLS,x=6]{A} 
+\umlactor[class=Machine D,x=12]{M}
+
+\begin{umlcall}[op={collectSSLKeys()},return={}]{U}{A}
+
+\begin{umlcallself}[op={readAddresses()}]{A}\end{umlcallself} 
+
+\begin{umlfragment}[type=loop, label=For each address, inner xsep=3,inner ysep=6]
+
+\begin{umlfragment}[type=alt, label=accept,inner xsep=5, inner ysep=2] 
+\begin{umlcall}[op={connect()},return={accept}]{A}{M}\end{umlcall}
+
+\begin{umlcall}[op={sendSSLKey()},return={serverSSLKeyIfNew}]{A}{M}\end{umlcall}
+
+\begin{umlcallself}[op={storeServerSSLKey()}]{A}\end{umlcallself} 
+
+\begin{umlcall}[op={close()}]{A}{M}\end{umlcall}
+
+\end{umlfragment}
+\end{umlfragment}
+\end{umlcall}
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+
+
+\subsection{UC.2: Factorisation des moduli des certificats}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.2: Factorisation des moduli des certificats}}\\
+	\hline
+	\textbf{Composants mis en jeu} & Appli F\\
+	\hline
+	\textbf{Intervenants} & Utilisateur\\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{
+	\begin{enumerate}
+	\item Récupérer la liste des clefs
+	\item Construire l'arbre des produits en stockant chaque niveau dans un fichier  a
+	\item Construire l'arbre des restes
+	\item Stocker les facteurs communs dans un fichier
+	\end{enumerate}
+	}\\
+	\hline
+	\end{tabularx}
+\end{center}
+\begin{algorithm}[H]
+
+ %\SetAlgoLined % For previous releases [?]
+ \Entree{Tableau des moduli des clefs publiques : T}
+ \Sortie{Hauteur de l'arbre, produits des moduli des clefs publiques}
+ \Donnees{Tableaux v, tmp; Entier i, level}
+ $v \leftarrow T$\;
+ $level \leftarrow 0$\;
+ \Tq{$|v|>1$}{
+  $tmp \leftarrow \emptyset$\;
+  \PourCh{$i \in \{0, .., |v| / 2\}$}{
+    $tmp[i] \leftarrow v[i\times2] \times v[i\times2 + 1]$\;
+  }
+  $storeProductLevel(v, level)$\;
+  $v \leftarrow tmp$\;
+  $level \leftarrow level + 1$\;
+ }
+ \Retour{level}
+ \caption{Construction de l'arbre des produits}
+\end{algorithm}
+\vspace{1cm}
+\begin{algorithm}[H]
+
+ %\SetAlgoLined % For previous releases [?]
+ \Entree{Hauteur de l'arbre des produits : level}
+ \Sortie{PGCDs des moduli des clefs publiques}
+ \Donnees{Tableaux P, v, w; Entier i}
+ $P \leftarrow getProductLevel(level)$\;
+ \Tq{$level>0$}{
+  $v \leftarrow getProductLevel(level - 1)$\;
+  \PourCh{$i \in \{0, .., |v|\}$}{
+    $v[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
+  }
+  $level \leftarrow 1$\;
+  $storeRemainderLevel(v, level)$\;
+  $v \leftarrow tmp$\;
+  $level \leftarrow level + 1$\;
+ }
+ $w \leftarrow \emptyset$\;
+ \PourCh{$i \in \{0, .., |v|\}$}{
+    $w[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
+    $w[i] \leftarrow w[i] / v[i]$\;
+    $w[i] \leftarrow pgcd(w[i],v[i])$\;
+  }
+ \Retour{w}
+ \caption{Construction de l'arbre des restes}
+\end{algorithm}
+
+\subsection{UC.3: Présentation des résultats}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.3: Présentation des résultats}}\\
+	\hline
+	\textbf{Composants mis en jeu} & Serveur web\\
+	\hline
+	\textbf{Intervenants} & Utilisateur\\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{
+	\begin{enumerate} 
+	\item Développement partie clefs publiques récupérées (tri par critères : taille, issuer si connu etc.)
+	\item Développement partie facteurs communs avec graphiques HighCharts
+	\item Documentation avec doxygen de l'audit d'OpenSSL
+	\end{enumerate}
+	}\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+
+\subsection{UC.4: Audit d'OpenSSL}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.4: Audit d'OpenSSL}}\\
+	\hline
+	\textbf{Composants mis en jeu} & code source d'OpenSSL\\
 	\hline
 	\textbf{Intervenants} & \\
 	\hline
 	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
 	\hline
-	\multicolumn{2}{|p{15cm}|}{}\\
+	\multicolumn{2}{|p{15cm}|}{
+	\begin{enumerate}
+	\item Sélectionner les fonctions à auditer
+	\item Développer les codes de tests sur ces fonctions
+	\item Générer une documentation doxygen associée à l'audit
+	\end{enumerate}
+	}\\
 	\hline
 	\end{tabularx}
 \end{center}
-\vspace{2cm}
-\begin{tikzpicture}[remember picture,transform shape,scale=0.6]
-\begin{umlseqdiag} 
-\umlactor[class=]{User}
-\umlobject[class=]{Client} 
-\umlobject[class=]{ClientS}
-\umlobject[class=]{ServerS}
-\umlobject[class=]{AR}
-\umlobject[class=]{AC}
-\umlobject[class=]{LDD}
-\begin{umlcallself}[op={GenerateKeys()}]{User} 
-\begin{umlcall}[op={SendRequête(id,keys)}]{User}{AR} 
-\begin{umlcallself}[op={VerifRules()}]{AR} \end{umlcallself}
-\begin{umlcall}[op={SendId()}]{AR}{AC} 
-\begin{umlcallself}[op={CreateCertif()}]{AC} 
-\begin{umlcall}[op={SendCertif()}]{AC}{Client} 
-\begin{umlcall}[op={ChangeSatus()}]{Client}{ClientS} \end{umlcall}
-\end{umlcall}
-\end{umlcallself}
-\end{umlcall}
-\end{umlcall}
-\begin{umlcall}[op={SaveCertif()}]{AC}{LDD} \end{umlcall}
-\end{umlcallself} 
-\end{umlseqdiag} 
-\end{tikzpicture}
+
 
 
 \end{document}

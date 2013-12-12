@@ -11,7 +11,11 @@
 \usepackage{graphicx} % Required to insert images
 \usepackage{tabularx, longtable}
 \usepackage{color, colortbl}
-\usepackage{cmbright}
+%\usepackage{cmbright}
+
+%
+\usepackage{lmodern,charter}
+\renewcommand{\bfdefault}{bx}
 
 \linespread{1.1} % Line spacing
 
@@ -29,19 +33,23 @@
 
 \newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
 \newcommand{\hmwkClass}{Master 2 SSI } % Course/class
-\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkAuthorName}{Boisseleau W. et Latimier M.} % Your name
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Cahier de recettes} % Document name
 
-\newcommand{\version}{X} % Document version
-\newcommand{\docDate}{X} % Document date
-\newcommand{\checked}{X} % Checker name
+\newcommand{\version}{1.3} % Document version
+\newcommand{\docDate}{12.12.13} % Document date
+\newcommand{\checked}{-} % Checker name
 \newcommand{\approved}{X} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
 \author{\hmwkAuthorName}
 \date{} % Insert date here if you want it to appear below your name
+
+
+
+
 
 
 \begin{document}
@@ -81,7 +89,9 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
-	X & X & X\\
+	1.1 & 10.12.13 & Création et complétion \\
+	1.2 & 11.12.13 & Complétion  \\
+	1.3 & 12.12.13 & Correctifs appliqués \\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -93,17 +103,294 @@
 
 % OBJET
 \section{Objet}
+L'objet de ce cahier de recettes est de lister les tests que nous allons pratiquer sur les différentes fonctionnalités liées au projet "Audit des implantations SSL/TLS" avant sa livraison au client. Il décrit notamment une série de scénarios précisant les démarches à suivre afin de prouver l'efficacité des différents produits. Il permet en effet de vérifier que la série de logiciels/services est conforme aux spécifications définies avec le client et qu'elles répondent efficacement au cahier des charges. 
+
+
+\section{Terminologie et sigles utilisés}
+Les acronymes suivants peuvent être utilisés dans le rapport ci-présent :
+
+
+\begin{itemize}
+	\item \textbf{Appli RC} : Application de Récupération des Certificats
+	\item \textbf{Appli F} : Application de Factorisation
+	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
+	\item \textbf{Appli SD} : réfère au logiciel de suppression de doublons.
+
+\end{itemize}
+
+
+Des sigles sont également définis et utilisés localement pour faciliter la définition des procédures de tests.
 
 \section{Documents applicables et de référence}
 
 \section{Environnement de test}
 
-\section{Responsabilités}
+\subsection{Lieu}
 
+L'ensemble des procédures de tests s'effectueront en salle machine U2.2.34 de l'Université de Rouen, en compagnie d'un ou deux testeurs minimum. Quelques tests peu gourmands en temps et en mémoire, mais nécessaires à la validation des fonctionnalités du produit final, pourront être effectués sur des machines personnelles.
+Cependant, la majorité d'entre eux nécessiteront la monopolisation d'une machine pour plusieurs heures, voire plusieurs jours.
+
+\subsection{Machines utilisées}
+
+Nous serons amenés à utiliser des machines virtuelles lors de tests mettant en scène un réseau complexe simulant à petite échelle un réseau internet, ceci sous différents scénarii possibles (mécanisme de pare-feu, zone (dé)militarisée, ports ouverts/fermés pour des connexions SSH, ...). \\
+
+Nous avons choisi le logiciel de virtualisation de réseau Netkit pour mener à bien ces tests. Le DAL indiquera l'ensemble des machines réelles utilisables pour la plate-forme de tests et/ou de développement.
+
+\subsection{Base de données de test}
+
+Plusieurs fonctionnalités du projet seront déjà implantées et pourront servir d'appui pour nos tests (dont ZMAP ou l'algorithme de factorisation).\\
+
+Nos procédures de tests se succèdent pour la plupart, les résultats des précédents tests nous serviront de faits pour les phases de tests suivantes.
+
+\subsection{Contraintes}
+
+La modification - même minime - de la partie applicative de notre projet aura pour conséquence le relancement de toutes les procédures de tests directement et indirectement concernées.\\
+
+Nous aurons des contraintes de temps selon le planning prévu dans le plan de développement. Les procédures de tests doivent être fonctionnelles rapidement afin de valider l'avancement du projet.\\
+
+Nos procédures de tests doivent être les plus simples possibles afin d'éviter toute perte de temps, et toute contrainte d'espace (ce qui n'enlève en rien à l'efficacité des tests).
+
+
+\section{Responsabilités}
+M. Latimier et W. Boisseleau sont les principaux testeurs sur ce projet, ils devront mener à bien la conception, l'exécution et la vérification de chacun d'entre eux. D'autres membres du projet pourront consacrer leur temps sur les tests en cas de demande explicite du chef de projet, ou durant leur temps libre (considéré comme non planifié).\\
+
+
+Dès lors qu'un outil ou parti d'outil sujet à des procédures de test est développé, les testeurs auront la responsabilité de lancer les procédures de tests sur celui-ci afin de permettre une gestion des erreurs efficace et la plus en amont possible.  \\
+
+De plus, les testeurs s'appliqueront à respecter ou faire respecter les conditions de tests définies dans ce rapport.\\
+
+Dans les cas ou des erreurs sont mises en évidence, l'équipe de testeurs devra d'une part analyser l'origine du problème et d'autre part communiquer aux développeurs et au chef de projet les problèmes identifiés. Lorsque c'est possible, ils soumettront une proposition de solution ou de piste solutionnante.
+
+
+\newpage
 \section{Stratégie de tests}
+
+\subsection{Gestion des tâches de tests}
+
+Les outils de tests devront être développés en parallèle aux développement des fonctionnalités du projet. L'écart entre le développement et les tests ne doit pas être trop grand, afin d'optimiser le rendement de chaque acteur.\\
+
+Les procédures de tests sont les plus fines possibles, elles mettent en place individuellement un test spécifique ; ceci afin de les distribuer plus facilement lors de la répartition des tâches, et de pouvoir gagner du temps dans nos phases de débogage. \\
+
+De plus, elles devront avoir le moins d'inter-dépendance possible, pour éviter des modifications en cascade lors des modifications des procédures parentes.
+Lorsqu'un outil de test est validé par l'équipe, il est inutile d'y apporter des améliorations. Nous y reviendrons uniquement lors de modifications éventuelles des fonctionnalités du projet.
+
+\subsection{La campagne de test}
+
+Elle s'effectuera principalement sur la première partie de notre projet "Audit de clefs cryptographiques", et éventuellement sur la troisième partie "Analyse dynamique" selon le planning et l'attente du client (non exigé pour l'instant).\\
+
+La seconde partie "Analyse statique" ne nécessite pas d'exigences techniques particulières, mais plutôt une réflexion sur un problème cryptographique.
+
+\subsection{Critères d'arrêt}
+
+Une procédure de tests sera considérée comme valide lors de l'envoi des livrables fonctionnels lui étant associée et le retour favorable du client.
+
 
 \section{Gestion des anomalies}
 
+Lors de nos phases de tests, l'ensemble des anomalies rencontrées devront être signalées dans un document attitré au format CSV (ou ODS). Lorsqu'une anomalie est rencontrée, nous devons calculer son taux de criticité sur le projet et le cahier des charges. Si une exigence technique du client s'en trouve affectée, elle doit être réglée au plus vite.\\
+
+Une politique de prévention doit être mise en place afin d'éviter tout renouvellement, en cas de modification d'un logiciel par exemple.
+
+
+
 \section{Procédures de test}
+\subsection{ZMAP}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+	\item \texttt{R} : réseau virtuel fixé représentant toutes les configurations réseau envisageables,
+	\item \texttt{R'} : réseau virtuel altéré de \texttt{R},
+	\item \texttt{lA} : liste d'adresses prédéfinie de machines de \texttt{R},
+	\item \texttt{A1} : liste d'adresses de machines ayant des ports SSH ouverts sur \texttt{R},
+	\item \texttt{A2} : liste d'adresses de machines ayant des ports SSH protégés et fermés sur \texttt{R},
+	\item \texttt{A1'} : liste d'adresses de machines ayant des ports SSH ouverts sur \texttt{R'},
+	\item \texttt{A2'} : liste d'adresses de machines ayant des ports SSH protégés et fermés sur \texttt{R'},
+	\item \texttt{VA1} : liste d'adresses de machines attendues ayant des ports SSH ouverts sur \texttt{R},
+	\item \texttt{VA2} : liste d'adresses de machines attendues ayant des ports SSH protégés et fermés sur \texttt{R},
+	\item \texttt{VA1'} : liste d'adresses de machines attendues ayant des ports SSH ouverts sur \texttt{R'},
+	\item \texttt{VA2'} : liste d'adresses de machines attendues ayant des ports SSH protégés et fermés sur \texttt{R'}.
+\end{itemize}
+
+
+\subsubsection*{Procédures.}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : ZMAP reconnaît port O/F/N-A} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P1 : TestPortsZMAP(ZMAP,R,R',lA,VA1,VA2,VA1',VA2')} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \texttt{A1=VA1} et \texttt{A2=VA2}. } &  & / \\
+\hline
+2 & On relance ZMAP sur \texttt{R'} avec \texttt{A2} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1'} et \texttt{A2'}. On vérifie que \texttt{A1'=VA1'} et \texttt{A2'=VA2'}. } & &  / \\
+\hline
+\end{tabular}
+
+\vspace{0.7cm}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Tester la portabilité du résultat de ZMAP pour l'application RC} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P2 : Portabilité(ZMAP,lA,R)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & Sur le système Linux, on lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée. On récupère A1 et A2. On relance ZMAP sur \texttt{A1} et \texttt{A2} & \multicolumn{2}{p{6cm}|}{ZMAP s'exécute correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
+\hline
+2 & Même procédé sur le système Windows & \multicolumn{2}{p{6cm}|}{ZMAP se termine correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
+\hline
+\end{tabular}
+
+\newpage
+\subsection{RC}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item \texttt{LAd} : liste d'adresses de machines ayant des ports ouverts générées par ZMAP,
+\item \texttt{$M_i$} : machine $i$ de la \texttt{LAd},
+\item \texttt{$C_i$} : certificat ou chaine de certification de la machine $i$ selon RC,
+\item \texttt{$VC_i$} : certificat ou chaine de certification de la machine $i$ selon $M_i$,
+\item \texttt{$C_i'$} : certificat ou chaine de certification de la machine $i$ selon RC,
+\item \texttt{$VC_i'$} : certificat ou chaine de certification de la machine $i$ après stockage.
+\end{itemize}
+
+\subsubsection*{Procédures.}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{RC} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Établissement de connexion avec RC} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P3 : conRC(RC,lA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P2 & / \\
+\hline
+\end{tabular}
+
+\vspace{0.7cm}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{RC} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Récupération des certificats } }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P4 : recCertifRC(RC,lA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P3 & / \\
+\hline
+2 & RC stocke dans une base de données le certificat s'il existe & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P3 & / \\
+\hline
+\end{tabular}
+
+\subsection{SD}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item \texttt{B} base de données contenant des certificats uniques et des certificats identiques,
+\item \texttt{BA} base de données B après suppression des doublons selon SD,
+\item \texttt{VBA} base de données B sans doublons
+\end{itemize}
+
+\subsubsection*{Procédure.}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{SD} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Tests de suppression de doublons } }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P4 : supD(SD,B,VBA)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & SD s'exécute sur B & \multicolumn{2}{p{6cm}|}{SD s'exécute correctement et BA=VBA} & & / \\
+\hline
+\end{tabular}
+
+
+\subsection{F}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item $lA_1$ : liste de taille impaire d'entiers de même taille binaire,
+\item $lA_2$ : liste de taille paire d'entiers de même taille binaire, 
+\item $F1$ : section de l'algorithme de  $F$ calculant l'arbre des produits,
+\item $F2$ : $F-F1$ section de l'algorithme de  $F$ calculant l'arbre des restes,
+\item $lF_1$ : liste des fils de $lA_1$ calculée suivant $F1$ sur $lA_1$,
+\item $lF_2$ : liste des fils de $lA_2$ calculée suivant $F1$ sur $lA_2$,
+\item $VlF_1$ : liste des fils attendue pour $lA_1$,
+\item $VlF_2$ : liste des fils attendue pour $lA_2$,
+\item $P$ : entier produit de facteurs après lancement de $F1$ sur $lA_A$,
+\item $modP1$ : élément gauche après calcul du modulo de $P$ suivant $F2$,
+\item $modP2$ : élément droite après calcul du modulo de $P$ suivant $F2$,
+\item $VmodP1$ : élément gauche modulo de $P$ suivant $F2$,
+\item $VmodP2$ : élément droite modulo de $P$ suivant $F2$.
+\end{itemize}
+
+\subsubsection*{Procédures.}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{F} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Calcul des fils selon $F1$ suivant une liste} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P5 : calcF1($F1$,$lA_1$,$lA_2$,$VlF_1$,$VlF_2$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline et $lF_1=VlF_1$} & & / \\
+\hline
+2 & On calcule $F1(lA_2)=lF_2$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline  et $lF_2=VlF_2$} & & / \\
+\hline
+\end{tabular}
+
+\vspace{0.7cm}
+
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{F} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Calcul des modulos fils avec  $F2$ suivant P} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P6 : calcF2($F2$,$P$,$VmodP1$,$VmodP2$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & On calcule \newline $F2(P)=(modP1,modP2)$ & \multicolumn{2}{p{6cm}|}{$F2$ s'exécute correctement \newline et $modP1=VmodP1$ \newline et $modP2=VmodP2$} & P5 & / \\
+\hline
+
+\end{tabular}
 
 \end{document}
