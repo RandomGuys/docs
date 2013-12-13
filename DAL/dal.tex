@@ -182,7 +182,7 @@ Widespread Weak Keys in Network Devices. Proceedings of the 21st USENIX Security
 \item accès aux ports 22 et 443 en destination
 \item bande passante importante
 \item espace disque pour stockage des certificats : 20 Go
-\item système : Ubuntu Server 13.10
+\item système : Ubuntu Server 12.04 LTS
 \end{itemize}
 
 \subsection{Machine de factorisation}
@@ -190,7 +190,7 @@ Widespread Weak Keys in Network Devices. Proceedings of the 21st USENIX Security
 \item au moins 8 Go de RAM
 \item processeur quatre cœurs
 \item espace disque pour stockage : 20 Go
-\item système : Ubuntu Server 13.10
+\item système : Ubuntu Server 12.04 LTS
 \end{itemize}
 %-------------------------------------------------
 
@@ -208,26 +208,7 @@ Les principales parties à développer sont :
 \end{itemize}
 \end{itemize}
 \subsection{Description des constituants}
-\begin{center}
-	\vspace*{0.7cm}
-	\begin{tabularx}{16cm}{|l|X|}
-	\hline
-	\multicolumn{2}{|r|}{\textbf{Constituant}}\\
-	\hline
-	R\^ole &  \\
-	\hline
-	Propriétés et attributs de caractérisation & \\
-	\hline
-	Dépendances avec d'autres constituants & \\
-	\hline
-	Langages de programmation & \\
-	\hline
-	Procédé de développement & \\
-	\hline
-	Taille complexité & \\
-	\hline
-	\end{tabularx}
-\end{center}
+
 
 \begin{center}
 	\vspace*{0.7cm}
@@ -280,7 +261,7 @@ Les principales parties à développer sont :
 	\hline
 	R\^ole & Trouver des facteurs communs des clefs récupérées\\
 	\hline
-	Propriétés et attributs de caractérisation & ???\\
+	Propriétés et attributs de caractérisation & GMP\\
 	\hline
 	Dépendances avec d'autres constituants & Application RC SSH et SSL/TLS\\
 	\hline
@@ -288,7 +269,7 @@ Les principales parties à développer sont :
 	\hline
 	Procédé de développement & \begin{enumerate} \item Arbre des produits \item Arbre des restes \item Exploitation des résultats \end{enumerate}\\
 	\hline
-	Taille complexité & 10\%\\
+	Taille complexité & 10\% du projet\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -309,7 +290,28 @@ Les principales parties à développer sont :
 	\hline
 	Procédé de développement & \begin{enumerate} \item Affichage clefs récupérées \item Affichage des facteurs communs \item Documentation audit OpenSSL\end{enumerate}\\
 	\hline
-	Taille complexité & 10\%\\
+	Taille complexité & 10\% du projet\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|r|}{\textbf{Évaluateur niveau de sécurité}}\\
+	\hline
+	R\^ole & Évaluer le niveau de sécurité d'un navigateur web \\
+	\hline
+	Propriétés et attributs de caractérisation & Programme qui établie la connexion SSL/TLS avec un navigateur et qui évalue le niveau de sécurité de la connexion\\
+	\hline
+	Dépendances avec d'autres constituants & Serveur web \\
+	\hline
+	Langages de programmation & C\\
+	\hline
+	Procédé de développement & \begin{enumerate} \item Mise en place du contexte SSL/TLS \item Récupérer les informations du hello client \item Calculer le score associé au niveau de sécurité \item Renvoyer une page html avec le score \end{enumerate}\\
+	\hline
+	Taille complexité & 20\% du projet\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -448,7 +450,7 @@ Les principales parties à développer sont :
 	\multicolumn{2}{|p{15cm}|}{
 	\begin{enumerate}
 	\item Récupérer la liste des clefs
-	\item Construire l'arbre des produits en stockant chaque niveau dans un fichier  a
+	\item Construire l'arbre des produits en stockant chaque niveau dans un fichier
 	\item Construire l'arbre des restes
 	\item Stocker les facteurs communs dans un fichier
 	\end{enumerate}
@@ -553,6 +555,52 @@ Les principales parties à développer sont :
 	\end{tabularx}
 \end{center}
 
+\subsection{UC.5: Évaluation du niveau de sécurité du navigateur client}
+\begin{center}
+	\vspace*{0.7cm}
+	\begin{tabularx}{16cm}{|l|X|}
+	\hline
+	\multicolumn{2}{|l|}{\textbf{UC.5: Évaluation du niveau de sécurité du navigateur client}}\\
+	\hline
+	\textbf{Composants mis en jeu} & Serveur web\\
+	\hline
+	\textbf{Intervenants} & Utilisateur\\
+	\hline
+	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
+	\hline
+	\multicolumn{2}{|p{15cm}|}{
+	\begin{enumerate}
+	\item Lister la liste des protocoles supportés par le navigateur de l'utilisateur
+	\item Lister la liste des systèmes de chiffrement supportés par le navigateur de l'utilisateur
+	\item Lister les détails du protocole utilisé pour la connexion HTTPS
+	\item Établir un score selon les résultats précédents
+	\end{enumerate}
+	}\\
+	\hline
+	\end{tabularx}
+\end{center}
 
+\begin{center}
+
+\begin{tikzpicture}[remember picture,transform shape,scale=1]
+\begin{umlseqdiag} 
+\umlactor[class=Utilisateur]{U}
+\umlobject[class=Navigateur web,x=6]{N} 
+\umlactor[class=Serveur Web,x=12]{M}
+
+\begin{umlcall}[op={checkMySecurityLevel()},return={}]{U}{N}
+
+\begin{umlcall}[op={helloClient()},return={sendScore}]{N}{M}
+
+\begin{umlcallself}[op={analyzeHelloClient()}]{M}\end{umlcallself}
+\begin{umlcallself}[op={computeScore()}]{M}\end{umlcallself}
+
+\begin{umlcall}[type=return,op={helloServer}]{M}{N}\end{umlcall}
+\end{umlcall}
+
+\end{umlcall}
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
 
 \end{document}
