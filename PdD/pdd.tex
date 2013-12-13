@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt,french]{article}
+	\documentclass[a4paper,11pt,french]{article}
 \usepackage[utf8]{inputenc}
 
 \usepackage[T1]{fontenc}
@@ -13,6 +13,16 @@
 \usepackage{extramarks} % Required for headers and footers
 \usepackage{graphicx} % Required to insert images
 \usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{lscape}
+\usepackage[hidelinks]{hyperref}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{pgfgantt}
+\usepackage{pgfcalendar}
+\usepackage{ifthen}
+\usepackage{gensymb}
 \usepackage{color, colortbl}
 
 \usepackage{cmbright}
@@ -96,119 +106,214 @@
 \tableofcontents
 \clearpage
 \section{Objet}
-Le projet s'inscrit dans un cadre relatif aux faits d'actualités autour de la sécurité, notamment concernant la crédibilité des fonctions de génération de nombre aléatoire ou encore  sur l’application des standards dans les fonctions d’OpenSSL.\\
+Le projet s'inscrit dans un cadre relatif aux faits d'actualités autour de la sécurité, notamment concernant la crédibilité des fonctions de génération de nombres aléatoires ou encore  sur l’application des standards dans les fonctions d’OpenSSL.\\
 
-RSA et DSA peuvent échouer lamentablement lorsqu’ils sont utilisés par un mauvais générateur de nombre aléatoire mais combien de cas comme celui ci peut-il y avoir sur le web? La première partie de ce projet essaiera de répondre à cette question en faisant un état des lieux des serveurs TLS et SSH et présenter des évidences que des clefs vulnérables peuvent exister.\\
+RSA et DSA peuvent échouer lamentablement lorsqu’ils sont utilisés par un mauvais générateur de nombres aléatoires mais combien de cas comme celui ci peut-il y avoir sur le web? La première partie de ce projet essaiera de répondre à cette question en faisant un état des lieux des serveurs TLS et SSH et présentera des preuves montrant que des clefs vulnérables peuvent exister.\\
 
-La deuxème partie de ce projet consistera à étudier les fonctions d’openSSL, en particulier sa partie développant la génération d’éléments aléatoires et ses primitives cryptographiques. Chaque fonctions seront comparer avec les standards actuels (cf. PKCS) afin de déterminer si elle est efficace.\\
+La deuxième partie de ce projet consistera à étudier les fonctions d’OpenSSL, en particulier sa partie développant la génération d’éléments aléatoires et ses primitives cryptographiques. Chaque fonction sera comparée avec les standards actuels (cf. PKCS) afin de déterminer si elle est efficace.\\
 
-Enfin, la troisième partie de ce projet consiste à développer une application tournant sur serveur sécurisé afin d’analyser chaque machine cliente se conectant à celui ci. L’application possèdera une liste de critères et des menaces éxistantes, par exemple avec la validité du certificat du client présenté lors de la connexion,  afin de tester la machine cliente et en déduire si elle est potentiellement un risque pour le serveur.\\
+Enfin, la troisième partie de ce projet consistera à développer une application tournant sur serveur sécurisé afin d’analyser chaque machine cliente se connectant à celui-ci. L’application possédera une liste de critères et de menaces existantes. Par exemple on peut considérer la validité du certificat du client présenté lors de la connexion.\\
 
 
-Ce projet est réalisé dans le cadre de l’enseignement de premère année de master Sécurité des Systèmes Informatiques. Il sera réalisé par un groupe de cinq étudiants. La première partie du projet consiste à rédiger les documents qui nous permet de mieux définir le sujet, les objectifs, les risques et l’organisation du projet. Suite à cela, le développement des différentes applications commenceront sur une durée de 6 semaines. \\
+Ce projet est réalisé dans le cadre de l’enseignement de deuxième année de master Sécurité des Systèmes Informatiques. Il sera réalisé par un groupe de cinq étudiants. La première partie du projet consiste à rédiger les documents qui nous permettent de mieux définir le sujet, les objectifs, les risques et l’organisation du projet. Suite à cela, le développement des différentes applications durera 6 semaines. \\
 
 \textbf{Documents de référence :}
 \begin{itemize}
   \item Mining Your Ps and Qs: Detection of Widespread Weak Keys in Network Devices \\
-  		{\centering by Nadia Heninger, Zakir Durumeric, Eric Wustrow, J. Alex Halderman}
-  \item ZMAP
+  		{by Nadia Heninger, Zakir Durumeric, Eric Wustrow, J. Alex Halderman}
+  \item ZMAP: Fast Internet-Wide Scanning and its Security Applications\\
+  		{by Zakir Durumeric, Eric Wustrow, J. Alex Halderman}
 \end{itemize}
-
 
 \section{Terminologie et sigles utilisés}
 \begin{itemize}
-	\item \textbf{RSA/DSA :}  Advanced Encryption Standard et Digital Signature Algorithm, sont deux algorithmes de chiffrement à bi-clef (publique et \\ privée)
+	\item \textbf{RSA/DSA :}  Advanced Encryption Standard et Digital Signature Algorithm, sont deux algorithmes de chiffrement à bi-clef (publique et privée)
 	\item \textbf{Appli RC :} Application de Récupération des certificats
 	\item \textbf{Appli F :} Application de Factorisation
-	\item \textbf{Certificat :} Document élétronique utilisant une signature digitale afin de liéer une clef plublique à une identité
+	\item \textbf{Certificat :} Document électronique utilisant une signature digitale afin de lier une clef publique à une identité
 \end{itemize}
 
 \newpage
 
 \section{Méthodologie de développement}
 
-Ce projet reposera sur la méthode agile en prenant en compte ses valeurs culturel et principes en l'appliquant dans une méthodologie SCRUM afin d'apporter une discipline de développement et de délivrer les résultats dans les meilleurs conditions. \\
+Ce projet reposera sur la méthode agile en prenant en compte ses valeurs culturelles et principes en l'appliquant dans une méthodologie SCRUM afin d'apporter une discipline de développement et de délivrer les résultats dans les meilleures conditions. \\
 
-Ce qui captive l'utilisation de la méthode Agile est l'essence et la philosophie de son approche et les points valoriser telle que : \\
-\begin{itemize}
-	\item [$\bullet$] Les individus et leurs interactions plus que les processus et les outils :
-\end{itemize}
-Elle correspond à la communication entre les collaborateurs à tout les niveaux (client/fournisseurs, testeurs/programmeurs,...) afin de ne pas perdre de temps ni d'énergie dans les malentendus ou incompréhension. \\
-\begin{itemize}
+Voici les valeurs et les principes de la méthodologie Scrum : 
+\paragraph{Les individus et leurs interactions plus que les processus et les outils :} 
+La méthodologie Scrum correspond à la communication entre les collaborateurs à tous les niveaux (client/fournisseurs, testeurs/programmeurs, ...) afin de ne pas perdre de temps ni d'énergie avec des malentendus ou de l'incompréhension.
+
 %	\item [$\bullet$] Des logiciels opérationnels plus qu’une documentation exhaustive
-	\item [$\bullet$] La collaboration avec les clients plus que la négociation contractuelle :
-\end{itemize}
-Une approche direct avec le client qui se sent beaucoup plus impliqué dans le projet afin de le permetre d'apporter ses avis et remarques.\\
-\begin{itemize}
-	\item [$\bullet$] L’adaptation au changement plus que le suivi d’un plan : 
-\end{itemize}
-Être capable de s'adapter lorsqu'une modification importante est nécessaire.\\
+\paragraph{La collaboration avec les clients plus que la négociation contractuelle :}
+Une approche directe avec le client qui se sent beaucoup plus impliqué dans le projet afin qu'il puisse apporter ses avis et remarques.
 
-Ainsi, une grande priorité sera de satisfaire les demandes du client en livrant régulièrement des fonctionnalités, tester préalablement par des outils de tests développés, et les faire valider par le client. Chaque fonctionnalité implementée sera intégrée au projets et testée.\\
+\paragraph{L’adaptation au changement plus que le suivi d’un plan :}
+Être capable de s'adapter lorsqu'une modification importante est nécessaire.
+\\
 
-La méthodologie de Scrum représente correctement cette approche dans le cadre de notre projet. Il est rythmé par un ensemble de réunions clairement définies et stritement limitées dans le temps :\\
+Ainsi, une grande priorité sera de satisfaire les demandes du client en livrant régulièrement des fonctionnalités, testées préalablement par des outils de tests développés, et les faire valider par le client. Chaque fonctionnalité validée sera intégrée au projet.\\
+
+La méthodologie de Scrum représente correctement cette approche dans le cadre de notre projet. Il est rythmé par un ensemble de réunions clairement définies et strictement limitées dans le temps :\\
+
+\includegraphics[width=40em]{scrum-agiles.jpg}
+
 
 \newpage
 
 \begin{itemize}
-\item [$\bullet$] \textbf{Planification du Sprint} (Sprint = itération) : au cours de cette réunion, l’équipe de développement sélectionne les éléments prioritaires du « Product Backlog » (liste ordonnancée des exigences fonctionnelles et non fonctionnelles du projet) qu’elle pense pouvoir réaliser au cours du sprint (en accord avec le « Product Owner »).
-\item [$\bullet$] \textbf{Revue de Sprint} : au cours de cette réunion qui a lieu à la fin du sprint, l’équipe de développement présente les fonctionnalités terminées au cours du sprint et recueille les feedbacks du Product Owner et des utilisateurs finaux. C’est également le moment d’anticiper le périmètre des prochains sprints et d’ajuster au besoin la planification de release (nombre de sprints restants).
-\item [$\bullet$] \textbf{Rétrospective de Sprint} : la rétrospective qui a généralement lieu après la revue de sprint est l’occasion de s’améliorer (productivité, qualité, efficacité, conditions de travail, etc) à la lueur du « vécu » sur le sprint écoulé (principe d’amélioration continue).
-\item [$\bullet$] \textbf{Mêlée quotidienne} : il s’agit d’une réunion de synchronisation de l’équipe de développement qui se fait debout (elle est aussi appelée « stand up meeting ») en 15 minutes maximum au cours de laquelle chacun répond principalement à 3 questions : « Qu’est ce que j’ai terminé depuis la dernière mêlée ? Qu’est ce que j’aurai terminé d’ici la prochaine mêlée ? Quels obstacles me retardent ? »
+\item \textbf{Planification du Sprint} (Sprint = itération) : au cours de cette réunion, l’équipe de développement sélectionne les éléments prioritaires du « Product Backlog » (liste ordonnancée des exigences fonctionnelles et non fonctionnelles du projet) qu’elle pense pouvoir réaliser au cours du sprint (en accord avec le « Product Owner »).
+\item \textbf{Revue de Sprint} : au cours de cette réunion qui a lieu à la fin du sprint, l’équipe de développement présente les fonctionnalités terminées au cours du sprint et recueille les feedbacks du Product Owner et des utilisateurs finaux. C’est également le moment d’anticiper le périmètre des prochains sprints et d’ajuster au besoin la planification de release (nombre de sprints restants).
+\item \textbf{Rétrospective de Sprint} : la rétrospective qui a généralement lieu après la revue de sprint est l’occasion de s’améliorer (productivité, qualité, efficacité, conditions de travail, etc) à la lueur du « vécu » sur le sprint écoulé (principe d’amélioration continue).
+\item \textbf{Mêlée quotidienne} : il s’agit d’une réunion de synchronisation de l’équipe de développement qui se fait debout (elle est aussi appelée « stand up meeting ») en 15 minutes maximum au cours de laquelle chacun répond principalement à 3 questions : « Qu’est ce que j’ai terminé depuis la dernière mêlée ? Qu’est ce que j’aurai terminé d’ici la prochaine mêlée ? Quels obstacles me retardent ? »
 \end{itemize}
 
 \section{Organisation et responsabilités :}
 
-Lors de la première et la troisième partie du projet, qui consiste au développement de différente application, chaque membre de l'équipe sera assigner un rôle particulier :\\ \\
-\begin{tabular}{lll}
-\textbf{Développeur} 	& : responsabes de la production du code. Ils aident aussi à la ré-estimation de la charge de travail en fonction de l'avancement du projet. Ces rôles sont tenus par Julien LEGRAS et Pascal EDOUARD. \\
-\textbf{Client}			& : notamment le «Product Owner», qui porte vision du produit à réaliser et représente généralement le client afin d'assurer l'intermédiaire avec l'équipe. Ce rôe est tenu par Claire SMETS.\\
-\textbf{Coach}			& : notamment le «Srum Master», reste le garant de l'application de la méthodologie Scrum et de l'équipe en terme de communication et le fonctionnement. Ce rôle est tenu par Pascal EDOUARD.\\
-\end{tabular}
+Lors de la première et la troisième partie du projet, qui consistent au développement de différentes applications, chaque membre de l'équipe sera assigné un rôle particulier :\\
 
-\section{Organigramme des tâches :}
+\begin{tabular}{l p{15cm}}
+\textbf{Développeur :} & responsables de la production du code. Ils aident aussi à la ré-estimation de la charge de travail en fonction de l'avancement du projet. Ces rôles sont tenus par Julien LEGRAS et Pascal EDOUARD. \\
+\textbf{Client :}& notamment le «Product Owner», qui porte vision du produit à réaliser et représente généralement le client afin d'assurer l'intermédiaire avec l'équipe. Ce rôle est tenu par Claire SMETS.\\
+\textbf{Coach :}&  notamment le «Srum Master», reste le garant de l'application de la méthodologie Scrum et de l'équipe en termes de communication et le fonctionnement. Ce rôle est tenu par Pascal EDOUARD.
+\end{tabular}
 
 \newpage
 
+\section{Organigramme des tâches :}
+\includegraphics[width=45em]{organigramme.png}
+
 \section{Evaluation du projet :}
 
-L'approche Scrum commence par lister les exigences du client afin de produire le « Product Backlog ». On définit une unité de coût (en terme de compléxité) avec la colonne Estimation. Elle permet de faciliter l'ordonnacement du Product Backlog, la planification des sprints et des releases.
-
-\begin{tabular}{ll}
-1. hola & blabla\\
-2. lalo & okoko\\
-\end{tabular}
+L'approche Scrum commence par lister les exigences du client afin de produire le « Product Backlog ». On définit une unité de coût (en terme de complexité) avec la colonne Estimation. Elle permet de faciliter l'ordonnancement du Product Backlog, la planification des sprints et des releases.
 
 
 \section{Dimensionnement des moyens :}
 
-Nous avons besoin, pour ce projet, d'une bonne connexion avec internet afin de récupérer le maximun de certificats avec le mininum de perte de connexion possible. Une machine moyenne (normal) en terme de performance est nécessaire pour cette partie. Cependant, l'application de factorisation des moduli nécéssite quelque chose de beaucoup plus puissante en terme de disque, mémoire et calcule de processeur. Nos possibilité d'obtenir un serveur de cette taille varie de possibilité, du plus probable au moins évident :
+Nous avons besoin, pour ce projet, d'une bonne connexion internet afin de récupérer le maximum de certificats avec le minimum de perte de connexion possible. Une machine moyenne (normale) en termes de performance est nécessaire pour cette partie. Cependant, l'application de factorisation des moduli nécessite quelque chose de beaucoup plus puissant en termes de disque, mémoire et calcul de processeur. Nos possibilités d'obtenir un serveur de cette taille peuvent varier comme suit :
 \begin{enumerate}
 \item Serveur local de l'université,
 \item Serveur de calcul au CRIHAN,
-\item Serveur Amazone à un prix raisonable.
+\item Serveur Amazon à un prix raisonnable.
 \end{enumerate}
 
-Le code source ainsi que les différents documents produits sont stockés sur le serveur GIT : \\ (https://github.com/randomguys)
+Le code source ainsi que les différents documents produits sont stockés sur le serveur git : \\ (https://github.com/RandomGuys)
 
 \newpage
 
 \section{Description des tâches :}
 
+\begin{tabular}{|c|c|r|l|}
+\hline
+&&\textbf{Tâche} & \textbf{Description}\\
+\hline
+\multirow{7}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}&{\textbf{App. RC}}
+&  1 & Récupération de la liste des adresses IP des serveurs\\
+&& 2 & Récupération des certificats SSH				\\
+&& 3 & Stockage des certificats SSH 				\\
+&& 4 & Récupération des certificats SSL/TLS 		\\
+&& 5 & Stockage des certificats SSL/TLS				\\
+\cline{2-4}
+&\multirow{2}{*}{\textbf{App. F}}
+&  6 &  Extraction des clefs des certificats\\
+&& 7 &  Trouver des facteurs communs des clefs récupérées\\
+&& 8 &  Tests et débeugage\\
+&& 9 &  Première livraison cliente\\
+\cline{1-4}
+\multirow{4}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}&{\textbf{OpenSSL}}
+&  8 &  Lister les fonctions d'OpenSSL à auditer\\
+&& 9 &  Lister les standards utilisés par chaque fonction à auditer\\
+&& 10 & Auditer les fonctions d'OpenSSL listées\\
+&& 11 &Mettre en place la page web des résultats de l'audit\\
+&& 12 &Deuxième livraison cliente\\
+\hline
+
+\multirow{5}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}&{\textbf{App. Eva}}
+&  13 & Lister les critères à vérifier sur une machine cliente\\
+&& 14 & Développement d'une fonction pour chaque critère\\
+&& 15 & Récupération des données du navigateur\\
+&& 16 & Évaluer chaque critère de la machine cliente\\
+&& 17 & Ajouter une page web pour les résultats de l'évaluation\\
+&& 18 & Tests et débeugage\\
+&& 19 & Troisième livraison cliente\\
+\hline
+
+\end{tabular}
+
+\vspace{0.5cm}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+&\textbf{\No Tâche}&\textbf{Début} & \textbf{Fin} & \textbf{Durée} & \textbf{Effectif} & \textbf{Charge} & \textbf{Ressources}\\
+\hline
+\multirow{7}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}
+&1  & 20/1/2014 & 20/1/2014 & 1& 5 & 5&Tous\\
+\cline{2-8}
+&2  &	21/1/2014 &	24/1/2014 & 4 & 5 &	20&Tous\\
+\cline{2-8}
+&3  &	24/1/2014 &	24/1/2014 &	1 & 2 &	2&William, Claire\\
+\cline{2-8}
+&4  & 	24/1/2014 &	27/1/2014 &	2 &5 &	10&Tous\\
+\cline{2-8}
+&5  & 	27/1/2014 &	27/1/2014 &	1 &2 &	2&William, Claire\\
+\cline{2-8}
+&6  & 	28/1/2014 &	28/1/2014 &	1 &	5&5&Mathieu\\
+\cline{2-8}
+&7  & 	28/1/2014 &	3/2/2014 & 5 &5 &	25&Tous\\
+\cline{2-8}
+&8  & 	3/2/2014 &	5/2/2014 &	3 &	2 &	6&Mathieu, William\\
+\cline{2-8}
+&9  &	5/2/2014 &	5/2/2014 &	1 &	5 &	5&Tous\\
+\hline
+&&&&&&&\\
+\hline
+\multirow{5}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}
+&10 & 	3/2/2014 &	3/2/2014 &	1 &	5 &	5&Tous\\
+\cline{2-8}
+&11 &	3/2/2014 &	3/2/2014 &	1 &	5 &	5&Tous\\
+\cline{2-8}
+&12 &	6/2/2014 &	11/2/2014 &	4 &	5 &	20&Tous\\
+\cline{2-8}
+&13 &	12/2/2014 &	14/2/2014 &	3 &	5 &	15&Tous\\
+\cline{2-8}
+&14 &	14/2/2014 &	14/2/2014 &	1 &	5 &	5&Tous\\
+\hline
+&&&&&&&\\
+\hline
+\multirow{5}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}
+&15 &	17/2/2014 &	17/2/2014 &	1 &	5 &	5&Tous\\
+\cline{2-8}
+&16 &	17/2/2014 &	24/2/2014 &	6 &	5 &	30&Tous\\
+\cline{2-8}
+&17 &	20/2/2014 &	26/2/2014 &	5 &	5 &	25&Tous\\
+\cline{2-8}
+&18 &	27/2/2014 &	28/2/2014 &	2 &	2 & 4&Mathieu, William\\
+\cline{2-8}
+&19 &	28/2/2014 &	28/2/2014 &	1 &	5 &	5&Tous\\
+\hline
+\end{tabular}
+
+\newpage
+
+\section{Plan de développement :}
+
+\begin{center}
+\includegraphics[angle=90,height=22.5cm]{gantt-chart_v1.png}
+\end{center}
+
 \newpage
 
 \section{Gestion de la documentation :}
-Les documents de référence pour la gestion de ce projet seront disponible au format pdf sur le serveur de GIT. \\
+Les documents de référence pour la gestion de ce projet seront disponibles au format pdf sur le serveur git. \\
 
-Chaque membre est responsable d'un document livrable, qui évolue au fil du projet et sera incrémenter par un numéro de version :\\ \\
+Chaque membre est responsable d'un document livrable, qui évolue au fil du projet et sera incrémenté par un numéro de version :\\ \\
 \begin{tabular}{ll}
-–	Le Spécification Technique du Besoin 	& : Claire SMETS\\
+–	La Spécification Technique du Besoin 	& : Claire SMETS\\
 –	Le Document d'Architecture Logicielle 	& : Julien LEGRAS\\
-–	L'Analyse des Risques 					& : Pascal Edouard\\
+–	L'Analyse des Risques 					& : Pascal EDOUARD\\
 –	Le Cahier des Recettes 					& : Mathieu LATIMIER et William BOISSELEAU\\
 –	Le Plan de Développement 				& : Pascal EDOUARD\\
 \end{tabular}
 \\ \\
-L'ensemble du groupe devra se tenir au courant de l'évolution de chaque document. De plus, après chaque réunion avec le client, un compte rendu sera rédigé et validé par l'équipe avant d'être soumis au client, qui pourra ensuite le valider. Le compte rendu sera accéssible sur le serveur de document GIT.
+
+L'ensemble du groupe devra se tenir au courant de l'évolution de chaque document. De plus, après chaque réunion avec le client, un compte-rendu sera rédigé et validé par l'équipe avant d'être soumis au client, qui pourra ensuite le valider. Le compte-rendu sera accessible sur le dépôt de documents git.
 
 \end{document}
