@@ -1,0 +1,237 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
+ \tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle, dashed,
+           rounded corners,
+           draw=black, very thin,
+           minimum height=2em,
+           minimum width = 2cm,
+           text centered},
+    square/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height=.5cm,
+           minimum width = 1cm,
+           text centered},
+    data/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height= 2cm,
+           minimum width = 2cm,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=1pt,
+           shorten >=1pt,},
+    asym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           red!100},
+    sym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           blue!100}
+}
+\usepackage{pgfplots}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+\usepackage{tikz-uml}
+\usepackage{color, colortbl}
+\usetheme{Antibes}
+\usecolortheme{beaver}
+\setbeamertemplate{sections/subsections in toc}[square]
+\setbeamertemplate{blocks}[square]%
+
+\author{William Boisseleau -- Pascal Edouard -- Mathieu Latimier -- Julien Legras -- Claire Smets}
+\title{Projet annuel - Audit des implantations SSL/TLS}
+\titlegraphic{\includegraphics[height=3em]{logo_univ.png}}
+\institute{Master 2 Sécurité des Systèmes Informatiques}
+
+\date{20/12/2013}
+
+\begin{document}
+{
+\setbeamertemplate{headline}[default] 
+\begin{frame}
+  \titlepage
+\end{frame}
+}
+
+\frame{
+\frametitle{Sommaire}
+\tableofcontents
+}
+
+\section{Présentation du projet}
+\frame{
+\frametitle{Présentation du projet}
+\begin{block}{Sujet proposé par Ayoub Otmani}
+	\begin{enumerate}
+		\item audit des clefs cryptographiques
+		\item analyse statique de la bibliothèque OpenSSL
+		\item analyse dynamique du niveau de sécurité d'un navigateur web
+	\end{enumerate}
+\end{block}
+}
+
+\section{Cas d'utilisation}
+\frame[allowframebreaks=1.0]{
+\frametitle{Cas d'utilisation}
+\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=0.8,every node/.style={transform shape}]
+\umlactor{Appli RC}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=3, y=4, width=3cm]{Lire}
+\umlusecase[x=3, y=1, width=3cm]{Se connecter}
+\umlusecase[x=10, y=2, width=3cm]{Échanger les certificats}
+\umlusecase[x=10, y=-1]{Stocker les certificats}
+
+%\umlusecase[x=10, width=3cm]{Envoi message privé}
+%\umlusecase[x=10, y=-2, width=3cm]{Envoi message au salon général}
+%\umlusecase[x=7, y=-3]{Déconnexion}
+
+\umltrans{Appli RC}{usecase-1}
+\umltrans{Appli RC}{usecase-2}
+%\umltrans{User}{usecase-3}
+\umltrans{Appli RC}{usecase-4}
+
+\umlinclude{usecase-1}{usecase-2}
+\umlextend{usecase-3}{usecase-2}
+
+\umlinclude{usecase-4}{usecase-3}
+\end{tikzpicture}
+
+\framebreak
+
+\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=0.7,every node/.style={transform shape}]
+\umlactor{Appli F}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=4, y=4, width=3cm]{Prendre les moduli}
+\umlusecase[x=5, y=2, width=3cm]{Construire l'arbre des produits}
+\umlusecase[x=5, y=0, width=3cm]{Construire l'arbre des restes}
+\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
+\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{Appli F}{usecase-5}
+\umltrans{Appli F}{usecase-6}
+\umltrans{Appli F}{usecase-7}
+\umltrans{Appli F}{usecase-8}
+
+\umlinclude{usecase-6}{usecase-7}
+\umlextend{usecase-5}{usecase-6}
+\umlextend{usecase-8}{usecase-7}
+\umlinclude{usecase-8}{usecase-9}
+%\umlinclude{usecase-4}{usecase-3}
+\end{tikzpicture}
+
+\framebreak
+\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=0.75,every node/.style={transform shape}]
+
+\umlactor{User}
+%\umlactor[x=14, y=4]{AC}
+
+\umlusecase[x=4, y=2, width=3cm]{Ouvrir la page web}
+\umlusecase[x=4, y=0, width=3cm]{Sélectionner et filtrer les données affichées}
+\umlusecase[x=12, y=0, width=3cm]{Exporter les données}
+%\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
+%\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{User}{usecase-10}
+\umltrans{User}{usecase-11}
+
+\umlextend{usecase-12}{usecase-11}
+
+\end{tikzpicture}
+
+\framebreak
+
+\begin{tikzpicture}[node distance=-.01cm,font=\tiny,scale=0.75,every node/.style={transform shape}]
+
+\umlactor[x=4,y=-1]{Client}
+\umlactor[x=15, y=-1]{Serveur}
+
+\umlusecase[x=4, y=2, width=3cm]{Se connecter sur le serveur}
+\umlusecase[x=10, y=2, width=3cm]{Établit la connexion}
+\umlusecase[x=10, y=-1, width=3cm]{Analyser le niveau de sécurité du navigateur}
+\umlusecase[x=10, y=-4]{Afficher les résultats}
+%\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{Client}{usecase-13}
+\umltrans{Serveur}{usecase-14}
+\umltrans{Serveur}{usecase-15}
+\umltrans{Serveur}{usecase-16}
+
+\umlinclude{usecase-13}{usecase-14}
+\umlinclude{usecase-14}{usecase-15}
+\umlinclude{usecase-15}{usecase-16}
+
+\end{tikzpicture}               
+}
+
+\section{Planning de développement}
+\frame[allowframebreaks=1.0,font=\tiny]{
+\frametitle{Planning de développement}
+\begin{block}{Sprint 1 : Récupération des certificats et factorisation}
+\begin{itemize}
+\item Outils de récupération des certificats SSL et SSH.
+\item Outils de factorisation des clefs cryptographiques.
+\end{itemize}
+\end{block}
+
+\begin{center}
+\begin{tikzpicture}
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {ports} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] {IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\end{tikzpicture}
+\end{center}
+
+\framebreak
+
+\begin{block}{Sprint 2 : Audit d'OpenSSL}
+\begin{itemize}
+\item Détermination des fonctions à auditer et des standards associés.
+\item Développer des outils de tests d'OpenSSL.
+\item Documentation et présentation des résultats de l'analyse.
+\end{itemize}
+\end{block}
+
+\framebreak
+\begin{block}{Sprint 3 : Analyse dynamique des navigateurs web}
+\begin{itemize}
+\item Serveur HTTPS analysant la poignée de main SSL/TLS.
+\item Présentation des résultats de l'analyse.
+\end{itemize}
+\end{block}
+}
+
+\end{document}
