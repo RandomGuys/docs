@@ -5,7 +5,7 @@
 \usepackage[francais]{babel} 
 \usepackage[top=1cm, bottom=2cm, left=2cm, right=2cm, includeheadfoot]{geometry} %pour les marges
 \usepackage{lmodern}
-\usepackage{pict2e}
+%\usepackage{pict2e}
 \usepackage{tikz}	
 \usepackage{tikz-uml}
 \usepackage{fancyhdr}   % Required for custom headers
@@ -91,7 +91,7 @@
 \newcommand{\hmwkDocName}{Document d'architecture logicielle} % Document name
 
 \newcommand{\version}{1.0} % Document version
-\newcommand{\docDate}{18/12/2013} % Document date
+\newcommand{\docDate}{17/01/2014} % Document date
 \newcommand{\checked}{William Boisseleau} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
@@ -142,6 +142,9 @@
 	\hline
 	1.0 & 18/12/2013 & Première version approuvée\\
 	\hline
+	1.1 & 18/01/2014 & Ajout du schéma général\\
+	&& Justification de la configuration\\
+	\hline
 	\end{tabularx}
 \end{center}
 
@@ -184,15 +187,14 @@ Widespread Weak Keys in Network Devices. Proceedings of the 21st USENIX Security
 \item accès aux ports 22 et 443 en destination
 \item bande passante importante
 \item espace disque pour stockage des certificats : 20 Go
-\item système : Ubuntu Server 12.04 LTS
+\item système : Ubuntu Server 12.04 LTS (Dernière version LTS)
 \end{itemize}
 
 \subsection{Machine de factorisation}
 \begin{itemize}
-\item au moins 8 Go de RAM
-\item processeur quatre cœurs
+\item au moins 8 Go de RAM (stockage en RAM de très grands entiers)
 \item espace disque pour stockage : 20 Go
-\item système : Ubuntu Server 12.04 LTS
+\item système : Ubuntu Server 12.04 LTS (Dernière version LTS)
 \end{itemize}
 %-------------------------------------------------
 
@@ -209,6 +211,32 @@ Les principales parties à développer sont :
 \item clefs publiques RSA récupérées par l'application RC
 \end{itemize}
 \end{itemize}
+
+\vspace*{1cm}
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none,right=of applif] (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {ports} (zmap);
+\draw (start) edge[->] node[midway,anchor=north] {22 \& 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] {listes} (applirc);
+\draw (zmap) edge[->] node[midway,anchor=north] {d'IPs} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] {clefs} (applif);
+\draw (applirc) edge[] node[midway,anchor=north] {RSA} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\end{tikzpicture}
+\end{center}
+\caption{Schéma du traitement du Sprint 1}
+\end{figure}
+
 \subsection{Description des constituants}
 
 
@@ -228,6 +256,11 @@ Les principales parties à développer sont :
 	\hline
 	Procédé de développement & \begin{enumerate} \item client SSH simple \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
 	\hline
+	Fonctions à développer & readAddresses() : lit les adresses IP récupérées avec ZMap depuis un fichier \verb+scan_ssh+ \\
+	& connect() : initie la connexion SSH avec une adresse \item sendSSHKey() : envoi de la clef SSH RSA cliente (si demandée par le serveur) \\
+	& storeServerSSHKeyIfNew() : stocke la clef publique RSA du serveur SSH si elle n'est pas déjà connue \\    
+	& close() : ferme la connexion SSH\\
+	\hline
 	Taille complexité & 20\% du projet\\
 	\hline
 	\end{tabularx}
@@ -245,9 +278,9 @@ Les principales parties à développer sont :
 	\hline
 	Dépendances avec d'autres constituants & ZMap : liste des adresses IP ayant le port 443 ouvert\\
 	\hline
-	Langages de programmation & C \\
+	Langages de programmation & Script Perl avec commandes openssl \\
 	\hline
-	Procédé de développement & \begin{enumerate} \item client SSL/TLS simple \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
+	Procédé de développement & \begin{enumerate} \item lancement de la commande openssl s\_client \item extraire le certificat de la session (openssl sess\_id) et le stocker \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
 	\hline
 	Taille complexité & 20\% du projet\\
 	\hline
@@ -270,6 +303,9 @@ Les principales parties à développer sont :
 	Langages de programmation & C\\
 	\hline
 	Procédé de développement & \begin{enumerate} \item Arbre des produits \item Arbre des restes \item Exploitation des résultats \end{enumerate}\\
+	\hline
+	Fonction à développer & buildProductTree() : construit l'abre des produits grâce à l'algorithme \ref{alg:productTree}\\
+	& buildRemainderTree() : construit l'arbre des restes grâce à l'algorithme \ref{alg:remainderTree}\\
 	\hline
 	Taille complexité & 10\% du projet\\
 	\hline
@@ -313,6 +349,9 @@ Les principales parties à développer sont :
 	\hline
 	Procédé de développement & \begin{enumerate} \item Mise en place du contexte SSL/TLS \item Récupérer les informations du hello client \item Calculer le score associé au niveau de sécurité \item Renvoyer une page html avec le score \end{enumerate}\\
 	\hline
+	Fonctions à développer & analyseHelloClient() : analyse le paquet HELLO du client (algorithmes supportés, certificat du navigateur etc.)\\
+	& computeScore() : calculer un score à partir de l'analyse et de critères d'évaluation fixés lors en début de sprint\\
+	\hline
 	Taille complexité & 20\% du projet\\
 	\hline
 	\end{tabularx}
@@ -355,7 +394,7 @@ Les principales parties à développer sont :
 \begin{umlseqdiag} 
 \umlactor[class=Utilisateur]{U}
 \umlobject[class=Appli RC SSH,x=6]{A} 
-\umlactor[class=Machine D,x=12]{M}
+\umlobject[class=Machine D,x=12]{M}
 
 \begin{umlcall}[op={collectSSHKeys()},return={}]{U}{A}
 
@@ -411,7 +450,7 @@ Les principales parties à développer sont :
 \begin{umlseqdiag} 
 \umlactor[class=Utilisateur]{U}
 \umlobject[class=Appli RC SSL/TLS,x=6]{A} 
-\umlactor[class=Machine D,x=12]{M}
+\umlobject[class=Machine D,x=12]{M}
 
 \begin{umlcall}[op={collectSSLKeys()},return={}]{U}{A}
 
@@ -420,13 +459,9 @@ Les principales parties à développer sont :
 \begin{umlfragment}[type=loop, label=For each address, inner xsep=3,inner ysep=6]
 
 \begin{umlfragment}[type=alt, label=accept,inner xsep=5, inner ysep=2] 
-\begin{umlcall}[op={connect()},return={accept}]{A}{M}\end{umlcall}
+\begin{umlcall}[op={openssl s\_client},return={accept}]{A}{M}\end{umlcall}
 
-\begin{umlcall}[op={sendSSLKey()},return={serverSSLKeyIfNew}]{A}{M}\end{umlcall}
-
-\begin{umlcallself}[op={storeServerSSLKey()}]{A}\end{umlcallself} 
-
-\begin{umlcall}[op={close()}]{A}{M}\end{umlcall}
+\begin{umlcallself}[op={openssl sess\_id}]{A}\end{umlcallself}
 
 \end{umlfragment}
 \end{umlfragment}
@@ -461,7 +496,7 @@ Les principales parties à développer sont :
 	\end{tabularx}
 \end{center}
 \begin{algorithm}[H]
-
+\label{alg:productTree}
  %\SetAlgoLined % For previous releases [?]
  \Entree{Tableau des moduli des clefs publiques : T}
  \Sortie{Hauteur de l'arbre, produits des moduli des clefs publiques}
@@ -479,10 +514,11 @@ Les principales parties à développer sont :
  }
  \Retour{level}
  \caption{Construction de l'arbre des produits}
+ 
 \end{algorithm}
 \vspace{1cm}
 \begin{algorithm}[H]
-
+ \label{alg:remainderTree}
  %\SetAlgoLined % For previous releases [?]
  \Entree{Hauteur de l'arbre des produits : level}
  \Sortie{PGCDs des moduli des clefs publiques}
@@ -588,7 +624,7 @@ Les principales parties à développer sont :
 \begin{umlseqdiag} 
 \umlactor[class=Utilisateur]{U}
 \umlobject[class=Navigateur web,x=6]{N} 
-\umlactor[class=Serveur Web,x=12]{M}
+\umlobject[class=Serveur Web,x=12]{M}
 
 \begin{umlcall}[op={checkMySecurityLevel()},return={}]{U}{N}
 
