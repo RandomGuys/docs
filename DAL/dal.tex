@@ -90,8 +90,8 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Document d'architecture logicielle} % Document name
 
-\newcommand{\version}{1.0} % Document version
-\newcommand{\docDate}{17/01/2014} % Document date
+\newcommand{\version}{1.2} % Document version
+\newcommand{\docDate}{22/01/2014} % Document date
 \newcommand{\checked}{William Boisseleau} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
@@ -145,6 +145,8 @@
 	1.1 & 18/01/2014 & Ajout du schéma général\\
 	&& Justification de la configuration\\
 	\hline
+	1.2 & 22/01/2014 & Suppression de la partie SSH\\
+	\hline
 	\end{tabularx}
 \end{center}
 
@@ -182,19 +184,19 @@ Widespread Weak Keys in Network Devices. Proceedings of the 21st USENIX Security
 \end{itemize}
 %-------------------------------------------------
 \section{Configuration requise}
-\subsection{Machine de récupération de certificats}
+\subsection{Machine de récupération de certificats (Instance micro Amazon Web Services EC2)}
 \begin{itemize}
-\item accès aux ports 22 et 443 en destination
+\item accès au port 443 en destination
 \item bande passante importante
 \item espace disque pour stockage des certificats : 20 Go
 \item système : Ubuntu Server 12.04 LTS (Dernière version LTS)
 \end{itemize}
 
 \subsection{Machine de factorisation}
+Recommandations de l'équipe de chercheurs ayant développé l'outil fastgcd :
 \begin{itemize}
-\item au moins 8 Go de RAM (stockage en RAM de très grands entiers)
-\item espace disque pour stockage : 20 Go
-\item système : Ubuntu Server 12.04 LTS (Dernière version LTS)
+\item au moins 30 Go de RAM (stockage en RAM de très grands entiers)
+\item espace disque pour stockage : 150 Go (stockage sur disque des calculs intermédiaires)
 \end{itemize}
 %-------------------------------------------------
 
@@ -239,33 +241,6 @@ Les principales parties à développer sont :
 
 \subsection{Description des constituants}
 
-
-\begin{center}
-	\vspace*{0.7cm}
-	\begin{tabularx}{16cm}{|l|X|}
-	\hline
-	\multicolumn{2}{|r|}{\textbf{Application RC SSH}}\\
-	\hline
-	R\^ole & Récupération et stockage des certificats SSH \\
-	\hline
-	Propriétés et attributs de caractérisation & Permet d'obtenir des certificats SSH en tentant une connexion  \\
-	\hline
-	Dépendances avec d'autres constituants & ZMap : liste des adresses IP ayant le port 22 ouvert\\
-	\hline
-	Langages de programmation & C \\
-	\hline
-	Procédé de développement & \begin{enumerate} \item client SSH simple \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
-	\hline
-	Fonctions à développer & readAddresses() : lit les adresses IP récupérées avec ZMap depuis un fichier \verb+scan_ssh+ \\
-	& connect() : initie la connexion SSH avec une adresse \item sendSSHKey() : envoi de la clef SSH RSA cliente (si demandée par le serveur) \\
-	& storeServerSSHKeyIfNew() : stocke la clef publique RSA du serveur SSH si elle n'est pas déjà connue \\    
-	& close() : ferme la connexion SSH\\
-	\hline
-	Taille complexité & 20\% du projet\\
-	\hline
-	\end{tabularx}
-\end{center}
-
 \begin{center}
 	\vspace*{0.7cm}
 	\begin{tabularx}{16cm}{|l|X|}
@@ -278,7 +253,7 @@ Les principales parties à développer sont :
 	\hline
 	Dépendances avec d'autres constituants & ZMap : liste des adresses IP ayant le port 443 ouvert\\
 	\hline
-	Langages de programmation & Script Perl avec commandes openssl \\
+	Langages de programmation & Scripts Perl avec commandes openssl \\
 	\hline
 	Procédé de développement & \begin{enumerate} \item lancement de la commande openssl s\_client \item extraire le certificat de la session (openssl sess\_id) et le stocker \item itérer les connexions pour toutes les adresses IP données par ZMap \end{enumerate} \\
 	\hline
@@ -296,9 +271,9 @@ Les principales parties à développer sont :
 	\hline
 	R\^ole & Trouver des facteurs communs des clefs récupérées\\
 	\hline
-	Propriétés et attributs de caractérisation & GMP\\
+	Propriétés et attributs de caractérisation & GMP, cmake\\
 	\hline
-	Dépendances avec d'autres constituants & Application RC SSH et SSL/TLS\\
+	Dépendances avec d'autres constituants & Application RC SSL/TLS\\
 	\hline
 	Langages de programmation & C\\
 	\hline
@@ -307,7 +282,7 @@ Les principales parties à développer sont :
 	Fonction à développer & buildProductTree() : construit l'abre des produits grâce à l'algorithme \ref{alg:productTree}\\
 	& buildRemainderTree() : construit l'arbre des restes grâce à l'algorithme \ref{alg:remainderTree}\\
 	\hline
-	Taille complexité & 10\% du projet\\
+	Taille complexité & 20\% du projet\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -361,64 +336,8 @@ Les principales parties à développer sont :
 %-------------------------------------------------
 \section{Fonctionnement dynamique}
 
-\subsection{UC.1: Récupération des certificats}
+\subsection{UC.1: Récupération des certificats SSL/TLS}
 
-\subsubsection{UC.1.2 : Récupération des certificats SSH}
-\begin{center}
-	\begin{tabularx}{16cm}{|l|X|}
-	\hline
-	\multicolumn{2}{|l|}{\textbf{UC.1.2: Récupération des certificats SSH}}\\
-	\hline
-	\textbf{Composants mis en jeu} & Appli RC SSH\\
-	\hline
-	\textbf{Intervenants} & Utilisateur, Machine D\\
-	\hline
-	\multicolumn{2}{|l|}{\textbf{Processus de mise en \oe uvre}}\\
-	\hline
-	\multicolumn{2}{|p{15cm}|}{
-    Pour toutes les adresses IP ayant un port 22 ouvert :
-	\begin{enumerate}
-	\item Établissement de la connexion TCP entre Appli RC SSH et Machine D
-	\item Échange des clefs/certificats entre Appli RC SSH et Machine D
-	\item Appli RC SSH stocke la clef/le certificat de Machine D dans un répertoire \verb+keys_ssh+ sous forme de fichier dont le nom est l'adresse IP de Machine D (si la clef n'est pas déjà présente)
-	\item Fermeture de la connexion
-	\end{enumerate}
-	}\\
-	\hline
-	\end{tabularx}
-\end{center}
-
-\begin{center}
-
-\begin{tikzpicture}[remember picture,transform shape,scale=1]
-\begin{umlseqdiag} 
-\umlactor[class=Utilisateur]{U}
-\umlobject[class=Appli RC SSH,x=6]{A} 
-\umlobject[class=Machine D,x=12]{M}
-
-\begin{umlcall}[op={collectSSHKeys()},return={}]{U}{A}
-
-\begin{umlcallself}[op={readAddresses()}]{A}\end{umlcallself} 
-
-\begin{umlfragment}[type=loop, label=For each address, inner xsep=3,inner ysep=6]
-
-\begin{umlfragment}[type=alt, label=accept,inner xsep=5, inner ysep=2] 
-\begin{umlcall}[op={connect()},return={accept}]{A}{M}\end{umlcall}
-
-\begin{umlcall}[op={sendSSHKey()},return={serverSSHKey}]{A}{M}\end{umlcall}
-
-\begin{umlcallself}[op={storeServerSSHKeyIfNew()}]{A}\end{umlcallself} 
-
-\begin{umlcall}[op={close()}]{A}{M}\end{umlcall}
-
-\end{umlfragment}
-\end{umlfragment}
-\end{umlcall}
-\end{umlseqdiag} 
-\end{tikzpicture}
-\end{center}
-
-\subsubsection{UC.1.2 : Récupération des certificats SSL/TLS}
 \begin{center}
 
 	\begin{tabularx}{16cm}{|l|X|}
@@ -436,7 +355,7 @@ Les principales parties à développer sont :
 	\begin{enumerate}
 	\item Établissement de la connexion TCP entre Appli RC SSL/TLS et Machine D
 	\item Échange des clefs/certificats entre Appli RC SSL/TLS et Machine D
-	\item Appli RC SSL/TLS stocke la clef/le certificat de Machine D dans un répertoire \verb+keys_ssl+ sous forme de fichier dont le nom est l'adresse IP de Machine D (si la clef n'est pas déjà présente)
+	\item Appli RC SSL/TLS stocke la clef/le certificat de Machine D dans un répertoire \verb+keys+/\verb+certs+ sous forme de fichier dont le nom est l'adresse IP de Machine D (si la clef n'est pas déjà présente)
 	\item Fermeture de la connexion
 	\end{enumerate}
 	}\\
