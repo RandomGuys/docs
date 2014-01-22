@@ -100,6 +100,8 @@
 	\hline
 	1.0 & 14/12/2013 & Première version \\
 	\hline
+	1.1 & 22/1/2014 & Modification du plan de développement \\
+	\hline
 	\end{tabularx}
 \end{center}
 
@@ -176,6 +178,7 @@ Lors de la première et la troisième partie du projet, qui consistent au dével
 \begin{tabular}{l p{15cm}}
 \textbf{Développeur :} & responsables de la production du code. Ils aident aussi à la ré-estimation de la charge de travail en fonction de l'avancement du projet. Ces rôles sont tenus par Julien LEGRAS et Pascal EDOUARD. \\
 \textbf{Client :}& notamment le «Product Owner», qui porte vision du produit à réaliser et représente généralement le client afin d'assurer l'intermédiaire avec l'équipe. Ce rôle est tenu par Claire SMETS.\\
+\textbf{Testeur :}&  responsable de la création des procédures de tests afin de valider le bon fonctionnement des applications développées. Ce rôle est tenu par Mathieu LATIMIER et William BOISSELEAU.\\
 \textbf{Coach :}&  notamment le «Srum Master», reste le garant de l'application de la méthodologie Scrum et de l'équipe en termes de communication et le fonctionnement. Ce rôle est tenu par Pascal EDOUARD.
 \end{tabular}
 
@@ -208,36 +211,42 @@ Le code source ainsi que les différents documents produits sont stockés sur le
 \hline
 &&\textbf{Tâche} & \textbf{Description}\\
 \hline
-\multirow{7}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}&{\textbf{App. RC}}
+\multirow{13}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}&\multirow{6}{*}{\textbf{App. RC}}
 &  1 & Récupération de la liste des adresses IP des serveurs\\
-&& 2 & Récupération des certificats SSH				\\
-&& 3 & Stockage des certificats SSH 				\\
-&& 4 & Récupération des certificats SSL/TLS 		\\
-&& 5 & Stockage des certificats SSL/TLS				\\
+&& 2 & Mise en place des procédures de test			\\
+&& 3 & Mise en place d'un client SSH simple			\\
+&& 4 & Mise en place d'un client SSL/TLS simple		\\
+&& 5 & Récupération des certificats SSL/TLS 		\\
+&& 6 & Stockage des certificats SSL/TLS				\\
 \cline{2-4}
-&\multirow{2}{*}{\textbf{App. F}}
-&  6 &  Extraction des clefs des certificats\\
-&& 7 &  Trouver des facteurs communs des clefs récupérées\\
-&& 8 &  Tests et débeugage\\
-&& 9 &  Première livraison cliente\\
+&\multirow{6}{*}{\textbf{App. F}}
+&  7 &  Extraction des clefs des certificats		\\
+&& 8 &  Développement des arbres de produits		\\
+&& 9 &  Développement des arbres de restes			\\
+&& 10 &  Mise en évidence des facteurs communs		\\
+&& 11 &  Tests										\\
+&& 12 &  Débogage									\\
+&& 13 &  Première livraison cliente					\\
 \cline{1-4}
-\multirow{4}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}&{\textbf{OpenSSL}}
-&  8 &  Lister les fonctions d'OpenSSL à auditer\\
-&& 9 &  Lister les standards utilisés par chaque fonction à auditer\\
-&& 10 & Auditer les fonctions d'OpenSSL listées\\
-&& 11 &Mettre en place la page web des résultats de l'audit\\
-&& 12 &Deuxième livraison cliente\\
+\multirow{8}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}&\multirow{8}{*}{\textbf{OpenSSL}}
+&  14 &  Lister les fonctions d'OpenSSL à auditer\\
+&& 15 &  Lister les standards utilisés par chaque fonction à auditer\\
+&& 16 &  Mettre en place la page web\\
+&& 17 &	 Auditer les fonctions d'OpenSSL listées\\
+&& 18 &  Développer les tests des fonctions auditées\\
+&& 19 &  Présenter les clefs communs sur le site\\
+&& 20 &  Présenter le résultat de l'audit sur le site\\
+&& 21 &  Deuxième livraison cliente\\
 \hline
 
-\multirow{5}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}&{\textbf{App. Eva}}
-&  13 & Lister les critères à vérifier sur une machine cliente\\
-&& 14 & Développement d'une fonction pour chaque critère\\
-&& 15 & Récupération des données du navigateur\\
-&& 16 & Évaluer chaque critère de la machine cliente\\
-&& 17 & Ajouter une page web pour les résultats de l'évaluation\\
-&& 18 & Tests et débeugage\\
-&& 19 & Troisième livraison cliente\\
-\hline
+\multirow{7}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}&\multirow{7}{*}{\textbf{App. Eva}}
+&  22 & Lister les critères à vérifier sur une machine cliente\\
+&& 23 & Développer la page de connexion client\\
+&& 24 & Récupération des données du navigateur\\
+&& 25 & Évaluer chaque critère de la machine cliente\\
+&& 26 & Présenter les résultats de l'évaluation sur la page web\\
+&& 27 & Tests et débeugage\\
+&& 28 & Troisième livraison cliente\\\hline
 
 \end{tabular}
 
@@ -246,52 +255,77 @@ Le code source ainsi que les différents documents produits sont stockés sur le
 \hline
 &\textbf{\No Tâche}&\textbf{Début} & \textbf{Fin} & \textbf{Durée} & \textbf{Effectif} & \textbf{Charge} & \textbf{Ressources}\\
 \hline
-\multirow{7}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}
-&1  & 20/1/2014 & 20/1/2014 & 1& 5 & 5&Tous\\
+\multirow{13}{*}{\begin{sideways}\textbf{Sprint 1}\end{sideways}}
+&1  		& 20/1/2014 	& 21/1/2014 		& 2		& 1 		& 2			& Julien\\
 \cline{2-8}
-&2  &	21/1/2014 &	24/1/2014 & 4 & 5 &	20&Tous\\
+&2  		& 20/1/2014 	& 23/1/2014 		& 4 	& 2 		& 8			& William, Mathieu\\
 \cline{2-8}
-&3  &	24/1/2014 &	24/1/2014 &	1 & 2 &	2&William, Claire\\
+&3  		& 20/1/2014 	& 21/1/2014 		& 2 	& 2 		& 4			& Pascal, Claire\\
 \cline{2-8}
-&4  & 	24/1/2014 &	27/1/2014 &	2 &5 &	10&Tous\\
+&4  		& 22/1/2014 	& 23/1/2014 		& 2 	& 1 		& 2			& Julien\\
 \cline{2-8}
-&5  & 	27/1/2014 &	27/1/2014 &	1 &2 &	2&William, Claire\\
+&5  		& 24/1/2014 	& 24/1/2014 		& 1 	& 3 		& 3			& Julien, Claire, Pascal\\
 \cline{2-8}
-&6  & 	28/1/2014 &	28/1/2014 &	1 &	5&5&Mathieu\\
+&6  		& 27/1/2014 	& 27/1/2014 		& 1 	& 3			& 3 		& Julien, Claire, Pascal\\
 \cline{2-8}
-&7  & 	28/1/2014 &	3/2/2014 & 5 &5 &	25&Tous\\
+&7  		& 24/1/2014 	& 24/1/2014 		& 1 	& 2 		& 2			& Mathieu, William\\
 \cline{2-8}
-&8  & 	3/2/2014 &	5/2/2014 &	3 &	2 &	6&Mathieu, William\\
+&8  		& 24/1/2014 	& 27/1/2014 		& 1.5 	& 2 		& 3			& Mathieu, Pascal\\
 \cline{2-8}
-&9  &	5/2/2014 &	5/2/2014 &	1 &	5 &	5&Tous\\
+&9  		& 24/1/2014 	& 27/1/2014 		& 1 	& 2 		& 3			& Claire, William\\
+\cline{2-8}
+&10  		& 28/1/2014 	& 30/1/2014 		& 2.5 	& 2 		& 5			& Claire, William\\
+\cline{2-8}
+&11  		& 30/1/2014 	& 3/2/2014 			& 3 	& 2 		& 5			& William, Pascal, Mathieu\\
+\cline{2-8}
+&12  		& 30/1/2014 	& 3/2/2014 			& 2 	& 2 		& 6			& Julien, Claire\\
+\cline{2-8}
+&13  		& 5/2/2014 		& 5/2/2014 			& 1 	& 5 		& --		& Tous\\
+
 \hline
 &&&&&&&\\
 \hline
-\multirow{5}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}
-&10 & 	3/2/2014 &	3/2/2014 &	1 &	5 &	5&Tous\\
+\multirow{8}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}
+&14 		& 6/2/2014 		& 10/2/2014 		& 3		& 3 		& 9			& William, Julien, Mathieu\\
 \cline{2-8}
-&11 &	3/2/2014 &	3/2/2014 &	1 &	5 &	5&Tous\\
+&15 		& 6/2/2014 		& 7/2/2014 			& 2 	& 2 		& 4			& Pascal, Claire\\
 \cline{2-8}
-&12 &	6/2/2014 &	11/2/2014 &	4 &	5 &	20&Tous\\
+&16 		& 10/2/2014 	& 10/2/2014 		& 1 	& 2 		& 2			& Pascal, Claire\\
 \cline{2-8}
-&13 &	12/2/2014 &	14/2/2014 &	3 &	5 &	15&Tous\\
+&17 		& 11/2/2014 	& 17/2/2014 		& 5 	& 2 		& 10		& Claire, Julien\\
 \cline{2-8}
-&14 &	14/2/2014 &	14/2/2014 &	1 &	5 &	5&Tous\\
+&18 		& 11/2/2014 	& 17/2/2014 		& 5 	& 3 		& 15		& Pascal, William, Mathieu\\
+\cline{2-8}
+&19 		& 18/2/2014 	& 20/2/2014 		& 3 	& 3 		& 9			& Claire, Pascal, Mathieu\\
+\cline{2-8}
+&20 		& 18/2/2014 	& 18/2/2014 		& 1 	& 2 		& 2			& Julien, William\\
+\cline{2-8}
+&21 		& 20/2/2014 	& 20/2/2014 		& 1 	& 5 		& --		& Tous\\
 \hline
 &&&&&&&\\
 \hline
-\multirow{5}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}
-&15 &	17/2/2014 &	17/2/2014 &	1 &	5 &	5&Tous\\
+\multirow{6}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}
+&22 		& 20/2/2014 	& 20/2/2014 		& 0.5 	& 2 		& 2			& Julien, Pascal\\
 \cline{2-8}
-&16 &	17/2/2014 &	24/2/2014 &	6 &	5 &	30&Tous\\
+&23 		& 20/2/2014 	& 20/2/2014 		& 0.5 	& 1 		& 0.5 		& Mathieu\\
 \cline{2-8}
-&17 &	20/2/2014 &	26/2/2014 &	5 &	5 &	25&Tous\\
+&24 		& 20/2/2014 	& 24/2/2014 		& 3 	& 2 		& 6			& Julien, Pascal\\
 \cline{2-8}
-&18 &	27/2/2014 &	28/2/2014 &	2 &	2 & 4&Mathieu, William\\
+&25 		& 24/2/2014 	& 27/2/2014 		& 2 	& 3 		& 6			& Claire, Pascal, Julien\\
 \cline{2-8}
-&19 &	28/2/2014 &	28/2/2014 &	1 &	5 &	5&Tous\\
+&26 		& 20/2/2014 	& 21/2/2014 		& 1 	& 2 		& 2			& Mathieu, William\\
+\cline{2-8}
+&27 		& 25/2/2014 	& 27/2/2014 		& 3 	& 2 		& 6			& Mathieu, William\\
+\cline{2-8}
+&28 		& 28/2/2014 	& 28/2/2014 		& 1 	& 5 		& --			& Tous\\
 \hline
 \end{tabular}
+\\ \\
+
+Les sprints 1 et 2 sont les parties indispensable. Lors de la répartition des tâches, nous avons donc opté pour la méthode du Planning Poker pour calculer les charges de chaque tâche en équipe et les effectifs nécessaires correspondants. Nous avons donc pu connaitre le délais nécessaire pour terminer les 2 premiers sprints.
+\\
+
+La date de soutenance du projet étant le vendredi 28 février, la dernière semaine sera plutôt dédié à la rédaction du rapport et préparation de la soutenance. Cependant, dans le cas où nous nous trouvons en avance par rapport aux dates fixées des deux premiers sprint, nous pourrons envisager de considerer le troisième sprint\footnote{Ceci explique pourquoi les charges du troisième sprint furent calculées et ajoutées dans ce tableau}, et dans ce cas seulement.
 
 \newpage
 
@@ -302,6 +336,10 @@ Le code source ainsi que les différents documents produits sont stockés sur le
 \end{center}
 
 \newpage
+
+
+
+Un outil en ligne, Teambox (récemment rennomé en Readbooth) sera utilisé pour gérer la répartition des tâches et suivre leur évolution. Teambox offre une interface permettant de voir ses tâches en cours. La convention utilisée par Teambox, une tâche est assignée à une personne uniquement mais peut avoir plusieurs "watchers" (les personnes qui seront notifiées lors d'un changement ou modification apportées sur la tâche) alors que notre plan de développement précise que plusieurs membres de l'équipe peut travailler sur la même tâche. De ce fait, pour chaque tâche, une personne sera désigné comme responsable de la tache et autres seront donc les "watchers" mais seront toujours capable de modifier la tâche (ajouter des commentaires, modifier son état, ...).
 
 \section{Gestion de la documentation :}
 Les documents de référence pour la gestion de ce projet seront disponibles au format pdf sur le serveur git. \\
@@ -317,5 +355,8 @@ Chaque membre est responsable d'un document livrable, qui évolue au fil du proj
 \\ \\
 
 L'ensemble du groupe devra se tenir au courant de l'évolution de chaque document. De plus, après chaque réunion avec le client, un compte-rendu sera rédigé et validé par l'équipe avant d'être soumis au client, qui pourra ensuite le valider. Le compte-rendu sera accessible sur le dépôt de documents git.
-
+\\
+Ce dépôt permettra à l'équipe de suivre l'évolution des documents (livrables, compte-rendu, ...) ainsi que les fichiers de scripts développés durant le projet. En cas de perte des données, il sera possible de retrouver une ancience version et limiter les pertes.
+\\ \\
+Une intégration Git - Teambox est également possible afin de suivre la gestion de la documentation et le plan de développement plus facilement. En effet, la fonction de hooks de Git permet de rajouter un commentaire à chaque fois qu'un commit (sauvegarde d'une modification directement sur le dépot) est effectué par l'un des membres de l'équipe.
 \end{document}
