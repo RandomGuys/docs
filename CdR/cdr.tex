@@ -11,10 +11,10 @@
 \usepackage{graphicx} % Required to insert images
 \usepackage{tabularx, longtable}
 \usepackage{color, colortbl}
-%\usepackage{cmbright}
+\usepackage{cmbright}
 
 %
-\usepackage{lmodern,charter}
+%\usepackage{lmodern,charter}
 \renewcommand{\bfdefault}{bx}
 
 \linespread{1.1} % Line spacing
@@ -37,10 +37,10 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Cahier de recettes} % Document name
 
-\newcommand{\version}{1.2} % Document version
-\newcommand{\docDate}{12.12.13} % Document date
-\newcommand{\checked}{-} % Checker name
-\newcommand{\approved}{X} % Approver name
+\newcommand{\version}{1.0} % Document version
+\newcommand{\docDate}{12/12/13} % Document date
+\newcommand{\checked}{Pascal Edouard} % Checker name
+\newcommand{\approved}{Ayoub Otmani} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
@@ -89,8 +89,9 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
-	1.1 & 10.12.13 & Création et complétion du cahier de recette \\
-	1.2 & 10.12.13 & Complétion du cahier de recette \\
+	0.1 & 10/12/13 & Création et complétion \\
+	0.2 & 11/12/13 & Complétion  \\
+	1.0 & 12/12/13 & Correctifs appliqués \\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -102,18 +103,22 @@
 
 % OBJET
 \section{Objet}
-L'objet de ce cahier de recettes est de lister les tests praticables et pratiqués sur les différentes fonctionnalités liées au projet Audit des implantations SSL/TLS avant sa livraison au client. Il décrit notamment une série de scénarios précisant les démarches à suivre afin de prouver l'efficacité des différents produits. Il permet en effet de vérifier que la série de logiciels/services est conforme aux spécifications définies avec le client et qu'elles répondent efficacement au cahier des charges. 
+L'objet de ce cahier de recettes est de lister les tests que nous allons pratiquer sur les différentes fonctionnalités liées au projet "Audit des implantations SSL/TLS" avant sa livraison au client. Il décrit notamment une série de scénarios précisant les démarches à suivre afin de prouver l'efficacité des différents produits. Il permet en effet de vérifier que la série de logiciels/services est conforme aux spécifications définies avec le client et qu'elles répondent efficacement au cahier des charges. 
 
 
 \section{Terminologie et sigles utilisés}
 Les acronymes suivants peuvent être utilisés dans le rapport ci-présent :
+
+
 \begin{itemize}
-\item DAL :  Documents d'Architecture Logicielle
-\item ZMAP : réfère au logiciel ZMAP.
-\item RC : réfère au logiciel de récupération de certificat
-\item SD : réfère au logiciel de suppression de doublons
-\item F : réfère au logiciel de calcul de GCD d'une liste d'entiers deux à deux
+	\item \textbf{Appli RC} : Application de Récupération des Certificats
+	\item \textbf{Appli F} : Application de Factorisation
+	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
+	\item \textbf{Appli SD} : réfère au logiciel de suppression de doublons.
+
 \end{itemize}
+
+
 Des sigles sont également définis et utilisés localement pour faciliter la définition des procédures de tests.
 
 \section{Documents applicables et de référence}
@@ -122,14 +127,14 @@ Des sigles sont également définis et utilisés localement pour faciliter la d�
 
 \subsection{Lieu}
 
-L'ensemble des procédures de tests s'effectueront en salle machine U2.34 de l'Université de Rouen, en compagnie d'un ou deux testeurs minimum. Quelques tests peu gourmands en temps et en mémoire, mais nécessaires à la validation des fonctionnalités du produit final, pourront être effectués sur des machines personnelles.
-Cependant, la majorité d'entre eux nécessiteront le monopole d'une machine pour plusieurs heures, voire plusieurs jours.
+L'ensemble des procédures de tests s'effectueront en salle machine U2.2.34 de l'Université de Rouen, en compagnie d'un ou deux testeurs minimum. Quelques tests peu gourmands en temps et en mémoire, mais nécessaires à la validation des fonctionnalités du produit final, pourront être effectués sur des machines personnelles.
+Cependant, la majorité d'entre eux nécessiteront la monopolisation d'une machine pour plusieurs heures, voire plusieurs jours.
 
 \subsection{Machines utilisées}
 
-Nous serons amenés à utiliser des machines virtuelles lors de tests mettant en scène un réseau complexe sous différents scénarii possibles (mécanisme de pare-feu, zone (dé)militarisée, ports ouverts/fermés pour des connexions SSH, ...). \\
+Nous serons amenés à utiliser des machines virtuelles lors de tests mettant en scène un réseau complexe simulant à petite échelle un réseau internet, ceci sous différents scénarii possibles (mécanisme de pare-feu, zone (dé)militarisée, ports ouverts/fermés pour des connexions SSH, ...). \\
 
-Nous avons choisi le logiciel de virtualisation de réseau Netkit pour mener à bien ces tests. La DAL indiquera l'ensemble des machines réelles utilisables pour la plateforme de tests et/ou de développement.
+Nous avons choisi le logiciel de virtualisation de réseau Netkit pour mener à bien ces tests. Le DAL indiquera l'ensemble des machines réelles utilisables pour la plate-forme de tests et/ou de développement.
 
 \subsection{Base de données de test}
 
@@ -139,51 +144,52 @@ Nos procédures de tests se succèdent pour la plupart, les résultats des préc
 
 \subsection{Contraintes}
 
-La modification - même minime - de la partie applicative de notre projet aura pour conséquence le relancement de toutes les procédures de tests directement et indirectement concernés.\\
+La modification - même minime - de la partie applicative de notre projet aura pour conséquence le relancement de toutes les procédures de tests directement et indirectement concernées.\\
 
 Nous aurons des contraintes de temps selon le planning prévu dans le plan de développement. Les procédures de tests doivent être fonctionnelles rapidement afin de valider l'avancement du projet.\\
 
-Nos procédures de tests doivent être les plus simples possibles afin d'éviter toute perte de temps, et toutes contraintes d'espace (ce qui n'enlève en rien l'efficacité des tests).
+Nos procédures de tests doivent être les plus simples possibles afin d'éviter toute perte de temps, et toute contrainte d'espace (ce qui n'enlève en rien à l'efficacité des tests).
 
 
 \section{Responsabilités}
-Latimier et Boisseleau sont les principaux testeurs sur ce projet, ils devront mener à bien la conception, l'exécution et la vérification de chacun d'entre eux. D'autres membres du projet pourront consacrer leur temps sur les tests en cas de demande explicite du chef de projet, ou durant leur temps libre (considéré comme non planifié).\\
+M. Latimier et W. Boisseleau sont les principaux testeurs sur ce projet, ils devront mener à bien la conception, l'exécution et la vérification de chacun d'entre eux. D'autres membres du projet pourront consacrer leur temps sur les tests en cas de demande explicite du chef de projet, ou durant leur temps libre (considéré comme non planifié).\\
 
 
 Dès lors qu'un outil ou parti d'outil sujet à des procédures de test est développé, les testeurs auront la responsabilité de lancer les procédures de tests sur celui-ci afin de permettre une gestion des erreurs efficace et la plus en amont possible.  \\
 
 De plus, les testeurs s'appliqueront à respecter ou faire respecter les conditions de tests définies dans ce rapport.\\
 
-Dans les cas ou des erreurs sont mises en évidence, l'équipe de testeurs devra d'une part analyser l'origine du problème et d'autre part communiquer aux développeurs et au chef de projet les problèmes identifiés, et, lorsque c'est possible, une proposition de solution ou de piste solutionnante.
+Dans les cas ou des erreurs sont mises en évidence, l'équipe de testeurs devra d'une part analyser l'origine du problème et d'autre part communiquer aux développeurs et au chef de projet les problèmes identifiés. Lorsque c'est possible, ils soumettront une proposition de solution ou de piste solutionnante.
 
 
+\newpage
 \section{Stratégie de tests}
 
 \subsection{Gestion des tâches de tests}
 
-Les outils de tests devront être développés en parallèle aux développement des fonctionnalités du projet. L'écart de développement ne doit pas être trop grand, afin d'optimiser le rendement de chaque acteur.\\
+Les outils de tests devront être développés en parallèle aux développement des fonctionnalités du projet. L'écart entre le développement et les tests ne doit pas être trop grand, afin d'optimiser le rendement de chaque acteur.\\
 
-Les procédures de tests sont les plus fines possibles, elles mettent en place individuellement un test spécifique ; ceci afin de les distribuer plus facilement lors de la répartition des tâches, et de pouvoir gagner du temps dans nos phases de déboggage. \\
+Les procédures de tests sont les plus fines possibles, elles mettent en place individuellement un test spécifique ; ceci afin de les distribuer plus facilement lors de la répartition des tâches, et de pouvoir gagner du temps dans nos phases de débogage. \\
 
 De plus, elles devront avoir le moins d'inter-dépendance possible, pour éviter des modifications en cascade lors des modifications des procédures parentes.
-Lorsqu'un outil de test est fonctionnel, il est inutile d'y apporter des améliorations. Nous y reviendrons uniquement lors de modifications éventuelles des fonctionnalités du projet.
+Lorsqu'un outil de test est validé par l'équipe, il est inutile d'y apporter des améliorations. Nous y reviendrons uniquement lors de modifications éventuelles des fonctionnalités du projet.
 
 \subsection{La campagne de test}
 
-Elle s'effectuera principalement sur la première partie de notre projet "audit de clefs cryptographiques", et éventuellement sur la troisième partie "analyse dynamique" selon le planning et l'attente du client (non exigé pour l'instant).\\
+Elle s'effectuera principalement sur la première partie de notre projet "Audit de clefs cryptographiques", et éventuellement sur la troisième partie "Analyse dynamique" selon le planning et l'attente du client (non exigé pour l'instant).\\
 
-La seconde partie "analyse statique" ne nécessite pas d'exigences techniques particulières, mais plutôt une réflexion sur un problème cryptographique.
+La seconde partie "Analyse statique" ne nécessite pas d'exigences techniques particulières, mais plutôt une réflexion sur un problème cryptographique.
 
 \subsection{Critères d'arrêt}
 
-Une procédure de tests sera considérée comme valide lors de l'envoi des livrables fonctionnelles lui étant associée et le retour favorable du client.
+Une procédure de tests sera considérée comme valide lors de l'envoi des livrables fonctionnels lui étant associée et le retour favorable du client.
 
 
 \section{Gestion des anomalies}
 
 Lors de nos phases de tests, l'ensemble des anomalies rencontrées devront être signalées dans un document attitré au format CSV (ou ODS). Lorsqu'une anomalie est rencontrée, nous devons calculer son taux de criticité sur le projet et le cahier des charges. Si une exigence technique du client s'en trouve affectée, elle doit être réglée au plus vite.\\
 
-Une politique de prévention doit être mis en place afin d'éviter tout renouvellement, en cas de modification d'un logiciel par exemple.
+Une politique de prévention doit être mise en place afin d'éviter tout renouvellement, en cas de modification d'un logiciel par exemple.
 
 
 
@@ -248,7 +254,7 @@ Sont définis les acronymes suivants :
 \hline
 \end{tabular}
 
-
+\newpage
 \subsection{RC}
 \subsubsection*{Terminologie.}
 Sont définis les acronymes suivants : 

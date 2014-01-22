@@ -7,7 +7,6 @@
 \usepackage{lmodern}
 \usepackage{pict2e}
 \usepackage{tikz}	
-\usepackage{tikz-uml}
 \usepackage{fancyhdr} % Required for custom headers
 \usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
@@ -34,14 +33,14 @@
 
 \newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
 \newcommand{\hmwkClass}{Master 2 SSI } % Course/class
-\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkAuthorName}{Pascal Edouard} % Your name
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Analyse des risques} % Document name
 
-\newcommand{\version}{X} % Document version
-\newcommand{\docDate}{X} % Document date
-\newcommand{\checked}{X} % Checker name
-\newcommand{\approved}{X} % Approver name
+\newcommand{\version}{1.0} % Document version
+\newcommand{\docDate}{04/12/2013} % Document date
+\newcommand{\checked}{Julien Legras} % Checker name
+\newcommand{\approved}{Ayoub Otmani} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
@@ -86,7 +85,7 @@
 	\hline
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
-	X & X & X\\
+	1.0 & 4/12/2013 & Création\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -124,23 +123,72 @@ FORT&4&&CRITIQUE&6\\
 \section{Registre des risques}
 
 \begin{center}
-\begin{tabular}{|c|p{3cm}|p{3cm}|l|l|l|c|}
+\begin{tabular}{|c|p{5cm}|p{3cm}|c|c|c|c|}
 \hline
 \textbf{Réf.} & \textbf{Description} & \textbf{Facteurs} & \textbf{Type} & \textbf{Probabilité} & \textbf{Impact} & \textbf{Criticité} \\
 \hline
-Rx& & & & & &\\
+ R01 & Absence prolongée (plusieurs semaines) d'un ou plusieurs membre de l'équipe. &
+ Accidents, Maladie, voyage à l'étranger imprévu. &
+ Humain &
+ Majeur &
+ Majeur &
+ 15 \\
+ \hline
+ R02 & Accumulation du retard dans le travaille de William. &
+ Emploi du temps trop chargé avec les cours à l'INSA et les tâches du project. &
+ Humain &
+ Majeur &
+ Mineur &
+ 12 \\
+ \hline
+ R03 & Programme de récupération des certificats ne fonctionne pas. &
+ Mauvaise implémentation, bug intempestif, aucune connexion internet.  &
+ Technique &
+ Faible &
+ Majeur &
+ 10 \\
 \hline
+ R04 & Programme de factorisation ne fonctionne pas. &
+ Mauvaise implémentation, bug intempestif, ressources (mémoire, processeur, etc) insuffisantes.  &
+ Technique &
+ Fort &
+ Majeur &
+ 15 \\
+\hline
+ R05 & Perte des données. &
+ Panne serveur GIT, récupération impossible des données depuis le serveur. &
+ Technique &
+ Faible &
+ Majeur &
+ 10 \\
+\hline
+
 \end{tabular}
 \end{center}
 
 \section{Plans d'actions}
 \begin{center}
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{|l|p{8cm}|l|l|}
 \hline
 \textbf{Réf.}&\textbf{Action(s) prévue(s)}&\textbf{Action effectuée}&\textbf{Date}\\
 \hline
-Rx & & & \\
+	R01 & 
+	Ré-organisation et répartition des tâches entre les membres de l'équipe présents. & & \\
 \hline
+	R02 &
+	Repartir ses tâches en retard à un ou plusieurs membres de l'équipe pour ratrapper le retard. & & \\
+\hline
+	R03 &
+	Re-travailler la struture du programme, répartir les bugs existant aux membres de l'équipe, changer de réseau. & & \\
+\hline
+R04 &
+	Re-travailler la structure du programme, répartir les bugs existant aux membres de l'équipe, discuter d'une ressource disponible pour exécuter le programme de calcule.& & \\
+\hline
+R05 &
+	Faire une évaluation des données restants sur les machines de chaque membres de l'équipe et calculer les pertes de données. & & \\
+\hline
+%R06 & & & \\
+%\hline
 \end{tabular}
 \end{center}
 \end{document}

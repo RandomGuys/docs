@@ -38,10 +38,10 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Spécification technique des besoins} % Document name
 
-\newcommand{\version}{0.1} % Document version
+\newcommand{\version}{1.0} % Document version
 \newcommand{\docDate}{\today} % Document date
-\newcommand{\checked}{X} % Checker name
-\newcommand{\approved}{X} % Approver name
+\newcommand{\checked}{Edouard PASCAL} % Checker name
+\newcommand{\approved}{Mr OTMANI} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
 
@@ -120,7 +120,7 @@
 	\hline
 	0.1 & 02/12/2013 & Création du Document\\
 	\hline
-	X & X & X\\
+	1.0 & 12/12/2013 & Présentation de la première version\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -132,7 +132,7 @@
 
 % OBJET
 \section{Objet}
-Le projet s'inscrit dans un cadre relatif à un fait d'actualité récemment mis à jour, lié aux révélations de Snowden sur les pratiques de la NSA. Le monde de la cryptographie est en proie à de grandes incertitudes suite à ces révélations et remet en question tous les systèmes jusqu'alors développ és. Notons que ce ne sont pas les algorithmes des systèmes cryptographiques qui sont remis en cause, mais leur développ ement machine qui n'est pas (ou plus) considéré comme nécessairement sûr. La NSA a par exemple très bien pu intro duire des backdoors, ou faiblesses dans les logiciels, de telle sorte qu'ils puissent accéder aux données claires sans diffcultés. On p eut par exemple remettre en questions les outils développ és par des lab oratoires tels que RSAlabs, ou même encore des standards prop osés par des agences comme le NIST (Op enssl, AES, sont-ils vraiment sûrs ?)
+Le projet s'inscrit dans un cadre relatif à un fait d'actualité récemment mis à jour, lié aux révélations de Snowden sur les pratiques de la NSA. Le monde de la cryptographie est en proie à de grandes incertitudes suite à ces révélations et remet en question tous les systèmes jusqu'alors développés. Notons que ce ne sont pas les algorithmes des systèmes cryptographiques qui sont remis en cause, mais leur développement machine qui n'est pas (ou plus) considéré comme nécessairement sûr. La NSA a par exemple très bien pu introduire des backdoors, ou faiblesses dans les logiciels, de telle sorte qu'ils puissent accéder aux données claires sans diffcultés. On peut par exemple remettre en questions les outils développ és par des laboratoires tels que RSA labs, ou même encore des standards proposés par des agences comme le NIST (Openssl, AES, sont-ils vraiment sûrs?)
 
 \textbf{Objectif technique : }\\
 \begin{itemize}
@@ -154,12 +154,13 @@ Une étude sur les certificats utilisés sur internet, ainsi que l'imlantation d
 % TERMINOLOGIE
 \section{Terminologie et sigles utilisés}
 \begin{itemize}
-	\item \textbf{Appli RC} : Application de Récupération des Certificats
 	\item \textbf{Appli F} : Application de Factorisation
+	\item \textbf{Appli RC} : Application de Récupération des Certificats
+	\item \textbf{Audit} : Analyse effectuée par un passage en revue complet et minutieux. Dans le cadre de notre projet, ce sera le code d’OpenSSL.
+	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
+	\item \textbf{Clefs} : Nous parlons ici des clefs RSA.
 	\item \textbf{Machine D} : Machine Distante
 	\item \textbf{Machine L} : Machine Locale
-	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
-	\item \textbf{Audit} : Procédure consistant à s'assurer du caractère complet, sincère et régulier des comptes d'une entreprise, à s'en porter garant auprès des divers partenaires intéressés de la firme et, plus généralement, à porter un jugement sur la qualité et la rigueur de sa gestion. Ici ce n'est pas une entreprise qui en sera la cible mais un programme : OpenSSL.
 	\item \textbf{Modulus} : En mathématiques et plus précisément en théorie algébrique des nombres, l’arithmétique modulaire est un ensemble de méthodes permettant la résolution de problèmes sur les nombres entiers. Ces méthodes dérivent de l’étude du reste obtenu par une division euclidienne.
 \end{itemize}
 
@@ -181,7 +182,9 @@ UC.2 & Factoridation des moduli des certificats & Appli F & Indispensable\\
 \hline
 UC.3 & Présentation des résultats & Utilisateur & Indispensable\\
 \hline
-UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
+UC.4 & Audit d'OpenSSL & Utilisateur & Indispensable\\
+\hline
+UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serveur & Optionnel\\
 \hline
 \end{tabular}
 \end{center}
@@ -202,14 +205,14 @@ UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 	{\begin{itemize}  %flot d'événements (acteurs)
 		\item [1.] Lire la liste
 		\item [2.] Se connecter à la machine distante
-		\item [3.] Échanger les certificats
+		\item [3.] Récupérer les certificats
 		\item [4.] Stocker le certificat
 	 \end{itemize}
 	} 
 	{\begin{itemize}  %flot d'événements (systeme)
 		\item []
 		\item []
-		\item [3.] Échanger les certificats
+		\item [3.] Récupérer les certificats
 	\end{itemize}
 	 }
 	{Coupure de connexion : retenter une deuxième fois si la Machine distante ne répond pas} %Flots d'exceptions (RG)
@@ -263,6 +266,13 @@ UC.4 & Audit d'OpenSSL & Utilisateur & Éventuelle\\
 	{} %Flots d'exceptions (RG)
 
 \subsection{UC 4 : Audit d'OpenSSL}
+\begin{enumerate}
+ 	\item Nous étudierons tout d'abord les recommandations et les standards actuels (cf. PKCS) sous forme d'état de l'art, et nous en choisirons de façon argumentée un standard sur lequel nous baserons nos analyses.
+	\item Nous analyserons dans un deuxième temps le code source d'OpenSSL (la dernière version), en particulier sa partie développant la génération d'éléments aléatoires et ses primitives cryptographiques. Nous en ferons de plus une description détaillée. Nous comparerons ensuite nos résultats avec les recommandations choisies, puis nous conclurons en déterminant si cette génération est efficace.
+\end{enumerate}
+
+
+\subsection{UC 5 : Évaluation du niveau de sécurité du navigateur client}
 Suivant le temps restant, il nous est proposé d'implémenter un système serveur permettant l'audit des clients. Le logiciel sur le serveur doit évaluer la sécurité du client suivant un protocole établi, en analysant son système et/ou lui prop osant des challenges spécifiques, en particulier autour de SSL. Le logiciel devra rendre un diagnostic et un rapport sur les différents éléments analysés, afin de permettre au client de constater des problèmes lorsqu'il y en a, et d'en connaître leur provenance.
 
 \section{Diagrammes de cas d'utilisation}
@@ -338,26 +348,58 @@ Suivant le temps restant, il nous est proposé d'implémenter un système serveu
 
 \end{tikzpicture}
 
-\newpage
+\subsection{UC 5}
+\begin{tikzpicture}
+
+\umlactor{Client}
+\umlactor[x=15, y=-1]{Serveur}
+
+\umlusecase[x=4, y=2, width=3cm]{Se connecter sur le serveur}
+\umlusecase[x=10, y=2, width=3cm]{Établit la connexion}
+\umlusecase[x=10, y=-1, width=3cm]{Analyser le niveau de sécurité du navigateur}
+\umlusecase[x=10, y=-4]{Afficher les résultats}
+%\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
+
+\umltrans{Client}{usecase-13}
+\umltrans{Serveur}{usecase-14}
+\umltrans{Serveur}{usecase-15}
+\umltrans{Serveur}{usecase-16}
+
+\umlinclude{usecase-13}{usecase-14}
+\umlinclude{usecase-14}{usecase-15}
+\umlinclude{usecase-15}{usecase-16}
+
+\end{tikzpicture}
+
+
 \section{Exigences opérationnelles}
 \begin{enumerate}
-\item [EO.X] : xxx
+	\item [EO.X] : Lors de la récupération des certificats, les protocoles visés seront SSH et SSL/TLS (cf UC1)
 \end{enumerate}
+
 
 \section{Exigences d'interface}
 \begin{enumerate}
-\item [EI.X] : xxx
+	\item [EI.1] : Présentation des résultats de manière claire et lisible.
 \end{enumerate}
 
 \section{Exigences de qualité}
 \begin{enumerate}
-\item [EQ.X] : xxx
+	\item [EQ.1] : Application optimisée de la factorisation des clefs.
+	\item [EQ.2] : Présentation ergonomique des résultats obtenus.
 \end{enumerate}
 
 \section{Exigences de réalisation}
 \begin{enumerate}
-\item [ER.X] : xxx
+	\item [ER.1] : Le programme de factorisation des clefs de certificat.
+	\item [ER.2] : Analyse des résultats obtenus sur la factorisation des clefs.
+	\item [ER.3] : Document détaillant l'audit réalisé sur OpenSSL.
 \end{enumerate}
 
-
 \end{document}
+
+
+
+
+
+
