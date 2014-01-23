@@ -226,7 +226,7 @@ Les principales parties à développer sont :
 \node[draw=none,right=of applif] (end) {};
 
 \draw (start) edge[->] node[midway,anchor=south] {ports} (zmap);
-\draw (start) edge[->] node[midway,anchor=north] {22 \& 443} (zmap);
+\draw (start) edge[->] node[midway,anchor=north] {443} (zmap);
 \draw (zmap) edge[->] node[midway,anchor=south] {listes} (applirc);
 \draw (zmap) edge[->] node[midway,anchor=north] {d'IPs} (applirc);
 \draw (applirc) edge[->] node[midway,anchor=south] {clefs} (applif);
@@ -237,6 +237,24 @@ Les principales parties à développer sont :
 \end{tikzpicture}
 \end{center}
 \caption{Schéma du traitement du Sprint 1}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+
+\node[square, right=of start] (lister) {Lister};
+\node[square,right=of lister] (auditer) {Auditer};
+\node[right=of auditer] (last) {};
+
+\draw (lister) edge[->] node[midway,anchor=south] {Fonctions à} (auditer);
+\draw (lister) edge[->] node[midway,anchor=north] {auditer} (auditer);
+\draw (auditer) edge[->] node[midway,anchor=south] {Résultats} (last);
+\draw (auditer) edge[->] node[midway,anchor=north] {doxygen} (last);
+
+\end{tikzpicture}
+\end{center}
+\caption{Schéma du traitement du Sprint 2}
 \end{figure}
 
 \subsection{Description des constituants}
@@ -303,6 +321,10 @@ Les principales parties à développer sont :
 	\hline
 	Procédé de développement & \begin{enumerate} \item Affichage clefs récupérées \item Affichage des facteurs communs \item Documentation audit OpenSSL\end{enumerate}\\
 	\hline
+	Pages à développer  & keys\_stat.php : Page php permettant d'afficher les résultats du sprint 1 avec des recherches selon les options suivantes : \begin{itemize} \item issuer : Autorité de certification \item key\_size : Taille de la clef (512, 1024, 2048 ou 4096)\end{itemize}\\
+	& audit\_results.php : Page php permettant d'afficher les résultats du sprint 2 avec une liste des fonctions auditées avec un lien vers la documentation Doxygen générée\\
+	& scan\_client.php : Page php permettant d'afficher le niveau de sécurité du navigateur client (partie optionnelle)\\
+	\hline
 	Taille complexité & 10\% du projet\\
 	\hline
 	\end{tabularx}
@@ -312,7 +334,7 @@ Les principales parties à développer sont :
 	\vspace*{0.7cm}
 	\begin{tabularx}{16cm}{|l|X|}
 	\hline
-	\multicolumn{2}{|r|}{\textbf{Évaluateur niveau de sécurité}}\\
+	\multicolumn{2}{|r|}{\textbf{Évaluateur niveau de sécurité (partie optionnelle)}}\\
 	\hline
 	R\^ole & Évaluer le niveau de sécurité d'un navigateur web \\
 	\hline
@@ -370,7 +392,7 @@ Les principales parties à développer sont :
 \umlactor[class=Utilisateur]{U}
 \umlobject[class=Appli RC SSL/TLS,x=6]{A} 
 \umlobject[class=Machine D,x=12]{M}
-
+\umlobject[class=Serveur Web, x=15]{W}
 \begin{umlcall}[op={collectSSLKeys()},return={}]{U}{A}
 
 \begin{umlcallself}[op={readAddresses()}]{A}\end{umlcallself} 
@@ -385,6 +407,7 @@ Les principales parties à développer sont :
 \end{umlfragment}
 \end{umlfragment}
 \end{umlcall}
+
 \end{umlseqdiag} 
 \end{tikzpicture}
 \end{center}
@@ -487,6 +510,27 @@ Les principales parties à développer sont :
 	\end{tabularx}
 \end{center}
 
+\begin{center}
+
+\begin{tikzpicture}[remember picture,transform shape,scale=1]
+\begin{umlseqdiag} 
+\umlactor[class=Utilisateur]{U}
+\umlobject[class=Serveur Web, x=5]{W}
+
+\begin{umlcall}[op={keys\_stat.php?options},return={results}]{U}{W}\end{umlcall}
+\begin{umlcall}[op={audit\_results.php},return={results}]{U}{W}
+\begin{umlcallself}[op={redirection vers Doxygen}]{W}
+\end{umlcallself}
+
+\end{umlcall}
+\begin{umlcall}[op={scan\_client.php}, return={results}]{U}{W}
+\begin{umlcallself}[op={cf. UC.5 ci-dessous}]{W}\end{umlcallself}
+\end{umlcall}
+
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+
 
 \subsection{UC.4: Audit d'OpenSSL}
 \begin{center}
@@ -512,7 +556,7 @@ Les principales parties à développer sont :
 	\end{tabularx}
 \end{center}
 
-\subsection{UC.5: Évaluation du niveau de sécurité du navigateur client}
+\subsection{UC.5: Évaluation du niveau de sécurité du navigateur client (partie optionnelle)}
 \begin{center}
 	\vspace*{0.7cm}
 	\begin{tabularx}{16cm}{|l|X|}
