@@ -37,8 +37,8 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Cahier de recettes} % Document name
 
-\newcommand{\version}{1.0} % Document version
-\newcommand{\docDate}{12/12/13} % Document date
+\newcommand{\version}{2.0} % Document version
+\newcommand{\docDate}{21/01/14} % Document date
 \newcommand{\checked}{Pascal Edouard} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
@@ -92,6 +92,7 @@
 	0.1 & 10/12/13 & Création et complétion \\
 	0.2 & 11/12/13 & Complétion  \\
 	1.0 & 12/12/13 & Correctifs appliqués \\
+	2.0 & 21/01/14 & Correctifs et nouvelles procédures de tests \\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -114,7 +115,7 @@ Les acronymes suivants peuvent être utilisés dans le rapport ci-présent :
 	\item \textbf{Appli RC} : Application de Récupération des Certificats
 	\item \textbf{Appli F} : Application de Factorisation
 	\item \textbf{Certificat} : Un certificat électronique (aussi appelé certificat numérique ou certificat de clé publique) peut être vu comme une carte d'identité numérique. Il est utilisé principalement pour identifier une entité physique ou morale, mais aussi pour chiffrer des échanges. \\Il est signé par un tiers de confiance qui atteste du lien entre l'identité physique et l'entité numérique (Virtuel).
-	\item \textbf{Appli SD} : réfère au logiciel de suppression de doublons.
+	\item \textbf{Appli GD} : réfère au logiciel de gestion des doublons.
 
 \end{itemize}
 
@@ -227,32 +228,32 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \texttt{A1=VA1} et \texttt{A2=VA2}. } &  & / \\
+1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \texttt{A1=VA1} et \texttt{A2=VA2}. } & UC1 & / \\
 \hline
 2 & On relance ZMAP sur \texttt{R'} avec \texttt{A2} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1'} et \texttt{A2'}. On vérifie que \texttt{A1'=VA1'} et \texttt{A2'=VA2'}. } & &  / \\
 \hline
 \end{tabular}
 
-\vspace{0.7cm}
-
-\noindent
-\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
-\hline
-\rowcolor{blue}
-\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
-\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
-\hline
-\multicolumn{6}{|l|}{\textbf{Objectif de test : Tester la portabilité du résultat de ZMAP pour l'application RC} }\\
-\hline
-\multicolumn{6}{|l|}{\textbf{Procédure P2 : Portabilité(ZMAP,lA,R)} }\\
-\hline
-\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
-\hline
-1 & Sur le système Linux, on lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée. On récupère A1 et A2. On relance ZMAP sur \texttt{A1} et \texttt{A2} & \multicolumn{2}{p{6cm}|}{ZMAP s'exécute correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
-\hline
-2 & Même procédé sur le système Windows & \multicolumn{2}{p{6cm}|}{ZMAP se termine correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
-\hline
-\end{tabular}
+%\vspace{0.7cm}
+%
+%\noindent
+%\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+%\hline
+%\rowcolor{blue}
+%\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ZMAP} }} & 
+%\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+%\hline
+%\multicolumn{6}{|l|}{\textbf{Objectif de test : Tester la portabilité du résultat de ZMAP pour l'application RC} }\\
+%\hline
+%\multicolumn{6}{|l|}{\textbf{Procédure P2 : Portabilité(ZMAP,lA,R)} }\\
+%\hline
+%\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+%\hline
+%1 & Sur le système Linux, on lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée. On récupère A1 et A2. On relance ZMAP sur \texttt{A1} et \texttt{A2} & \multicolumn{2}{p{6cm}|}{ZMAP s'exécute correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
+%\hline
+%2 & Même procédé sur le système Windows & \multicolumn{2}{p{6cm}|}{ZMAP se termine correctement sur \texttt{A1} à \texttt{A2}} & P1 & / \\
+%\hline
+%\end{tabular}
 
 \newpage
 \subsection{RC}
@@ -277,11 +278,11 @@ Sont définis les acronymes suivants :
 \hline
 \multicolumn{6}{|l|}{\textbf{Objectif de test : Établissement de connexion avec RC} }\\
 \hline
-\multicolumn{6}{|l|}{\textbf{Procédure P3 : conRC(RC,lA)} }\\
+\multicolumn{6}{|l|}{\textbf{Procédure P2 : conRC(RC,lA)} }\\
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P2 & / \\
+1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P1 & / \\
 \hline
 \end{tabular}
 
@@ -292,27 +293,29 @@ Sont définis les acronymes suivants :
 \hline
 \rowcolor{blue}
 \multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{RC} }} & 
-\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{2.0} }}\\
 \hline
 \multicolumn{6}{|l|}{\textbf{Objectif de test : Récupération des certificats } }\\
 \hline
-\multicolumn{6}{|l|}{\textbf{Procédure P4 : recCertifRC(RC,lA)} }\\
+\multicolumn{6}{|l|}{\textbf{Procédure P3 : recCertifRC(RC,lA)} }\\
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P3 & / \\
+1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P2 & / \\
 \hline
-2 & RC stocke dans une base de données le certificat s'il existe & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P3 & / \\
+2 & RC stocke le certificat s'il existe dans un dossier & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P2 & / \\
 \hline
 \end{tabular}
 
-\subsection{SD}
+\subsection{GD}
 \subsubsection*{Terminologie.}
 Sont définis les acronymes suivants : 
 \begin{itemize}
-\item \texttt{B} base de données contenant des certificats uniques et des certificats identiques,
-\item \texttt{BA} base de données B après suppression des doublons selon SD,
-\item \texttt{VBA} base de données B sans doublons
+\item \texttt{B} dossier contenant des certificats uniques et des certificats identiques,
+\item \texttt{BA} dossier B après suppression des doublons selon GD,
+\item \texttt{VBA} dossier B sans doublons
+\item \texttt{BB} dossier listant les doublons selon GD,
+\item \texttt{VBB} dossier de doublons
 \end{itemize}
 
 \subsubsection*{Procédure.}
@@ -320,16 +323,16 @@ Sont définis les acronymes suivants :
 \begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
 \hline
 \rowcolor{blue}
-\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{SD} }} & 
-\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{GD} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{2.0} }}\\
 \hline
 \multicolumn{6}{|l|}{\textbf{Objectif de test : Tests de suppression de doublons } }\\
 \hline
-\multicolumn{6}{|l|}{\textbf{Procédure P4 : supD(SD,B,VBA)} }\\
+\multicolumn{6}{|l|}{\textbf{Procédure P4 : gestionD(GD,B,VBA)} }\\
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & SD s'exécute sur B & \multicolumn{2}{p{6cm}|}{SD s'exécute correctement et BA=VBA} & & / \\
+1 & GD s'exécute sur B & \multicolumn{2}{p{6cm}|}{GD s'exécute correctement et BA=VBA et BB=VBB} & P3 & / \\
 \hline
 \end{tabular}
 
@@ -367,7 +370,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline et $lF_1=VlF_1$} & & / \\
+1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline et $lF_1=VlF_1$} & UC2 & / \\
 \hline
 2 & On calcule $F1(lA_2)=lF_2$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline  et $lF_2=VlF_2$} & & / \\
 \hline
@@ -392,5 +395,60 @@ Sont définis les acronymes suivants :
 \hline
 
 \end{tabular}
+
+\subsection{ContrôleDesRésultats}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item $S$ : site contenant les résultats du produit
+\end{itemize}
+
+\subsubsection*{Procédures.}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{ContrôleDesRésultats} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Vérifier l'existence et l'intégrité des données du site rapportant les résultats } }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P6 : verifDonnées($S$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & Recherche des données sur $S$ & \multicolumn{2}{p{6cm}|}{Les données accessibles doivent être les suivantes :\newline [indispensables] filtrage des données par taille de clé, \textit{issuer}, IP, zone, doublons existants, premiers identiques, \newline [facultatives] géolocalisation, etc. } & UC3 & / \\
+
+\hline
+\end{tabular}
+
+
+\subsection{SyntaxeEtContenuAudit}
+\subsubsection*{Terminologie.}
+Sont définis les acronymes suivants : 
+\begin{itemize}
+\item $R$ : rapport produit sur une fonction après audit
+\end{itemize}
+
+\subsubsection*{Procédures.}
+\noindent
+\begin{tabular}{|p{0.5cm}| p{6cm} | p{1cm} | p{4cm} | p{1.5cm}| p{1.5cm}|} 
+\hline
+\rowcolor{blue}
+\multicolumn{2}{|l|}{\color{white}\bfseries{Objet testé : \color{white} \bfseries{SyntaxeEtContenuAudit} }} & 
+\multicolumn{4}{l|}{\color{white}\bfseries{Version : \color{white}\bfseries{1.0} }}\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Objectif de test : Vérifier la syntaxe et le contenu pour une fonction audit} }\\
+\hline
+\multicolumn{6}{|l|}{\textbf{Procédure P7 : verifSyntaxeEtContenu($R$)} }\\
+\hline
+\textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
+\hline
+1 & Affichage des données d'une fonction suite à audit & \multicolumn{2}{p{6cm}|}{Les données renseignent les éléments suivants : \newline Auteur, Date, Nom de la fonction, Implémentation, Implantation, Norme visée, Respect de la norme, Conséquences-Criticités, Améliorations proposées} & UC4 & / \\
+
+\hline
+\end{tabular}
+
+
 
 \end{document}
