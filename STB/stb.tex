@@ -134,7 +134,7 @@
 \section{Objet}
 Le projet s'inscrit dans un cadre relatif à un fait d'actualité récemment mis à jour, lié aux révélations de Snowden sur les pratiques de la NSA. Le monde de la cryptographie est en proie à de grandes incertitudes suite à ces révélations et remet en question tous les systèmes jusqu'alors développés. Notons que ce ne sont pas les algorithmes des systèmes cryptographiques qui sont remis en cause, mais leur développement machine qui n'est pas (ou plus) considéré comme nécessairement sûr. La NSA a par exemple très bien pu introduire des backdoors, ou faiblesses dans les logiciels, de telle sorte qu'ils puissent accéder aux données claires sans diffcultés. On peut par exemple remettre en questions les outils développ és par des laboratoires tels que RSA labs, ou même encore des standards proposés par des agences comme le NIST (Openssl, AES, sont-ils vraiment sûrs?)
 
-\textbf{Objectif technique : }\\
+\textbf{Objectif technique : }
 \begin{itemize}
 	\item coder un outil permettant de récupérer un grand nombre de certificats
 	\item coder un outil permettant de trouver d'éventuels facteurs communs aux certificats récupérés
@@ -200,19 +200,19 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 	{Appli RC, Machine D} %acteurs concernés
 	{Récupérer une liste des certificats sur les adresses et les ports ouverts, scannés par ZMAP} %description
 	{Avoir une liste de machines distantes dont les ports sont ouverts} %préconditions
-	{L'administrateur lance l'application} % événements déclenchants
-	{La liste est parcourue en entier} %conditions d'arret
+	{L'application est lancée par un membre du groupe} % événements déclenchants
+	{La liste des adresses est parcourue en entier} %conditions d'arret
 	{\begin{itemize}  %flot d'événements (acteurs)
 		\item [1.] Lire la liste
 		\item [2.] Se connecter à la machine distante
-		\item [3.] Récupérer les certificats
-		\item [4.] Stocker le certificat
+		\item [3.] Échanger les certificats
+		\item [4.] Stocker le certificat reçu
 	 \end{itemize}
 	} 
 	{\begin{itemize}  %flot d'événements (systeme)
 		\item []
 		\item []
-		\item [3.] Récupérer les certificats
+		\item [3.] Échanger les certificats
 	\end{itemize}
 	 }
 	{Coupure de connexion : retenter une deuxième fois si la Machine distante ne répond pas} %Flots d'exceptions (RG)
@@ -273,14 +273,32 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 
 
 \subsection{UC 5 : Évaluation du niveau de sécurité du navigateur client}
-Suivant le temps restant, il nous est proposé d'implémenter un système serveur permettant l'audit des clients. Le logiciel sur le serveur doit évaluer la sécurité du client suivant un protocole établi, en analysant son système et/ou lui prop osant des challenges spécifiques, en particulier autour de SSL. Le logiciel devra rendre un diagnostic et un rapport sur les différents éléments analysés, afin de permettre au client de constater des problèmes lorsqu'il y en a, et d'en connaître leur provenance.
-
-\section{Diagrammes de cas d'utilisation}
+\fiche
+	{Test d'un client} %nom
+	{Client, serveur de test} %acteurs concernés
+	{Lors de la connexion d'un client, analyse des paquets échangés} %description
+	{Le client possède une version de navigateur récente} %préconditions
+	{Demande de connexion d'un client} % événements déclenchants
+	{Les paquets ont été achangés et analysés} %conditions d'arret
+	{\begin{itemize}  %flot d'événements (acteurs)
+		\item [1. ] Se connecter sur le serveur
+		\item [] 
+		\item [] 
+	 \end{itemize}
+	} 
+	{\begin{itemize}  %flot d'événements (systeme)
+		\item []
+		\item [2. ] Établir la connexion
+		\item [3. ] Analyser le niveau de sécurité du navigateur
+		\item [4. ] Afficher les résultats
+	\end{itemize}
+	 }
+	{} %Flots d'exceptions (RG)
 
 \subsection{UC 1}
 
 \setlength{\fboxrule}{0.1mm}
-
+\fbox{
 \begin{tikzpicture}
 \umlactor{Appli RC}
 %\umlactor[x=14, y=4]{AC}
@@ -304,9 +322,11 @@ Suivant le temps restant, il nous est proposé d'implémenter un système serveu
 
 \umlinclude{usecase-4}{usecase-3}
 \end{tikzpicture}
+}
 
 \subsection{UC 2}
 
+\fbox{
 \begin{tikzpicture}
 \umlactor{Appli F}
 %\umlactor[x=14, y=4]{AC}
@@ -326,13 +346,17 @@ Suivant le temps restant, il nous est proposé d'implémenter un système serveu
 \umlextend{usecase-5}{usecase-6}
 \umlextend{usecase-8}{usecase-7}
 \umlinclude{usecase-8}{usecase-9}
+
 %\umlinclude{usecase-4}{usecase-3}
 \end{tikzpicture}
+}
 
 \subsection{UC 3}
+
+\fbox{
 \begin{tikzpicture}
 
-\umlactor{User}
+\umlactor{Client}
 %\umlactor[x=14, y=4]{AC}
 
 \umlusecase[x=4, y=2, width=3cm]{Ouvrir la page web}
@@ -341,62 +365,67 @@ Suivant le temps restant, il nous est proposé d'implémenter un système serveu
 %\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
 %\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
 
-\umltrans{User}{usecase-10}
-\umltrans{User}{usecase-11}
+\umltrans{Client}{usecase-10}
+\umltrans{Client}{usecase-11}
 
 \umlextend{usecase-12}{usecase-11}
 
 \end{tikzpicture}
+}
 
 \subsection{UC 5}
+
+\fbox{
 \begin{tikzpicture}
 
 \umlactor{Client}
-\umlactor[x=15, y=-1]{Serveur}
+%\umlactor[x=15, y=-1]{Serveur}
 
 \umlusecase[x=4, y=2, width=3cm]{Se connecter sur le serveur}
-\umlusecase[x=10, y=2, width=3cm]{Établit la connexion}
+\umlusecase[x=10, y=2, width=3cm]{Établir la connexion}
 \umlusecase[x=10, y=-1, width=3cm]{Analyser le niveau de sécurité du navigateur}
 \umlusecase[x=10, y=-4]{Afficher les résultats}
 %\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
 
 \umltrans{Client}{usecase-13}
-\umltrans{Serveur}{usecase-14}
-\umltrans{Serveur}{usecase-15}
-\umltrans{Serveur}{usecase-16}
+%\umltrans{Serveur}{usecase-14}
+%\umltrans{Serveur}{usecase-15}
+%\umltrans{Serveur}{usecase-16}
 
 \umlinclude{usecase-13}{usecase-14}
 \umlinclude{usecase-14}{usecase-15}
 \umlinclude{usecase-15}{usecase-16}
 
 \end{tikzpicture}
-
+}\medskip\\
+Notre sujet étant constitué de plusieurs blocs sans réel lien entre eux, regrouper les cas d'utilisation en un seul constituerait une redondance du document.
 
 \section{Exigences opérationnelles}
 \begin{enumerate}
-	\item [EO.X] : Lors de la récupération des certificats, les protocoles visés seront SSH et SSL/TLS (cf UC1)
+	\item [EO.X] : Lors de la récupération des certificats, les protocoles visés seront SSL/TLS (cf UC1). SSH est laissé de côté après plusieurs plaintes d'Amazone.
 \end{enumerate}
 
 
 \section{Exigences d'interface}
-\begin{enumerate}
-	\item [EI.1] : Présentation des résultats de manière claire et lisible.
-\end{enumerate}
+Pas d'exigence d'interface.
 
 \section{Exigences de qualité}
 \begin{enumerate}
-	\item [EQ.1] : Application optimisée de la factorisation des clefs.
-	\item [EQ.2] : Présentation ergonomique des résultats obtenus.
+	\item [EQ.1] : L'application de la factorisation des clefs se fait dans un temps proportionnel à durée du projet.
+	\item [EQ.2] : Présentation des résultats sous forme de formulaires, dont la maquette est ci-jointe.
 \end{enumerate}
 
 \section{Exigences de réalisation}
 \begin{enumerate}
-	\item [ER.1] : Le programme de factorisation des clefs de certificat.
-	\item [ER.2] : Analyse des résultats obtenus sur la factorisation des clefs.
-	\item [ER.3] : Document détaillant l'audit réalisé sur OpenSSL.
+	\item [ER.1] : Le programme de récupération des certificats.
+	\item [ER.2] : Le programme de factorisation des clefs de certificat.
+	\item [ER.3] : Analyse des résultats obtenus sur la factorisation des clefs.
+	\item [ER.4] : Document détaillant l'audit réalisé sur OpenSSL.
 \end{enumerate}
 
 \end{document}
+
+
 
 
 
