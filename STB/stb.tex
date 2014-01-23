@@ -297,17 +297,18 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 
 \subsection{UC 1}
 
-\setlength{\fboxrule}{0.1mm}
-\fbox{
-\begin{tikzpicture}
-\umlactor{Appli RC}
-%\umlactor[x=14, y=4]{AC}
 
+\begin{tikzpicture}
+
+\umlactor{Appli RC}
+
+%\umlactor[x=14, y=4]{AC}
+\begin{umlsystem}[x=2, y=0]{Application RC}
 \umlusecase[x=3, y=4, width=3cm]{Lire}
 \umlusecase[x=3, y=1, width=3cm]{Se connecter}
 \umlusecase[x=10, y=2, width=3cm]{Échanger les certificats}
 \umlusecase[x=10, y=-1]{Stocker les certificats}
-
+\end{umlsystem}
 %\umlusecase[x=10, width=3cm]{Envoi message privé}
 %\umlusecase[x=10, y=-2, width=3cm]{Envoi message au salon général}
 %\umlusecase[x=7, y=-3]{Déconnexion}
@@ -322,15 +323,13 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 
 \umlinclude{usecase-4}{usecase-3}
 \end{tikzpicture}
-}
 
 \subsection{UC 2}
 
-\fbox{
 \begin{tikzpicture}
 \umlactor{Appli F}
 %\umlactor[x=14, y=4]{AC}
-
+\begin{umlsystem}[x=1, y=0]{Application F}
 \umlusecase[x=4, y=4, width=3cm]{Prendre les moduli}
 \umlusecase[x=5, y=2, width=3cm]{Construire l'arbre des produits}
 \umlusecase[x=5, y=0, width=3cm]{Construire l'arbre des restes}
@@ -346,47 +345,46 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 \umlextend{usecase-5}{usecase-6}
 \umlextend{usecase-8}{usecase-7}
 \umlinclude{usecase-8}{usecase-9}
-
+\end{umlsystem}
 %\umlinclude{usecase-4}{usecase-3}
 \end{tikzpicture}
-}
 
 \subsection{UC 3}
 
-\fbox{
+
 \begin{tikzpicture}
 
 \umlactor{Client}
 %\umlactor[x=14, y=4]{AC}
-
+\begin{umlsystem}[x=1, y=0]{Présentation des résultats}
 \umlusecase[x=4, y=2, width=3cm]{Ouvrir la page web}
 \umlusecase[x=4, y=0, width=3cm]{Sélectionner et filtrer les données affichées}
 \umlusecase[x=12, y=0, width=3cm]{Exporter les données}
 %\umlusecase[x=6, y=-2]{Sortir la liste des facteurs communs}
 %\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
-
+\end{umlsystem}
 \umltrans{Client}{usecase-10}
 \umltrans{Client}{usecase-11}
 
 \umlextend{usecase-12}{usecase-11}
 
 \end{tikzpicture}
-}
+
 
 \subsection{UC 5}
 
-\fbox{
+
 \begin{tikzpicture}
 
 \umlactor{Client}
 %\umlactor[x=15, y=-1]{Serveur}
-
+\begin{umlsystem}[x=1, y=0]{Application d'évalu navigateur client}
 \umlusecase[x=4, y=2, width=3cm]{Se connecter sur le serveur}
 \umlusecase[x=10, y=2, width=3cm]{Établir la connexion}
 \umlusecase[x=10, y=-1, width=3cm]{Analyser le niveau de sécurité du navigateur}
 \umlusecase[x=10, y=-4]{Afficher les résultats}
 %\umlusecase[x=12, y=-0.5]{Sortir la liste des moduli vulnérables}
-
+\end{umlsystem}
 \umltrans{Client}{usecase-13}
 %\umltrans{Serveur}{usecase-14}
 %\umltrans{Serveur}{usecase-15}
@@ -397,7 +395,7 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 \umlinclude{usecase-15}{usecase-16}
 
 \end{tikzpicture}
-}\medskip\\
+\medskip\\
 Notre sujet étant constitué de plusieurs blocs sans réel lien entre eux, regrouper les cas d'utilisation en un seul constituerait une redondance du document.
 
 \section{Exigences opérationnelles}
