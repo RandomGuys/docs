@@ -5,7 +5,6 @@
 \usepackage[francais]{babel} 
 \usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
 \usepackage{lmodern}
-\usepackage{pict2e}
 \usepackage{tikz}	
 \usepackage{fancyhdr} % Required for custom headers
 \usepackage{lastpage} % Required to determine the last page for the footer
@@ -37,8 +36,8 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Analyse des risques} % Document name
 
-\newcommand{\version}{1.0} % Document version
-\newcommand{\docDate}{04/12/2013} % Document date
+\newcommand{\version}{1.1} % Document version
+\newcommand{\docDate}{22/01/2014} % Document date
 \newcommand{\checked}{Julien Legras} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
@@ -86,6 +85,8 @@
 	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
 	\hline
 	1.0 & 4/12/2013 & Création\\
+	\hline
+	1.1 & 22/01/2014 & Risque SSH\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -153,7 +154,7 @@ FORT&4&&CRITIQUE&6\\
  Technique &
  Fort &
  Majeur &
- 15 \\
+ 20 \\
 \hline
  R05 & Perte des données. &
  Panne serveur GIT, récupération impossible des données depuis le serveur. &
@@ -162,13 +163,20 @@ FORT&4&&CRITIQUE&6\\
  Majeur &
  10 \\
 \hline
+ R06 & Récupération d'adresses IP impossible pour SSH. &
+ Rapports d'abus. &
+ Technique/Légal &
+ Majeur &
+ Majeur &
+ 15 \\
+\hline
 
 \end{tabular}
 \end{center}
 
 \section{Plans d'actions}
 \begin{center}
-\begin{tabular}{|l|p{8cm}|l|l|}
+\begin{tabular}{|l|p{7cm}|p{7cm}|l|}
 \hline
 \textbf{Réf.}&\textbf{Action(s) prévue(s)}&\textbf{Action effectuée}&\textbf{Date}\\
 \hline
@@ -187,8 +195,46 @@ R04 &
 R05 &
 	Faire une évaluation des données restants sur les machines de chaque membres de l'équipe et calculer les pertes de données. & & \\
 \hline
-%R06 & & & \\
-%\hline
+R06 & Arrêter temporairement le scan et décider avec le client de l'action à entreprendre. & Abandon de la partie SSH en accord avec le client. & 21/01/2014\\
+\hline
 \end{tabular}
 \end{center}
+
+\section{Annexes}
+
+\subsection{Mail reçu le 19/01/2014 lié au risque R06}
+\begin{verbatim}
+Dear Amazon EC2 Customer,
+
+We've received a report that your instance(s):
+
+Instance Id: i-6394312c
+IP Address: 54.194.102.0
+
+has been port scanning remote hosts on the Internet; check the information provided below by 
+the abuse reporter.
+
+This is specifically forbidden in our User Agreement: http://aws.amazon.com/agreement/
+
+Please immediately restrict the flow of traffic from your instances(s) to cease disruption to 
+other networks and reply this email to send your reply of action to the original abuse 
+reporter. This will activate a flag in our ticketing system, letting us know that you have 
+acknowledged receipt of this email.
+
+It's possible that your environment has been compromised by an external attacker. It remains 
+your responsibility to ensure that your instances and all applications are secured.
+
+Case number: 11135140320-1
+
+Additional abuse report information provided by original abuse reporter:
+* Destination IPs: 
+* Destination Ports: 22
+* Destination URLs: 
+* Abuse Time: Sun Jan 19 11:36:00 UTC 2014
+* Log Extract: 
+<<<
+54.194.102.0 was observed probing caltech.edu for security holes. It
+has been blocked at our border routers. It may be compromised.
+...
+\end{verbatim}
 \end{document}

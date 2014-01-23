@@ -1,0 +1,101 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+%\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{gensymb}
+%\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Compte-rendu de réunion du 20/12/13} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+\usepackage{array}
+\usepackage{tabularx}
+
+\begin{document}
+\pagestyle{fancy}
+
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+	
+\section{Présents}
+\begin{itemize}
+\item Pascal Edouard (Chef de projet)
+\item Claire Smets (Relation Client)
+\item Julien Legras
+\item Mathieu Latimer
+\item William Boisseleau (Réd. CR)
+\end{itemize}
+
+\section{Objet}
+Ce document reprend les points évoqués durant la réunion du 20 décembre 2013. Il s'agissait notamment de rependre et corriger certains éléments du projet rapportés dans notre documentation. 
+
+\section{Contenu abordé}
+\begin{center}
+
+\begin{tabular}{ | l | p{15cm} |}
+	\hline
+   \textbf{Sujet} & \textbf{Actions à entreprendre}    \\ \hline
+ STB & Fournir un diagramme UC général \\ 
+ & \textbf{UC1 :} origine de la récupération des certificats à déterminer et indiquer/définir l'administrateur \\
+ & \textbf{UC2 et UC5 :} corriger le user/client et définir si le serveur est considéré comme un acteur \\ 
+ & \textbf{UC4 :} effectuer une analyse statique \\ 
+ & \textbf{Exigences :} revoir les notions de priorité et supprimer "présentation claire et visible". Supprimer E1, car il n'y a pas d'exigence d'interface. Concernant EQ2, préciser en quoi l'application doit être optimisée. \\ \hline
+CDR &  Confirmer les exigences pour la deuxième partie \\ \hline
+DAL & Concernant l'architecture applicative, créer un schéma général et justifier les choix de configuration\\
+	& Faire apparaitre les fonctions dans les dépendances de la description des constituants (supprimer userMachine)\\
+	& Décrire les fonctions, algorithmes, détailler et argumenter\\ \hline
+ADR	& \textbf{Criticité :} expliciter/argumenter son calcul \\ \hline
+PDD & \textbf{Tâches :}  prendre des actions préventives plutôt qu'un rétroplanning.\\
+ & \textbf{SCRUM :}  argumenter son utilisation\\
+ & \textbf{Description des tâches :} mentionner le partionnement des items. \\
+ & \textbf{Attribution des charges :} supprimer le TOUS, décrire les sous-tâches. Modifier le Gant et refaire le découpage des charge (itérations doivent être équivalentes). Détailler les outils utilisés. \\
+ & \textbf{Gestion de la documentation :} préciser l'utilisation de GIT et teambox\\ \hline
+ \end{tabular}
+ 
+\end{center}
+
+\end{document}
