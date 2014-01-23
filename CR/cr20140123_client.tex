@@ -1,0 +1,93 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{tikz}	
+%\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{gensymb}
+\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Compte-rendu de réunion client du 23/01/14} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+\usepackage{array}
+\usepackage{tabularx}
+
+\begin{document}
+\pagestyle{fancy}
+
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+	
+\section{Présents}
+\begin{itemize}
+\item Ayoub Otmani (client)
+\item Pascal Edouard 
+\item Claire Smets
+\item Julien Legras (Réd. CR) 
+\item Mathieu Latimer
+\item William Boisseleau
+\end{itemize}
+
+\section{Objet}
+Ce document reprend les points évoqués durant la réunion du 23 janvier 2014 avec le client. Il s'agissait dans un premier temps de faire un point sur les modifications et améliorations apportées aux différents documents. 
+
+Dans un second temps, nous avons abordé des points plus techniques sur la mise à l'échelle de la factorisation (ressources matérielles nécessaires).
+
+\section{Contenu abordé}
+\begin{center}
+
+\begin{tabular}{ | l | p{15cm} |}
+	\hline
+   \textbf{Sujet} & \textbf{Actions à entreprendre}    \\ \hline
+Fonctions GMP & Mesurer les temps d'exécution des fonctions GMP utilisées dans la factorisation en vue de l'exécution du programme sur un calculateur (gcd, produit...).\\
+ \hline
+ Calculateur & Se renseigner sur les disponibilités et les ressources du calculateur du département.\\
+ \hline
+Réunions & Planification de réunions hébdomadaires avec le client les jeudis à 16h30 pour suivre l'avancement du projet.\\
+ \hline
+ \end{tabular}
+ 
+\end{center}
+\end{document}
