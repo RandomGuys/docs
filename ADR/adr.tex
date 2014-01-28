@@ -2,10 +2,10 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage[T1]{fontenc}
-\usepackage[francais]{babel} 
+\usepackage[francais]{babel}
 \usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
 \usepackage{lmodern}
-\usepackage{tikz}	
+\usepackage{tikz}        
 \usepackage{fancyhdr} % Required for custom headers
 \usepackage{lastpage} % Required to determine the last page for the footer
 \usepackage{extramarks} % Required for headers and footers
@@ -36,9 +36,9 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Analyse des risques} % Document name
 
-\newcommand{\version}{1.1} % Document version
-\newcommand{\docDate}{22/01/2014} % Document date
-\newcommand{\checked}{Julien Legras} % Checker name
+\newcommand{\version}{1.3} % Document version
+\newcommand{\docDate}{28/01/2014} % Document date
+\newcommand{\checked}{Julien Legras, Mathieu Latimier} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
@@ -53,21 +53,21 @@
 \vspace*{5cm}
 \begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
 \vspace*{7cm}
-	
+        
 \begin{center}
 \fcolorbox{black}{gris}{
 \begin{minipage}{10cm}
 \begin{tabularx}{10cm}{lXl}
-	\bfseries{Version} & & \version\\
-	& & \\
-	\bfseries{Date} & & \docDate\\
-	& & \\
-	\bfseries{Rédigé par} & & \hmwkAuthorName \\
-	& & \\
-	\bfseries{Relu par} & & \checked \\
-	& & \\
-	\bfseries{Approuvé par} & & \approved \\
-	& & \\
+        \bfseries{Version} & & \version\\
+        & & \\
+        \bfseries{Date} & & \docDate\\
+        & & \\
+        \bfseries{Rédigé par} & & \hmwkAuthorName \\
+        & & \\
+        \bfseries{Relu par} & & \checked \\
+        & & \\
+        \bfseries{Approuvé par} & & \approved \\
+        & & \\
 \end{tabularx}
 \end{minipage}
 }
@@ -80,17 +80,19 @@
 \begin{center}
 \textbf{\huge{MISES À JOUR}}\\
 \vspace*{3cm}
-	\begin{tabularx}{16cm}{|c|c|X|}
-	\hline
-	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
-	\hline
-	1.0 & 4/12/2013 & Création\\
-	\hline
-	1.1 & 22/01/2014 & Risque SSH\\
-	\hline
-	1.2 & 23/01/2014 & Description de criticité\\
-	\hline
-	\end{tabularx}
+        \begin{tabularx}{16cm}{|c|c|X|}
+        \hline
+        \bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
+        \hline
+        1.0 & 4/12/2013 & Création\\
+        \hline
+        1.1 & 22/01/2014 & Risque SSH\\
+        \hline
+        1.2 & 23/01/2014 & Description de criticité\\
+        \hline
+        1.3 & 28/01/2014 & Redéfinition des plans d'actions, et découpage des tâches d'absences\\
+        \hline
+        \end{tabularx}
 \end{center}
 
 %La table des matières
@@ -104,7 +106,7 @@ Document réunissant les différents risques qui pourraient arriver pendant ce p
 \begin{itemize}
 \item Calcul de la criticité :\\
 
-Afin de déterminer la criticité de chaque risque, une évaluation de la probabilité d'occurence et de l'impact est éstimé. La criticité est le produit de la probabilité de son occurence par l'impact que le risque a sur le projet. On sera donc pret pour appliquer les mesures adéquates face à ces risques. \\
+Afin de déterminer la criticité de chaque risque, une évaluation de la probabilité d'occurrence et de l'impact est estimé. La criticité est le produit de la probabilité de son occurrence par l'impact que le risque a sur le projet. On sera donc prêt pour appliquer les mesures adéquates face à ces risques. \\
 
 {\centering CRITICITÉ = PROBABILITÉ $\times$ IMPACT} \\
 
@@ -126,37 +128,39 @@ FORT&4&&CRITIQUE&6\\
 \item []
 \item Env: environnement
 \item RH : ressources humaines
+\item P : Pascal Edouard, J : Julien Legras, C : Claire Smets, W : William Boisseleau, M : Mathieu Latimier
 \end{itemize}
 \section{Registre des risques}
 
 \begin{center}
-\begin{tabular}{|c|p{5cm}|p{3cm}|c|c|c|c|}
+\begin{tabular}{|l|p{4cm}|p{4cm}|l|l|l|l|}
 \hline
 \textbf{Réf.} & \textbf{Description} & \textbf{Facteurs} & \textbf{Type} & \textbf{Probabilité} & \textbf{Impact} & \textbf{Criticité} \\
 \hline
- R01 & Absence prolongée (plusieurs semaines) d'un ou plusieurs membre de l'équipe. &
- Accidents, Maladie, voyage à l'étranger imprévu. &
+ \hline
+ R01 & Absences occasionnelles (quelques heures à une journée). &
+ Entretiens, Administrations, Logement, Cours à l'INSAA pour William, Désagréments. &
+ Humain &
+ Fort &
+ Mineur &
+ 16 \\
+ \hline
+ R02 & Absences prolongées sur plusieurs jours d'un ou plusieurs membres de l'équipe. &
+ Accidents, Maladies, voyages à l'étranger imprévus. &
  Humain &
  Majeur &
  Majeur &
  15 \\
  \hline
- R02 & Accumulation du retard dans le travaille de William. &
- Emploi du temps trop chargé avec les cours à l'INSA et les tâches du project. &
- Humain &
- Majeur &
- Mineur &
- 12 \\
- \hline
  R03 & Programme de récupération des certificats ne fonctionne pas. &
- Mauvaise implémentation, bug intempestif, aucune connexion internet.  &
+ Mauvaise implémentation, bug intempestif, aucune connexion internet. &
  Technique &
  Faible &
  Majeur &
  10 \\
 \hline
  R04 & Programme de factorisation ne fonctionne pas. &
- Mauvaise implémentation, bug intempestif, ressources (mémoire, processeur, etc) insuffisantes.  &
+ Mauvaise implémentation, bug intempestif, ressources insuffisantes (mémoire, processeur, etc). &
  Technique &
  Fort &
  Majeur &
@@ -182,26 +186,28 @@ FORT&4&&CRITIQUE&6\\
 
 \section{Plans d'actions}
 \begin{center}
-\begin{tabular}{|l|p{7cm}|p{7cm}|l|}
+\begin{tabular}{|l|p{7cm}|p{5cm}|p{2.5cm}|p{1.5cm}|}
 \hline
-\textbf{Réf.}&\textbf{Action(s) prévue(s)}&\textbf{Action effectuée}&\textbf{Date}\\
+\textbf{Réf.}&\textbf{Action(s) prévue(s)}&\textbf{Action effectuée}&\textbf{Date}&\textbf{Par}\\
 \hline
-	R01 & 
-	Ré-organisation et répartition des tâches entre les membres de l'équipe présents. & & \\
+        R01 &
+        Soit l'absence ne génère pas de retard sur la tâche en cours (ou peut être rattrapée par les autres acteurs), soit la journée doit être rattrapée en cumulant plus d'heures dans la semaine.
+         & Répartition des horaires de travail le jour même ou le samedi & 20/01/14 (M) 22/01/14 (W) 23/01/14 (J) 27/01/14 (M) 28/01/14 (C) & Pascal \\
 \hline
-	R02 &
-	Repartir ses tâches en retard à un ou plusieurs membres de l'équipe pour ratrapper le retard. & & \\
+        R02 &
+        	Réorganisation et répartition de l'ensemble des tâches entre les membres restants de l'équipe.
+         & & & Pascal\\
 \hline
-	R03 &
-	Re-travailler la struture du programme, répartir les bugs existant aux membres de l'équipe, changer de réseau. & & \\
+        R03 &
+        Retravailler la structure du programme, répartir les bugs existant aux membres de l'équipe, changer de réseau. & & & Julien\\
 \hline
 R04 &
-	Re-travailler la structure du programme, répartir les bugs existant aux membres de l'équipe, discuter d'une ressource disponible pour exécuter le programme de calcule.& & \\
+        Retravailler la structure du programme, répartir les bugs existant aux membres de l'équipe, discuter d'une ressource disponible pour exécuter le programme de calcule.& & & Julien\\
 \hline
 R05 &
-	Faire une évaluation des données restants sur les machines de chaque membres de l'équipe et calculer les pertes de données. & & \\
+        Faire une évaluation des données restants sur les machines de chaque membres de l'équipe et calculer les pertes de données. & & & William et Mathieu\\
 \hline
-R06 & Arrêter temporairement le scan et décider avec le client de l'action à entreprendre. & Abandon de la partie SSH en accord avec le client. & 21/01/2014\\
+R06 & Arrêter temporairement le scan et décider avec le client de l'action à entreprendre. & Abandon de la partie SSH en accord avec le client. & 21/01/2014 & Claire\\
 \hline
 \end{tabular}
 \end{center}
@@ -217,27 +223,27 @@ We've received a report that your instance(s):
 Instance Id: i-6394312c
 IP Address: 54.194.102.0
 
-has been port scanning remote hosts on the Internet; check the information provided below by 
+has been port scanning remote hosts on the Internet; check the information provided below by
 the abuse reporter.
 
 This is specifically forbidden in our User Agreement: http://aws.amazon.com/agreement/
 
-Please immediately restrict the flow of traffic from your instances(s) to cease disruption to 
-other networks and reply this email to send your reply of action to the original abuse 
-reporter. This will activate a flag in our ticketing system, letting us know that you have 
+Please immediately restrict the flow of traffic from your instances(s) to cease disruption to
+other networks and reply this email to send your reply of action to the original abuse
+reporter. This will activate a flag in our ticketing system, letting us know that you have
 acknowledged receipt of this email.
 
-It's possible that your environment has been compromised by an external attacker. It remains 
+It's possible that your environment has been compromised by an external attacker. It remains
 your responsibility to ensure that your instances and all applications are secured.
 
 Case number: 11135140320-1
 
 Additional abuse report information provided by original abuse reporter:
-* Destination IPs: 
+* Destination IPs:
 * Destination Ports: 22
-* Destination URLs: 
+* Destination URLs:
 * Abuse Time: Sun Jan 19 11:36:00 UTC 2014
-* Log Extract: 
+* Log Extract:
 <<<
 54.194.102.0 was observed probing caltech.edu for security holes. It
 has been blocked at our border routers. It may be compromised.

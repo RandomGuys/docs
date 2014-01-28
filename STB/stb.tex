@@ -38,7 +38,7 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Spécification technique des besoins} % Document name
 
-\newcommand{\version}{1.0} % Document version
+\newcommand{\version}{2.1} % Document version
 \newcommand{\docDate}{\today} % Document date
 \newcommand{\checked}{Pascal EDOUARD} % Checker name
 \newcommand{\approved}{Mr OTMANI} % Approver name
@@ -124,6 +124,8 @@
 	\hline
 	2.0 & 23/01/2013 & Deuxième version validée par le client\\
 	\hline
+	2.1 & 28/01/2013 & Définitions des niveaux des exigences\\
+	\hline
 	\end{tabularx}
 \end{center}
 
@@ -180,7 +182,7 @@ Une étude sur les certificats utilisés sur internet, ainsi que l'imlantation d
 \hline
 UC.1 & Récupération des certificats & Appli RC, Machine D & Indispensable\\
 \hline
-UC.2 & Factoridation des moduli des certificats & Appli F & Indispensable\\
+UC.2 & Factorisation des moduli des certificats & Appli F & Indispensable\\
 \hline
 UC.3 & Présentation des résultats & Utilisateur & Indispensable\\
 \hline
@@ -219,6 +221,7 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 	 }
 	{Coupure de connexion : retenter une deuxième fois si la Machine distante ne répond pas} %Flots d'exceptions (RG)
 
+\textbf{Information :} SSH est laissé de côté après plusieurs plaintes d'Amazon (cf Annexes).
 
 \subsection{UC 2 : Factorisation des moduli des certificats}
 
@@ -397,31 +400,87 @@ UC.5 & Évaluation du niveau de sécurité du navigateur client & Client et Serv
 \umlinclude{usecase-15}{usecase-16}
 
 \end{tikzpicture}
-\medskip\\
+\medskip \\
 Notre sujet étant constitué de plusieurs blocs sans réel lien entre eux, regrouper les cas d'utilisation en un seul constituerait une redondance du document.
 
 \section{Exigences opérationnelles}
-\begin{enumerate}
-	\item [EO.1] : Lors de la récupération des certificats, les protocoles visés seront SSL/TLS (cf UC1). SSH est laissé de côté après plusieurs plaintes d'Amazone(cf Annexes).
-\end{enumerate}
-
+\begin{center}
+\begin{tabular}{|p{1cm}|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+EO.1 (cf. UC1) & Lors de la récupération des certificats, les protocoles visés seront SSL/TLS & Appli RC & Indispensable \\
+\hline
+\end{tabular}
+\end{center}
 
 \section{Exigences d'interface}
 Pas d'exigence d'interface.
 
 \section{Exigences de qualité}
-\begin{enumerate}
-	\item [EQ.1] : L'application de la factorisation des clefs se fait dans un temps proportionnel à durée du projet.
-	\item [EQ.2] : Présentation des résultats sous forme de formulaires, dont la maquette est ci-jointe (cf annexes).
-\end{enumerate}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+EQ.1 & L'application de la factorisation des clefs se fait dans un temps proportionnel à la durée du projet & Appli F & Recommandé \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+EQ.2 & Présentation des résultats sous forme de formulaires, dont la maquette est ci-jointe (cf annexes). & Application évaluation & Recommandé \\
+\hline
+\end{tabular}
+\end{center}
 
 \section{Exigences de réalisation}
-\begin{enumerate}
-	\item [ER.1] : Le programme de récupération des certificats.
-	\item [ER.2] : Le programme de factorisation des clefs de certificat.
-	\item [ER.3] : Analyse des résultats obtenus sur la factorisation des clefs.
-	\item [ER.4] : Document détaillant l'audit réalisé sur OpenSSL.
-\end{enumerate}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+ER.1 & Le programme de récupération des certificats. & Appli RC & Indispensable \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+ER.2 & Le programme de factorisation des clefs de certificat & Appli F & Indispensable \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+ER.3 & Analyse des résultats obtenus sur la factorisation des clefs. & Application évaluation & Indispensable \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{6cm}|l|}
+\hline
+\textbf{Id} & \textbf{Intitulé} & \textbf{Acteur(s)} & \textbf{Priorité}\\
+\hline
+ER.4 & Document détaillant l'audit réalisé sur OpenSSL. & -- & Indispensable \\
+\hline
+\end{tabular}
+\end{center}
+
 
 \section{Annexes}
 \subsection{Message d'Amazon}
@@ -444,11 +503,3 @@ Pas d'exigence d'interface.
 \end{center}
 
 \end{document}
-
-
-
-
-
-
-
-
