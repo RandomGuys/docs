@@ -1,0 +1,107 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}        
+%\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{gensymb}
+%\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Compte-rendu de réunion du 24/01/14} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+\usepackage{array}
+\usepackage{tabularx}
+
+\begin{document}
+\pagestyle{fancy}
+
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+        
+\section{Présents}
+\begin{itemize}
+\item Pascal Edouard  
+\item Claire Smets
+\item Julien Legras
+\item Mathieu Latimer (Réd. CR)
+\item William Boisseleau
+\end{itemize}
+
+\section{Objet}
+Compte-rendu d'Audit du 24 Janvier 2014 avec M. Abdellah Godard. Lors de cette réunion, nous avons étudié et relevé les dernières modifications à apporter aux 
+documents livrables suivants : "Spécification technique du besoin", "Analyse des risques", "Plan de développement".
+\newline
+\newline
+Nous avons également parlé de l'organisation des comptes-rendus, et un point a été soulevé : "À qui doit-on assigner les actions à entreprendre?".
+\newline
+\newline
+La prochaine réunion avec M. Abdellah Godard se fera aux alentours du 21 Février 2014, et elle sera également le dernier Audit du projet, avant sa livraison finale.
+Nous évoquerons alors les tests effectués (cf. document "Cahier de recettes"), et la validité du client sur les différents livrables .
+
+\section{Contenu abordé}
+\begin{center}
+
+\begin{tabular}{ | p{3cm} | p{11cm} | p{3cm} |}
+        \hline
+   \textbf{Sujet} & \textbf{Actions à entreprendre} & \textbf{Réalisation}   \\ \hline
+ STB & 1 - Définir le niveau des exigences (facultatif, recommandé, obligatoire) & Claire \\ 
+ & 2 - Indiquer qu'on ne traite plus le cas de SSH dans le UseCase 1 (et non dans les exigences) &   \\ \hline
+ADR & 1 - Revoir la syntaxe du document & Pascal\\
+        & 2 - Redéfinir les plans d'actions (notamment : qui fait quoi) & \\
+        & 3 - Découper la tâche absence en plusieurs sous-tâches & \\ \hline
+PDD/Outils projet & 1 - Avoir une vue globale du projet à montrer au client (pour la soutenance finale) - notamment rendre visible les charges et les ressources sur chaque tâche & Pascal \\
+		 & 2 - Mettre les documents Teambox à jour (chemin critique, dépendances, gestion du temps et des ressources, délais) & \\
+		& 3 - Insérer des jalons de validation (retour client, remarques du client sur la finalité des livrables auprès de l'AMOA) & \\
+		& 4 - La tâche Test doit être mise au pluriel (et éventuellement y ajouter optimisations) & \\
+		& 5 - Tester l'outil Gantter Project & 
+		\\ \hline
+CR &  Nouvelle colonne indiquant les acteurs réalisant les actions à entreprendre & Les prochains rédacteurs de CR \\ \hline
+Client &  Noter les prochaines modifications du client sur un document à part, le faire signer et le valider & Claire \\ \hline
+Autres &  Rendre visible les différences entre les versions des documents (sur-lignage par exemple) & Rédacteurs respectifs de documents \\ \hline
+ \end{tabular}
+ 
+\end{center}
+\end{document}
