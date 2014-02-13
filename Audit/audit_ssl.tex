@@ -1,0 +1,476 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1cm, bottom=2cm, left=2cm, right=2cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+%\usepackage{pict2e}
+\usepackage{tikz}	
+\usepackage{tikz-uml}
+\usepackage{fancyhdr}   % Required for custom headers
+\usepackage{lastpage}   % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx}   % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage[toc,page]{appendix} 
+\usepackage{pgf}
+\usepackage{pgfplots}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+\usepackage{cmbright}
+\usepackage[hidelinks]{hyperref}
+\usepackage[french]{algorithm2e}
+\usepackage{soul}
+\geometry{a4paper,textwidth=17cm,textheight=27cm} 
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
+ \tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle, dashed,
+           rounded corners,
+           draw=black, very thin,
+           minimum height=2em,
+           minimum width = 2cm,
+           text centered},
+    square/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height=.5cm,
+           minimum width = 1cm,
+           text centered},
+    data/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height= 2cm,
+           minimum width = 2cm,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=1pt,
+           shorten >=1pt,},
+    asym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           red!100},
+    sym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           blue!100}
+}
+\tikzumlset{font=\footnotesize} 
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{Julien Legras} % Your name
+\newcommand{\hmwkSubject}{Projet} % Subject
+\newcommand{\hmwkDocName}{Document d'audit du protocole SSL} % Document name
+
+\newcommand{\version}{0.1} % Document version
+\newcommand{\docDate}{11/02/2014} % Document date
+\newcommand{\checked}{} % Checker name
+\newcommand{\approved}{} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Version} & & \version\\
+	& & \\
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{Relu par} & & \checked \\
+	& & \\
+	\bfseries{Approuvé par} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+
+\pagebreak
+%Tableau de mises à jour
+\vspace*{1cm}
+\begin{center}
+\textbf{\huge{MISES À JOUR}}\\
+\vspace*{3cm}
+	\begin{tabularx}{16cm}{|c|c|X|}
+	\hline
+	\bfseries{Version} & \bfseries{Date} & \bfseries{Modifications réalisées}\\
+	\hline
+	0.1 & 12/12/2013 & Création du document\\
+	\hline
+	\end{tabularx}
+\end{center}
+
+%La table des matières
+\clearpage
+\tableofcontents
+\clearpage
+%--------------------------------------------------
+\section{Objet}
+Ce document présente l'audit réalisé sur la partie SSL/TLS d'OpenSSL. Pour chaque partie, il y aura une présentation des recommandations/spécifications du protocole puis l'analyse du code associé dans OpenSSL.
+
+%--------------------------------------------------
+\section{Terminologie et sigles utilisés}
+\begin{itemize}
+	\item \textbf{RFC} : Les RFC (Request For Comments) sont un ensemble de documents qui font référence auprès de la Communauté Internet et qui décrivent, spécifient, aident à l'implémentation, standardisent et débattent de la majorité des normes, standards, technologies et protocoles liés à Internet et aux réseaux en général. 
+    \item \textbf{SSL} : Secure Sockets Layer
+    \item \textbf{TLS} : Transport Layer Security 
+    \item \textbf{IETF} : The Internet Engineering Task Force est un groupe informel, international, ouvert à tout individu, qui participe à l'élaboration de standards Internet.
+    \item \textbf{KeyExch} : Échange de clef
+    \item \textbf{Authn} : Authentification
+    \item \textbf{Enc} : Chiffrement
+    \item \textbf{MAC} :  Message Authentication Code
+\end{itemize}
+
+%-------------------------------------------------
+\pagebreak
+\section{Schéma global d'une connexion SSL/TLS}
+Pour simplifier la compréhension des parties suivantes, voici un schéma qui représente de manière large l'établissement d'une connexion SSL/TLS. Les données entre accolades sont chiffrées avec la clef indiquée en indice. La $masterkey$ est la clef principale qui sera dérivée pour chiffrer chaque message.
+
+\begin{center}
+\begin{tikzpicture}[remember picture]
+\begin{umlseqdiag} 
+\umlobject[class=Client SSL/TLS] {C};
+\umlobject[class=Serveur SSL/TLS,x=10] {S};
+
+\begin{umlcall}[op={hello client},return={hello serveur},padding=4]{C}{S}\end{umlcall}
+
+\begin{umlfragment}[type=alt, label=si certificat, inner xsep=10] 
+\begin{umlcall}[dt=5,padding=4,op={certificat serveur},return={}]{S}{C}\end{umlcall}
+\umlfpart[sinon]
+\begin{umlcall}[op={clef publique serveur},return={},padding=4]{S}{C}\end{umlcall}
+\end{umlfragment}
+
+\begin{umlfragment}[type=alt, label=si auth client, inner xsep=10] 
+\begin{umlcall}[dt=7,padding=4,op={Demande d'envoi de certificat signé par <CA>},return={certificat client}]{S}{C}\end{umlcall}
+\begin{umlcall}[dt=7,padding=4,op={challenge aléatoire},return={challenge chiffré avec la clef privée client}]{S}{C}\end{umlcall}
+\end{umlfragment}
+
+\begin{umlcall}[dt=6,padding=4,op={${\{master key\}}_{pk\,serveur}$},return={}]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=6,padding=4,op={${\{id\,connexion\}}_{masterkey'}$},return={${\{challenge\,hello\,client\}}_{masterkey''}$}]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=6,padding=4,op={${\{id\,session\}}_{masterkey'''}$},return={}]{S}{C}\end{umlcall}
+
+\begin{umlcall}[dt=6,padding=4,op={Changement de d'algorithme de chiffrement du client},return={Changement de d'algorithme de chiffrement du serveur}]{C}{S}\end{umlcall}
+
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+
+\paragraph{hello client}
+Version du protocole SSL avec laquelle le client souhaite communiquer, challenge, algorithmes de chiffrement supportés par le client, méthodes de compressiosn supportées par le client.
+
+\paragraph{hello serveur}
+Version du protocole SSL calculée par le serveur (plus haute version du serveur supportée également par le client), challenge, id de session, algorithmes de chiffrement supportés par le serveur, méthodes de compressiosn supportées par le serveur.
+
+
+
+Sources = \url{http://www.symantec.com/connect/articles/apache-2-ssltls-step-step-part-1}, \url{http://datatracker.ietf.org/doc/rfc6101/?include_text=1}
+
+%-------------------------------------------------
+\pagebreak
+\section{SSL version 2}
+\subsection{Spécifications}
+Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé et développé par la société Netscape Communications. Cette version est sortie en 1994. Toutefois, on trouve des morceaux d'informations dans certaines RFC (6176) et le draft de Hickman (\url{http://tools.ietf.org/html/draft-hickman-netscape-ssl-00}).
+
+\paragraph{Algorithmes supportés} 
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+SSL_CK_RC2_128_CBC_WITH_MD5+&RSA&RSA&RC2.128 CBC&MD5\\
+\hline
+\verb+SSL_CK_RC2_128_CBC_EXPORT40_WITH_MD5+&RSA.512&RSA&RC4.40 CBC&MD5\\
+\hline
+\verb+SSL_CK_IDEA_128_CBC_WITH_MD5+&RSA&RSA&IDEA.128 CBC&MD5\\
+\hline
+\verb+SSL_CK_DES_64_CBC_WITH_MD5+&RSA&RSA&DES.56 CBC&MD5\\
+\hline
+\verb+SSL_CK_DES_192_EDE3_CBC_WITH_MD5+&RSA&RSA&3DES.168 CBC&MD5\\
+\hline
+\verb+SSL_CK_RC4_128_WITH_MD5+&RSA&RSA&RC4.128&MD5\\
+\hline
+\verb+SSL_CK_RC4_128_EXPORT40_WITH_MD5+&RSA.512&RSA&RC4.40&MD5\\
+\hline
+\end{tabularx}
+\end{center}
+
+\paragraph{Remarque} Le \verb+CK+ signifie \verb+CIPHER-KIND+.
+
+\subsection{Implémentation}
+
+Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s2_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl2.h+, on retrouve bien les algorithmes du draft :
+
+\begin{center}
+\begin{tabularx}{17cm}{|l|X|}
+\hline
+\textbf{Identifiant} & \textbf{Constante OpenSSL}\\
+\hline
+\verb+SSL_CK_RC2_128_CBC_WITH_MD5+&\verb+SSL2_CK_RC2_128_CBC_WITH_MD5+\\
+\hline
+\verb+SSL_CK_RC2_128_CBC_EXPORT40_WITH_MD5+&\verb+SSL2_CK_RC2_128_CBC_EXPORT40_WITH_MD5+\\
+\hline
+\verb+SSL_CK_IDEA_128_CBC_WITH_MD5+&\verb+SSL2_CK_IDEA_128_CBC_WITH_MD5+\\
+\hline
+\verb+SSL_CK_DES_64_CBC_WITH_MD5+&\verb+SSL2_CK_DES_64_CBC_WITH_MD5+\\
+\hline
+\verb+SSL_CK_DES_192_EDE3_CBC_WITH_MD5+&\verb+SSL2_CK_DES_192_EDE3_CBC_WITH_MD5+\\
+\hline
+\verb+SSL_CK_RC4_128_WITH_MD5+&\verb+SSL2_CK_RC4_128_WITH_MD5+\\
+\hline
+\verb+SSL_CK_RC4_128_EXPORT40_WITH_MD5+&\verb+SSL2_CK_RC4_128_EXPORT40_WITH_MD5+\\
+\hline
+\end{tabularx}
+\end{center}
+
+On y trouve également des constantes non définies dans le draft avec des commentaires très succincts :
+\begin{itemize}
+\item \verb+SSL2_CK_NULL_WITH_MD5 /* v3 */+
+\item \verb+SSL2_CK_DES_64_CBC_WITH_SHA /* v3 */+
+\item \verb+SSL2_CK_DES_192_EDE3_CBC_WITH_SHA /* v3 */+
+\item \verb+SSL2_CK_RC4_64_WITH_MD5 /* MS hack */+
+\item \verb+SSL2_CK_DES_64_CFB64_WITH_MD5_1 /* SSLeay */+
+\item \verb+SSL2_CK_NULL /* SSLeay */+
+\end{itemize}
+
+Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de rétro-compatilibité depuis SSL v3. Celles commentées par \verb+SSLeay+ sont des vestiges de l'ancêtre d'OpenSSL : SSLeay. Elles sont sûrement conservées pour la rétro-compatibilité avec des vieux logiciels utilisant SSLeay. La \verb+MS hack+ est spécifique à Windows
+
+%-------------------------------------------------
+\pagebreak
+\section{SSL version 3}
+\subsection{Spécifications}
+La version 3 du protocole SSL est décrite dans la RFC 6101. On y trouve notamment en section A.6 la liste des algorithmes de chiffrement pouvant être utilisés avec cette version :
+
+\paragraph{Algorithmes supportés} 
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+SSL_NULL_WITH_NULL_NULL+&NULL&NULL&NULL&NULL\\
+\hline
+\verb+SSL_RSA_WITH_NULL_MD5+&RSA&RSA&NULL&MD5\\
+\hline 
+\verb+SSL_RSA_WITH_NULL_SHA+&RSA&RSA&NULL&SHA1\\
+\hline 
+\verb+SSL_RSA_EXPORT_WITH_RC4_40_MD5+&RSAex&RSAex&RC4.40&MD5\\
+\hline
+\verb+SSL_RSA_WITH_RC4_128_MD5+&RSA&RSA&RC4.128&MD5\\
+\hline
+\verb+SSL_RSA_WITH_RC4_128_SHA+ &RSA&RSA&IDEA.128&SHA1\\
+\hline
+\verb+SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5+&RSAex&RSAex&RC2.40 CBC&MD5 \\
+\hline
+\verb+SSL_RSA_WITH_IDEA_CBC_SHA+& RSA&RSA&IDEA.128 CBC&SHA1\\
+\hline
+\verb+SSL_RSA_EXPORT_WITH_DES40_CBC_SHA+&RSAex&RSAex&DES.40&SHA1\\
+\hline
+\verb+SSL_RSA_WITH_DES_CBC_SHA+& RSA&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+SSL_RSA_WITH_3DES_EDE_CBC_SHA+& RSA&RSA&3DES.168 CBC&SHA1\\
+\hline
+\verb+SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA+&DH&DSS&DES.40 CBC&SHA1\\
+\hline
+\verb+SSL_DH_DSS_WITH_DES_CBC_SHA+ & DH&DSS&DES.56 CBC&SHA1\\
+\hline 
+\verb+SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA+ & DH&DSS&3DES.168 CBC&SHA1\\
+\hline
+\verb+SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA+ & DH&RSA&DES.40 CBC&SHA1\\
+\hline
+\verb+SSL_DH_RSA_WITH_DES_CBC_SHA+ & DH&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA+ & DH&RSA&3DES.168 CBC&SHA1\\
+\hline
+\verb+SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA+ & DHE.512&DSS&DES.40 CBC&SHA1\\
+\hline
+\verb+SSL_DHE_DSS_WITH_DES_CBC_SHA+ & DHE&DSS&DES.56 CBC&SHA1\\
+\hline
+\verb+SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA+ & DHE&DSS&3DES.168 CBC&SHA1\\
+\hline
+\verb+SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA+ & DHE.512&RSA&DES.40CBC&SHA1\\
+\hline
+\verb+SSL_DHE_RSA_WITH_DES_CBC_SHA+ & DHE&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA+ & DHE&RSA&3DES.168 CBC&SHA1\\
+\hline 
+\verb+SSL_DH_anon_EXPORT_WITH_RC4_40_MD5+ & DH.512&None&RC4.40&MD5\\
+\hline
+\verb+SSL_DH_anon_WITH_RC4_128_MD5+ & DH&None&RC4.128&MD5\\
+\hline
+\verb+SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA+ & DH.512&None&DES.40 CBC&SHA1\\
+\hline
+\verb+SSL_DH_anon_WITH_DES_CBC_SHA+& DH	&None	&DES.56	CBC&SHA1\\
+\hline
+\verb+SSL_DH_anon_WITH_3DES_EDE_CBC_SHA+ & DH	&None	&3DES.168 CBC&	SHA1\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_NULL_SHA+ & FRTZA&	KEA&	None&	SHA1\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_FORTEZZA_CBC_SHA+ & FRTZA & KEA & FRTZA& SHA1\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_RC4_128_SHA+ & FRTZA	&KEA&	RC4.128	&SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+
+\subsection{Implémentation}
+
+Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s3_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl3.h+, on y retrouve les algorithmes de la RFC :
+
+\begin{center}
+\begin{tabularx}{17cm}{|l|X|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{Constante OpenSSL} \\
+\hline
+\verb+SSL_NULL_WITH_NULL_NULL+&\\
+\hline
+\verb+SSL_RSA_WITH_NULL_MD5+&\verb+SSL3_CK_RSA_NULL_MD5+\\
+\hline 
+\verb+SSL_RSA_WITH_NULL_SHA+&\verb+SSL3_CK_RSA_NULL_SHA+\\
+\hline 
+\verb+SSL_RSA_EXPORT_WITH_RC4_40_MD5+&\verb+SSL3_CK_RSA_RC4_40_MD5+\\
+\hline
+\verb+SSL_RSA_WITH_RC4_128_MD5+&\verb+SSL3_CK_RSA_RC4_128_MD5+\\
+\hline
+\verb+SSL_RSA_WITH_RC4_128_SHA+ &\verb+SSL3_CK_RSA_RC4_128_SHA+\\
+\hline
+\verb+SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5+&\verb+SSL3_CK_RSA_RC2_40_MD5+ \\
+\hline
+\verb+SSL_RSA_WITH_IDEA_CBC_SHA+& \verb+SSL3_CK_RSA_IDEA_128_SHA+\\
+\hline
+\verb+SSL_RSA_EXPORT_WITH_DES40_CBC_SHA+&\verb+SSL3_CK_RSA_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_RSA_WITH_DES_CBC_SHA+& \verb+SSL3_CK_RSA_DES_64_CBC_SHA+\\
+\hline
+\verb+SSL_RSA_WITH_3DES_EDE_CBC_SHA+& \verb+SSL3_CK_RSA_DES_192_CBC3_SHA+\\
+\hline
+\verb+SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA+&\verb+SSL3_CK_DH_DSS_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_DH_DSS_WITH_DES_CBC_SHA+ & \verb+SSL3_CK_DH_DSS_DES_64_CBC_SHA+\\
+\hline 
+\verb+SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA+ & \verb+SSL3_CK_DH_DSS_DES_192_CBC3_SHA+\\
+\hline
+\verb+SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA+ & \verb+SSL3_CK_DH_RSA_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_DH_RSA_WITH_DES_CBC_SHA+ & \verb+SSL3_CK_DH_RSA_DES_64_CBC_SHA+\\
+\hline
+\verb+SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA+ & \verb+SSL3_CK_DH_RSA_DES_192_CBC3_SHA+\\
+\hline
+\verb+SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA+ & \verb+SSL3_CK_DHE_DSS_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_DHE_DSS_WITH_DES_CBC_SHA+ & \verb+SSL3_CK_DHE_DSS_DES_64_CBC_SHA+\\
+\hline
+\verb+SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA+ & \verb+SSL3_CK_DHE_DSS_DES_192_CBC3_SHA+\\
+\hline
+\verb+SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA+ & \verb+SSL3_CK_DHE_RSA_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_DHE_RSA_WITH_DES_CBC_SHA+ & \verb+SSL3_CK_DHE_RSA_DES_64_CBC_SHA+\\
+\hline
+\verb+SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA+ & \verb+SSL3_CK_DHE_RSA_DES_192_CBC3_SHA+\\
+\hline 
+\verb+SSL_DH_anon_EXPORT_WITH_RC4_40_MD5+ & \verb+SSL3_CK_ADH_RC4_40_MD5+\\
+\hline
+\verb+SSL_DH_anon_WITH_RC4_128_MD5+ & \verb+SSL3_CK_ADH_RC4_128_MD5+\\
+\hline
+\verb+SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA+ & \verb+SSL3_CK_ADH_DES_40_CBC_SHA+\\
+\hline
+\verb+SSL_DH_anon_WITH_DES_CBC_SHA+& \verb+SSL3_CK_ADH_DES_64_CBC_SHA+\\
+\hline
+\verb+SSL_DH_anon_WITH_3DES_EDE_CBC_SHA+ & \verb+SSL3_CK_ADH_DES_192_CBC_SHA+\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_NULL_SHA+ & \verb+SSL3_CK_FZA_DMS_NULL_SHA+\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_FORTEZZA_CBC_SHA+ & \verb+SSL3_CK_FZA_DMS_FZA_SHA+\\
+\hline
+\verb+SSL_FORTEZZA_KEA_WITH_RC4_128_SHA+ & \verb+SSL3_CK_FZA_DMS_RC4_SHA+\\
+\hline
+\end{tabularx}
+\end{center}
+
+\paragraph{Attention} Les 3 algorithmes FORTEZZA sont commentés dans OpenSSL depuis le commit\\
+ 89bbe14c506b9bd2fd00e6bae22a99ef1ee7ad19 de 2006.
+ 
+\paragraph{Remarque} OpenSSL déclare d'autre constantes pour utiliser SSL 3 avec Kerberos 5 :
+\begin{itemize}
+\item \verb+SSL3_CK_KRB5_DES_64_CBC_SHA+
+\item \verb+SSL3_CK_KRB5_DES_192_CBC3_SHA+
+\item \verb+SSL3_CK_KRB5_RC4_128_SHA+
+\item \verb+SSL3_CK_KRB5_IDEA_128_CBC_SHA+
+\item \verb+SSL3_CK_KRB5_DES_64_CBC_MD5+
+\item \verb+SSL3_CK_KRB5_DES_192_CBC3_MD5+
+\item \verb+SSL3_CK_KRB5_RC4_128_MD5+
+\item \verb+SSL3_CK_KRB5_IDEA_128_CBC_MD5+
+\item \verb+SSL3_CK_KRB5_DES_40_CBC_SHA+
+\item \verb+SSL3_CK_KRB5_RC2_40_CBC_SHA+
+\item \verb+SSL3_CK_KRB5_RC4_40_SHA+
+\item \verb+SSL3_CK_KRB5_DES_40_CBC_MD5+
+\item \verb+SSL3_CK_KRB5_RC2_40_CBC_MD5+
+\item \verb+SSL3_CK_KRB5_RC4_40_MD5+
+\end{itemize}
+
+%-------------------------------------------------
+\pagebreak
+\section{TLS version 1}
+\subsection{Spécifications}
+\subsection{Implémentation}
+
+%-------------------------------------------------
+\pagebreak
+\section{TLS version 1.1}
+\subsection{Spécifications}
+\subsection{Implémentation}
+
+%-------------------------------------------------
+\pagebreak
+\section{TLS version 1.2}
+\subsection{Spécifications}
+\subsection{Implémentation}
+
+
+\end{document}
