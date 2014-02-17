@@ -44,6 +44,24 @@
 \include{listing}
 
 
+% FIGURES :
+\usepgflibrary{arrows} % for pgf-umlsd
+\linespread{1.1} % Line spacing
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains,patterns	}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{punkt} = [rectangle, dashed, rounded corners, draw=black, very thin,minimum height=2em,minimum width = 2cm, text centered]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+% PACKAGE MATHS : 
+\usepackage{mathtools}
+\DeclareMathOperator*{\Max}{Max}
+\newcommand{\chidpdf}{\texorpdfstring{$\chi^2$\xspace}{X\texttwosuperior\xspace}}
+
 
 
 

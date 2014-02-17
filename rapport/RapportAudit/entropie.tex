@@ -1,6 +1,125 @@
 \chapter{Entropie}
 \section{Définitions et contexte}
 
+\subsection{Introduction}
+Cette partie explicite les notions d'entropie nécessaires pour la définition d'aléatoire de certains programmes, mais décrit aussi les sources qui de génération de bits aléatoires et les tests liés. \\
+
+
+
+Trois axes principaux sont nécessaires à la mise en place d'un générateur cryptographique aléatoire de bits  : 
+\begin{itemize}
+\item Une source de bits aléatoires (source d'entropie)
+\item Un algorithme pour accumuler ces bits reçus et les faire suivre vers l'application en nécessitant.
+\item Une méthode appropriée pour combiner ces deux premiers composants\\
+\end{itemize}
+
+
+\subsection{Estimation de l'entropie générée par la source}
+Il est tout d'abord important de vérifier que la source d'entropie choisie produit suffisamment d'entropie, à un taux égalant voire dépassant une borne fixée. Pour ce faire, il faut définir avec précision la quantité d'entropie générée par la source. Il est de plus important de considérer les différents comportements des composants de la source, afin d'éliminer les interactions qu'ils peut y avoir entre les composants. En effet, ceci peut provoquer une redondance dans la génération d'entropie si cela n'est pas considéré. Étant donné une source biaisée, l'entropie générée sera conditionnée et donc plus facilement prévisible/estimable.
+
+La source d'entropie doit donc être minutieusement choisie, sans qu'aucune interaction et conditionnement ne soit possible.
+
+\subsection{Concept d'entropie}
+\paragraph{Définition.\\}
+Soit $X$ est une V.A. discrète. On définit l'\textbf{entropie} de $X$ comme suit : 
+$$H(X) = - \sum_x P(X=x)*log(P(X=x))	 $$ 
+Le logarithme est dans notre cas de base 2. L'entropie se mesure en shannons ou en bits.\\
+
+\paragraph{Définition.\\}
+On définit le \textbf{désordre} (ou incertitude) étant liée à cette expérience aléatoire. Si l'on considère l'ensemble fini des issues possibles d'une expérience $\lbrace v_1,...,v_n \rbrace$, l'entropie de l'expérience vaudra :
+$$H(\epsilon) = - \sum_x P(\lbrace a_i \rbrace)*log(P(\lbrace a_i \rbrace))	 $$ 
+
+\paragraph{Propriété.\\} 
+On constate que l'entropie est maximale lorsque X est équi-répartie. En effet, si l'on considère n éléments de X étant équi-répartie, on retrouve notre entropie de $H(X) = log(n)$. \\
+
+
+Ainsi, on comprend qu'une variable aléatoire apporte en moyenne un maximum d'entropie lorsqu'elle peut prendre chaque valeur avec une équiprobabilité. D'un point de vue moins théorique, on considère que plus l'entropie sera grande, plus il sera difficile de prévoir la valeur que l'on observe.
+
+\paragraph{Min-entropy.\\}
+La recommandation du NIST propose le calcul de \textit{Min-entropy} pour mesurer au pire des cas l'entropie d'une observation. \\
+
+Soit $x_i$ un bruit de la source d'entropie. Soit $p(x_i)$ la probabilité d'obtenir $x_i$. On définit l'entropie au pire des cas telle que : 
+$$\text{Min-entropy}=-log_2(max(p(x_i))$$
+La probabilité d'observer $x_i$ sera donc au minimum  $\frac{1}{2^\text{Min-entropy}}$.
+
+\subsection{Source d'entropie}
+\paragraph{Approche théorique.\\}
+La source d'entropie est composée de 3 éléments principaux : 
+\begin{itemize}
+\item le \textbf{bruit source}, qui est la voûte de la sécurité du système. Ce bruit doit être non déterministe, il renvoie de façon aléatoire des bits grâce à des processus non déterministes. Le bruit ne vient pas nécessairement directement d'éléments binaires. Si ce bruit est externe, il est alors converti en données binaires. La taille des données binaires générées est fixée, de telle sorte que la sortie du bruit source soit déterminé dans un espace fixe.
+\item le \textbf{composant de conditionnement}, qui permet d'augmenter ou diminuer le taux d'entropie reçu. L'algorithme de conditionnement doit être un algorithme cryptographique approuvé.
+\item une \textbf{batterie de tests}, partie également intégrante du système. Des tests sont réalisés pour déterminer l'état de santé du générateur aléatoire, permettant de s'assurer que la source d'entropie fonctionne comme attendu. On considère 3 catégories de tests : 
+	\begin{itemize}
+	\item Les tests au démarrage sur tous les composants de la source
+	\item Les tests lancés de façon continue sur le bruit généré par la source
+	\item Les tests sur demande (qui peuvent prendre du temps)
+	\end{itemize}
+	L'objectif principal de ces tests est d'être capable d'identifier rapidement des échecs de génération d'entropie, ceci avec une forte probabilité. Il est donc important de déterminer une bonne stratégie de détermination d'échec pour chacun de ces tests.\\
+\end{itemize}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node (source) {\textbf{Source d'entropie}};
+\node (bruit) [below of=source,yshift=1cm,xshift=0.5cm] {\textbf{Bruit}};
+\node (donnees) [io,below of=bruit,yshift=1cm,xshift=0.5cm,pattern=dots,pattern color=orange] {Données};
+\node (digit) [process, right of=donnees, xshift=4cm] {Digitalisation};
+\node (cond) [process, below of=digit,text width=3cm,yshift=-0.5cm] {Conditionnement (optionnel)};
+\node (bat) [process, right of=cond, xshift=4cm] {Batterie de tests}; 
+\node (dec) [decision, below of=cond,yshift=-0.5cm] {Sortie}; 
+\node (appli) [process, below of=dec, yshift=-1cm] {Application};
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(donnees)(digit)(cond)(bat)(dec)(bruit)(source), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(donnees)(digit)(bruit), fill=yellow!20] (groupclient) {};
+\end{pgfonlayer}
+
+\draw [arrow] (donnees) -- (digit);
+\draw [arrow] (digit) -- node[anchor=east] {out1}(cond);
+\draw [arrow] (cond) --  node[anchor=east] {out2} (dec);
+\draw [arrow] (digit) -| node[anchor=south] {out1} (bat);
+\draw [arrow] (cond) -- node[anchor=south] {out2} (bat);
+\draw [arrow] (bat) |- node[anchor=north] {true/false} (dec);
+\draw [arrow] (dec) -- node[anchor=east] {output/error}  (appli);
+\end{tikzpicture}
+\end{center}
+\caption{Composants d'une source d'entropie. \texttt{out1} est une chaîne binaire de taille quelconque et \texttt{out2} est une chaîne binaire conditionnée de taille fixe. }
+\end{figure}
+
+\paragraph{Modèle conceptuel.\\}
+Suivant ces sections précédentes, on peut déterminer 3 interfaces conceptuelle :
+\begin{itemize}
+\item \texttt{getEntropy} qui retourne 
+	\begin{itemize}
+	\item \texttt{entropy\_bitstring}, une chaîne de bits de l'entropie demandée
+	\item \texttt{assessed\_entropy}, entier indiquant le nombre de bits d'entropie de \texttt{entropy\_bitstring}
+	\item \texttt{status}, booléen renvoyant \texttt{true} si la requête est satisfaite, \texttt{false} sinon.\\
+	\end{itemize}
+\item \texttt{getNoise}	 qui prend en entrée : 
+	\begin{itemize}
+	\item \texttt{number\_of\_sample\_requested}, entier indiquant le nombre d'éléments demandés en retour à la source de bruit
+	\end{itemize}
+et en sortie : 
+	\begin{itemize}
+	\item \texttt{noise\_source\_data}, la séquences d'éléments demandée, ayant la taille \texttt{number\_of\_sample\_requested}.
+	\item \texttt{status}, booléen renvoyant \texttt{true} si la requête est satisfaite, \texttt{false} sinon.\\
+	\end{itemize}
+\item \texttt{HealthTest}, élément test de la batterie de tests, qui prend en entrée :
+	\begin{itemize}
+	\item \texttt{type\_of\_test\_requested}, chaine de bits déterminant le type de tests que l'on souhaite effectuer (peut différer suivant le type de source)
+	\end{itemize}
+et en sortie : 
+	\begin{itemize}
+	\item \texttt{pass-fail\_flag}, booléen qui renvoie \texttt{true} si la source d'entropie a réussi le test, \texttt{faux} sinon.
+	\end{itemize}
+	
+\end{itemize}
+
+
+
 \section{Audits}
 	\subsection{Audit 1 : X }
 	\subsubsection{Norme visée}
