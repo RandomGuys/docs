@@ -23,7 +23,12 @@
 \usepackage{cmbright}
 \usepackage[hidelinks]{hyperref}
 \usepackage[french]{algorithm2e}
-\usepackage{soul}
+
+\usepackage{fancyvrb}
+\RecustomVerbatimEnvironment
+{Verbatim}{Verbatim}
+{gobble=0,frame=single,numbers=left,numbersep=2mm
+}
 \geometry{a4paper,textwidth=17cm,textheight=27cm} 
 
 \usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
@@ -160,6 +165,7 @@ Ce document présente l'audit réalisé sur la partie SSL/TLS d'OpenSSL. Pour ch
     \item \textbf{SSL} : Secure Sockets Layer
     \item \textbf{TLS} : Transport Layer Security 
     \item \textbf{IETF} : The Internet Engineering Task Force est un groupe informel, international, ouvert à tout individu, qui participe à l'élaboration de standards Internet.
+    \item \textbf{IANA} : Internet Assigned Numbers Authority
     \item \textbf{KeyExch} : Échange de clef
     \item \textbf{Authn} : Authentification
     \item \textbf{Enc} : Chiffrement
@@ -454,23 +460,495 @@ Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichie
 \item \verb+SSL3_CK_KRB5_RC4_40_MD5+
 \end{itemize}
 
+
+\subsection{Failles}
+\subsubsection{CVE-2013-4353}
+Cette faille découverte le 7 janvier 2014 par Anton Johansson permet de faire planter OpenSSL avec un déréférencement de pointeur NULL et peut ainsi causer des dénis de service. Cette faille a été corrigée le même jour par Stephen Henson. Voici le patch de correction dans la fonction \verb+ssl3_take_mac+ du fichier \verb+ssl/s3_both.c+ :
+
+\begin{Verbatim}
+-------------------------------- ssl/s3_both.c --------------------------------
+diff --git a/ssl/s3_both.c b/ssl/s3_both.c
+index 8de149a..0a259b1 100644
+--- a/ssl/s3_both.c
++++ b/ssl/s3_both.c
+@@ -203,7 +203,11 @@
+ 	{
+ 	const char *sender;
+ 	int slen;
+-
++	/* If no new cipher setup return immediately: other functions will
++	 * set the appropriate error.
++	 */
++	if (s->s3->tmp.new_cipher == NULL)
++		return;
+ 	if (s->state & SSL_ST_CONNECT)
+ 		{
+ 		sender=s->method->ssl3_enc->server_finished_label;
+\end{Verbatim}
+
+
+\subsection{\label{Vaudenay}Attaque sur le padding CBC de Serge Vaudenay}
+
+Cette attaque fait partie de la famille des attaques par canaux auxiliaires et plus particulèrement des timing attacks. En effet, lorsqu'openssl déchiffre en mode CBC, le temps varie en fonction de la longueur du message et du padding. Pour que l'attaque fonctionne, il faut utiliser un oracle de padding qui valide ou non le padding d'un chiffré.
+
+Ben Laurie a appliqué un correctif du code OpenSSL le 28 janvier 2013 qui rend le décodage CBC constant, que le padding soit correct ou non. Le code a été placé dans un nouvelle fonction \verb+tls1_cbc_remove_padding+ du fichier \verb+ssl/s3_cbc.c+
+
+\subsection{\label{CVE-2011-4576}CVE-2011-4576}
+
+Cette faille permettait de récupérer des données d'un déchiffrement précédent. En effet, le buffer n'était pas réinitialisé. Cette faille a été identifée et corrigée par Adam Langley le 4 janvier 2011, voici le patch appliqué :
+
+\begin{Verbatim}
+--------------------------------- ssl/s3_enc.c --------------------------------
+diff --git a/ssl/s3_enc.c b/ssl/s3_enc.c
+index 0ddfe19..c5df2cb 100644
+--- a/ssl/s3_enc.c
++++ b/ssl/s3_enc.c
+@@ -512,6 +512,9 @@
+ 
+            /* we need to add 'i-1' padding bytes */
+            l+=i;
++           /* the last of these zero bytes will be overwritten
++            * with the padding length. */
++           memset(&rec->input[rec->length], 0, i);
+            rec->length+=i;
+            rec->input[l-1]=(i-1);
+            }
+\end{Verbatim}
+
 %-------------------------------------------------
 \pagebreak
 \section{TLS version 1}
 \subsection{Spécifications}
+
+La version 1 de TLS est décrite dans la RFC 2246 (janvier 1999). Ce protocole est assez similaire à SSL 3 mais il y a quelques différences notables. Il y est notamment prévu un mécanisme de rétrocompatibilité vers SSL 3. La plus grosse différence est que TLS, contrairement à SSL, permet de commencer une connexion non chiffré sur un port usuel tel que le 80 et bascule en mode chiffré avec la commande STARTTLS.
+
+Du point de vue des algorithmes de chiffrement, on a globalement la même liste que SSL 3 et les algorithmes de Fortezza ont été retirés :
+
+\paragraph{Algorithmes supportés} 
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_NULL_WITH_NULL_NULL+&NULL&NULL&NULL&NULL\\
+\hline
+\verb+TLS_RSA_WITH_NULL_MD5+&RSA&RSA&NULL&MD5\\
+\hline 
+\verb+TLS_RSA_WITH_NULL_SHA+&RSA&RSA&NULL&SHA1\\
+\hline 
+\verb+TLS_RSA_EXPORT_WITH_RC4_40_MD5+&RSAex&RSAex&RC4.40&MD5\\
+\hline
+\verb+TLS_RSA_WITH_RC4_128_MD5+&RSA&RSA&RC4.128&MD5\\
+\hline
+\verb+TLS_RSA_WITH_RC4_128_SHA+ &RSA&RSA&IDEA.128&SHA1\\
+\hline
+\verb+TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5+&RSAex&RSAex&RC2.40 CBC&MD5 \\
+\hline
+\verb+TLS_RSA_WITH_IDEA_CBC_SHA+& RSA&RSA&IDEA.128 CBC&SHA1\\
+\hline
+\verb+TLS_RSA_EXPORT_WITH_DES40_CBC_SHA+&RSAex&RSAex&DES.40&SHA1\\
+\hline
+\verb+TLS_RSA_WITH_DES_CBC_SHA+& RSA&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+TLS_RSA_WITH_3DES_EDE_CBC_SHA+& RSA&RSA&3DES.168 CBC&SHA1\\
+\hline
+\verb+TLS_DH_DSS_EXPORT_WITH_DES40_CBC_SHA+&DH&DSS&DES.40 CBC&SHA1\\
+\hline
+\verb+TLS_DH_DSS_WITH_DES_CBC_SHA+ & DH&DSS&DES.56 CBC&SHA1\\
+\hline 
+\verb+TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA+ & DH&DSS&3DES.168 CBC&SHA1\\
+\hline
+\verb+TLS_DH_RSA_EXPORT_WITH_DES40_CBC_SHA+ & DH&RSA&DES.40 CBC&SHA1\\
+\hline
+\verb+TLS_DH_RSA_WITH_DES_CBC_SHA+ & DH&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA+ & DH&RSA&3DES.168 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA+ & DHE.512&DSS&DES.40 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_DSS_WITH_DES_CBC_SHA+ & DHE&DSS&DES.56 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA+ & DHE&DSS&3DES.168 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA+ & DHE.512&RSA&DES.40CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_DES_CBC_SHA+ & DHE&RSA&DES.56 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA+ & DHE&RSA&3DES.168 CBC&SHA1\\
+\hline 
+\verb+TLS_DH_anon_EXPORT_WITH_RC4_40_MD5+ & DH.512&None&RC4.40&MD5\\
+\hline
+\verb+TLS_DH_anon_WITH_RC4_128_MD5+ & DH&None&RC4.128&MD5\\
+\hline
+\verb+TLS_DH_anon_EXPORT_WITH_DES40_CBC_SHA+ & DH.512&None&DES.40 CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_DES_CBC_SHA+& DH	&None	&DES.56	CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_3DES_EDE_CBC_SHA+ & DH	&None	&3DES.168 CBC&	SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+
+\paragraph{Algorithmes supplémentaires de la RFC 3268}
+La RFC prévoit la possibilité d'étendre cette liste. Ainsi, la RFC 3268 apporte des nouvelles constantes avec AES et SHA-1 :
+ 
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_RSA_WITH_AES_128_CBC_SHA+&RSA&RSA&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_DH_DSS_WITH_AES_128_CBC_SHA+&DH&DSS&AES 128 CBC&SHA1\\
+\hline 
+\verb+TLS_DH_RSA_WITH_AES_128_CBC_SHA+&DH&RSA&AES 128 CBC&SHA1\\
+\hline 
+\verb+TLS_DHE_DSS_WITH_AES_128_CBC_SHA+&DHE&DSS&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_AES_128_CBC_SHA+&DHE&RSA&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_AES_128_CBC_SHA+ &DH&NULL&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_RSA_WITH_AES_256_CBC_SHA+&RSA&RSA&AES 256 CBC&SHA1 \\
+\hline
+\verb+TLS_DH_DSS_WITH_AES_256_CBC_SHA+& DH&DSS&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_DH_RSA_WITH_AES_256_CBC_SHA+&DH&RSA&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_DSS_WITH_AES_256_CBC_SHA+& DHE&DSS&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_AES_256_CBC_SHA+& DHE&RSA&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_AES_256_CBC_SHA+& DH&NULL&AES 256 CBC&SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+\paragraph{Algorithmes supplémentaires de la RFC 4132} 
+La RFC 4132 apporte également une liste supplémentaire utilisant l'algorithme de chiffrement Camellia :
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_RSA_WITH_CAMELLIA_128_CBC_SHA+&RSA&RSA&Camellia 128 CBC&SHA1\\
+\hline
+\verb+TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA+&DH&DSS&Camellia 128 CBC&SHA1\\
+\hline 
+\verb+TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA+&DH&RSA&Camellia 128 CBC&SHA1\\
+\hline 
+\verb+TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA+&DHE&DSS&Camellia 128 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA+&DHE&RSA&Camellia 128 CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA+ &DH&NULL&Camellia 128 CBC&SHA1\\
+\hline
+\verb+TLS_RSA_WITH_CAMELLIA_256_CBC_SHA+&RSA&RSA&Camellia 256 CBC&SHA1 \\
+\hline
+\verb+TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA+& DH&DSS&Camellia 256 CBC&SHA1\\
+\hline
+\verb+TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA+&DH&RSA&Camellia 256 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA+& DHE&DSS&Camellia 256 CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA+& DHE&RSA&Camellia 256 CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA+& DH&NULL&Camellia 256 CBC&SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+\paragraph{Algorithmes supplémentaires de la RFC 4162} 
+La RFC 4162 ajoute l'algorithme de chiffrement SEED :
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_RSA_WITH_SEED_CBC_SHA+&RSA&RSA&SEED CBC&SHA1\\
+\hline
+\verb+TLS_DH_DSS_WITH_SEED_CBC_SHA+&DH&DSS&SEED CBC&SHA1\\
+\hline 
+\verb+TLS_DH_RSA_WITH_SEED_CBC_SHA+&DH&RSA&SEED CBC&SHA1\\
+\hline 
+\verb+TLS_DHE_DSS_WITH_SEED_CBC_SHA+&DHE&DSS&SEED CBC&SHA1\\
+\hline
+\verb+TLS_DHE_RSA_WITH_SEED_CBC_SHA+&DHE&RSA&SEED CBC&SHA1\\
+\hline
+\verb+TLS_DH_anon_WITH_SEED_CBC_SHA+ &DH&NULL&SEED CBC&SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+
+\paragraph{Extensions TLS}
+Des extensions TLS du hello client sont décrites dans les RFC 3546, 4366, 4492 et 4507 :
+\begin{itemize}
+\item \textbf{Server Name Indication} : permet d'indiquer au serveur quel est le nom du serveur qu'il demande, cela est utilisé lorsqu'il y a plusieurs hôtes virtuels sur une même machine;
+\item \textbf{Maximum Fragment Length Negotiation} : sans cette extension, TLS spécifie une taille maximale fixe de fragment à $2^{14}$ octets. Cette extension permet aux clients d'adapter cette taille en fonction des limites de mémoire ou de bande passante. Valeurs autorisées : $2^9, 2^{10}, 2^{11}, 2^{12}$. Si la valeur n'est pas dans cette liste, le serveur doit interrompre la poignée de main.
+\item \textbf{Client Certificate URLs} : sans cette extension, TLS spécifie que lors l'authentification client, ce dernier doit envoyer son certificat pendant la poignée de main. Grâce à cette extension, le client peut économiser de l'espace disque en stoquant son certificat à une autre adresse
+\item \textbf{Trusted CA Indication} : indique les clefs de CA racines possède le client
+\item \textbf{Truncated HMAC} : permet de tronquer le code MAC à 10 octets pour économiser dela bande passante
+\item \textbf{Certificate Status Request} : indique que le client souhaite vérifier la validité du certificat du serveur avec une requête OCSP par exemple
+\item \textbf{Supported Elliptic Curves} : indique les courbes elliptiques supportées par le client
+\item \textbf{Session Ticket} : permet de rétablir une session précédente
+\end{itemize}
+
 \subsection{Implémentation}
+
+Pour les constantes représentant les algorithmes disponibles, tout est dans \verb+ssl/tls1.h+. On y trouve également les algorithmes utilisant les courbes elliptiques décrits dans le draft \url{http://tools.ietf.org/html/draft-ietf-tls-ecc-12} :
+
+\begin{verbatim}
+#define TLS1_CK_ECDH_ECDSA_WITH_NULL_SHA                0x0300C001
+#define TLS1_CK_ECDH_ECDSA_WITH_RC4_128_SHA             0x0300C002
+#define TLS1_CK_ECDH_ECDSA_WITH_DES_192_CBC3_SHA        0x0300C003
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_128_CBC_SHA         0x0300C004
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_256_CBC_SHA         0x0300C005
+
+#define TLS1_CK_ECDHE_ECDSA_WITH_NULL_SHA               0x0300C006
+#define TLS1_CK_ECDHE_ECDSA_WITH_RC4_128_SHA            0x0300C007
+#define TLS1_CK_ECDHE_ECDSA_WITH_DES_192_CBC3_SHA       0x0300C008
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_128_CBC_SHA        0x0300C009
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_256_CBC_SHA        0x0300C00A
+
+#define TLS1_CK_ECDH_RSA_WITH_NULL_SHA                  0x0300C00B
+#define TLS1_CK_ECDH_RSA_WITH_RC4_128_SHA               0x0300C00C
+#define TLS1_CK_ECDH_RSA_WITH_DES_192_CBC3_SHA          0x0300C00D
+#define TLS1_CK_ECDH_RSA_WITH_AES_128_CBC_SHA           0x0300C00E
+#define TLS1_CK_ECDH_RSA_WITH_AES_256_CBC_SHA           0x0300C00F
+
+#define TLS1_CK_ECDHE_RSA_WITH_NULL_SHA                 0x0300C010
+#define TLS1_CK_ECDHE_RSA_WITH_RC4_128_SHA              0x0300C011
+#define TLS1_CK_ECDHE_RSA_WITH_DES_192_CBC3_SHA         0x0300C012
+#define TLS1_CK_ECDHE_RSA_WITH_AES_128_CBC_SHA          0x0300C013
+#define TLS1_CK_ECDHE_RSA_WITH_AES_256_CBC_SHA          0x0300C014
+
+#define TLS1_CK_ECDH_anon_WITH_NULL_SHA                 0x0300C015
+#define TLS1_CK_ECDH_anon_WITH_RC4_128_SHA              0x0300C016
+#define TLS1_CK_ECDH_anon_WITH_DES_192_CBC3_SHA         0x0300C017
+#define TLS1_CK_ECDH_anon_WITH_AES_128_CBC_SHA          0x0300C018
+#define TLS1_CK_ECDH_anon_WITH_AES_256_CBC_SHA          0x0300C019
+
+#define TLS1_CK_RSA_WITH_AES_128_SHA                    0x0300002F
+#define TLS1_CK_DH_DSS_WITH_AES_128_SHA                 0x03000030
+#define TLS1_CK_DH_RSA_WITH_AES_128_SHA                 0x03000031
+#define TLS1_CK_DHE_DSS_WITH_AES_128_SHA                0x03000032
+#define TLS1_CK_DHE_RSA_WITH_AES_128_SHA                0x03000033
+#define TLS1_CK_ADH_WITH_AES_128_SHA                    0x03000034
+
+#define TLS1_CK_RSA_WITH_AES_256_SHA                    0x03000035
+#define TLS1_CK_DH_DSS_WITH_AES_256_SHA                 0x03000036
+#define TLS1_CK_DH_RSA_WITH_AES_256_SHA                 0x03000037
+#define TLS1_CK_DHE_DSS_WITH_AES_256_SHA                0x03000038
+#define TLS1_CK_DHE_RSA_WITH_AES_256_SHA                0x03000039
+#define TLS1_CK_ADH_WITH_AES_256_SHA                    0x0300003A
+
+#define TLS1_CK_RSA_WITH_CAMELLIA_128_CBC_SHA           0x03000041
+#define TLS1_CK_DH_DSS_WITH_CAMELLIA_128_CBC_SHA        0x03000042
+#define TLS1_CK_DH_RSA_WITH_CAMELLIA_128_CBC_SHA        0x03000043
+#define TLS1_CK_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA       0x03000044
+#define TLS1_CK_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA       0x03000045
+#define TLS1_CK_ADH_WITH_CAMELLIA_128_CBC_SHA           0x03000046
+\end{verbatim}
+
+Pour ce qui est de la poignée de main, OpenSSL utilise la même fonction que pour SSL 3 : \verb+ssl3_connect (s3_clnt.c)+/\verb+ssl3_accept (s3_srvr.c)+ et la gestion des extensions se trouve dans la fonction \verb+ssl_scan_clienthello_tlsext (t1_lib.c)+.
+
+\begin{center}
+\begin{tabularx}{16cm}{|X|l|}
+\hline
+\textbf{Extension}&\textbf{Implémenté}\\ \hline
+Server Name Indication& oui (\verb+t1_lib.c+)\\ \hline
+Maximum Fragment Length Negotiation& non trouvée\\ \hline
+Client Certificate URLs& non trouvée\\ \hline
+Trusted CA Indication& non trouvée\\ \hline
+Truncated HMAC & non trouvée\\ \hline
+Certificate Status Request& oui (\verb+t1_lib.c+)\\ \hline
+Supported Elliptic Curves& oui (\verb+t1_lib.c+)\\ \hline
+Session Ticket& oui (\verb+t1_lib.c+)\\ \hline
+\end{tabularx}
+\end{center}
+
+
+\subsection{Failles}
+\subsection{Attaque sur le padding CBC de Serge Vaudenay}
+Voir \ref{Vaudenay}
 
 %-------------------------------------------------
 \pagebreak
 \section{TLS version 1.1}
 \subsection{Spécifications}
+
+La version 1.1 de TLS est spécifiée par la RFC 4346. Différences avec la version 1.0 :
+\begin{itemize}
+\item l'IV implicite est remplacé par une IV explicite (protection contre les attaques sur CBC : \url{http://www.openssl.org/~bodo/tls-cbc.txt});
+\item utilisation de l'alerte \verb+bad_record_mac+ plutôt que \verb+decryption_failed+ lors des erreurs de padding;
+\item les sessions fermées prématurément peuvent être reprises.
+\end{itemize}
+
+\paragraph{Algorithmes supplémentaires de la RFC 5054} 
+La RFC 5054 ajoute l'échange de clef/authentification SRP :
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_SRP_SHA_WITH_3DES_EDE_CBC_SHA+&SRP SHA1&SRP SHA1&3DES CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA+&SRP SHA1&RSA&3DES CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA+&SRP SHA1&DSS&3DES CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_WITH_AES_128_CBC_SHA+&SRP SHA1&SRP SHA1&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_RSA_WITH_AES_128_CBC_SHA+&SRP SHA1&RSA&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_DSS_WITH_AES_128_CBC_SHA+&SRP SHA1&DSS&AES 128 CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_WITH_AES_256_CBC_SHA+&SRP SHA1&SRP SHA1&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_RSA_WITH_AES_256_CBC_SHA+&SRP SHA1&RSA&AES 256 CBC&SHA1\\
+\hline
+\verb+TLS_SRP_SHA_DSS_WITH_AES_256_CBC_SHA+&SRP SHA1&DSS&AES 256 CBC&SHA1\\
+\hline
+\end{tabularx}
+\end{center}
+
+\paragraph{Extensions TLS}
+Une extension TLS du hello client est décrite dans la RFC 5054 :
+\begin{itemize}
+\item \textbf{srp} : permet d'indiquer le support d'algorithmes d'échange de clefs/authentification SRP;
+\end{itemize}
+
 \subsection{Implémentation}
+
+On retrouve les constantes dans \verb+ssl/tls1.h+ : 
+\begin{verbatim}
+/* SRP ciphersuites from RFC 5054 */
+#define TLS1_CK_SRP_SHA_WITH_3DES_EDE_CBC_SHA       0x0300C01A
+#define TLS1_CK_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA   0x0300C01B
+#define TLS1_CK_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA   0x0300C01C
+#define TLS1_CK_SRP_SHA_WITH_AES_128_CBC_SHA        0x0300C01D
+#define TLS1_CK_SRP_SHA_RSA_WITH_AES_128_CBC_SHA    0x0300C01E
+#define TLS1_CK_SRP_SHA_DSS_WITH_AES_128_CBC_SHA    0x0300C01F
+#define TLS1_CK_SRP_SHA_WITH_AES_256_CBC_SHA        0x0300C020
+#define TLS1_CK_SRP_SHA_RSA_WITH_AES_256_CBC_SHA    0x0300C021
+#define TLS1_CK_SRP_SHA_DSS_WITH_AES_256_CBC_SHA    0x0300C022
+\end{verbatim}
+
+\subsection{Failles}
+\subsubsection{\label{CVE-2012-2333}CVE-2012-2333}
+
+Un integer underflow permettait de causer un déni de service dans les protocoles TLS 1.1, 1.2 et DTLS. Cette faille a été publiée le 10 mai 2012 par Codenomicon et affecte les versions d'OpenSSL suivantes :
+\begin{itemize}
+\item < 0.9.8x
+\item 1.0.0x < 1.0.0j
+\item 1.0.1x < 1.0.0c
+\end{itemize}
+
+Cette faille a été trouvée grâce à l'outil Fuzz-o-Matic développé par Codenomicon.
+
+La correction suivante a été appliquée le même jour par l'équipe d'OpenSSL :
+\begin{Verbatim}
+--------------------------------- ssl/t1_enc.c --------------------------------
+diff --git a/ssl/t1_enc.c b/ssl/t1_enc.c
+index 201ca9a..f7bdeb3 100644
+--- a/ssl/t1_enc.c
++++ b/ssl/t1_enc.c
+@@ -889,6 +889,8 @@
+            if (s->version >= TLS1_1_VERSION
+                && EVP_CIPHER_CTX_mode(ds) == EVP_CIPH_CBC_MODE)
+                {
++               if (bs > (int)rec->length)
++                   return -1;
+                rec->data += bs;    /* skip the explicit IV */
+                rec->input += bs;
+                rec->length -= bs;
+\end{Verbatim}
+
+Ici, la variable \verb+bs+ est la taille de bloc utilisée dans l'algorithme de chiffrement.
+On constate que, sans vérification, il était possible de déplacer les pointeurs \verb+rec->data+, \verb+rec->input+ et \verb+rec->length+  au-delà de la longueur du paquet et ainsi créer une erreur de segmentation.
+
 
 %-------------------------------------------------
 \pagebreak
 \section{TLS version 1.2}
 \subsection{Spécifications}
+
+La version 1.2 de TLS est décrite dans la RFC 5246 (2008)
+
+\paragraph{Algorithmes supplémentaires de la RFC 5289} 
+La RFC 5289 ajoute les codes MAC SHA256 et SHA384 ainsi que le mode GCM (Galois Counter Mode) :
+\begin{center}
+\begin{tabularx}{17cm}{|l|l|l|X|l|}
+\hline
+\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
+\hline
+\verb+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256+&ECDHE&ECDSA&AES 128 CBC&SHA256\\
+\hline
+\verb+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384+&ECDHE&ECDSA&AES 256 CBC&SHA384\\
+\hline
+\verb+TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256+&ECDH&ECDSA&AES 128 CBC&SHA256\\
+\hline
+\verb+TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384+&ECDH&ECDSA&AES 256 CBC&SHA256\\
+\hline
+\verb+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256+&ECDHE&RSA&AES 128 CBC&SHA256\\
+\hline
+\verb+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384+&ECDHE&RSA&AES 256 CBC&SHA384\\
+\hline
+\verb+TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256+&ECDH&RSA&AES 128 CBC&SHA256\\
+\hline
+\verb+TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384+&ECDH&RSA&AES 256 CBC&SHA384\\
+\hline
+\verb+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256+&ECDHE&ECDSA&AES 128 GCM&SHA256\\
+\hline
+\verb+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384+&ECDHE&ECDSA&AES 256 GCM&SHA384\\
+\hline
+\verb+TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256+&ECDH&ECDSA&AES 128 GCM&SHA256\\
+\hline
+\verb+TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384+&ECDH&ECDSA&AES 256 GCM&SHA384\\
+\hline
+\verb+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256+&ECDHE&RSA&AES 128 GCM&SHA256\\
+\hline
+\verb+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384+&ECDHE&RSA&AES 256 GCM&SHA384\\
+\hline
+\verb+TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256+&ECDH&RSA&AES 128 GCM&SHA256\\
+\hline
+\verb+TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384+&ECDH&RSA&AES 256 GCM&SHA384\\
+\hline
+\end{tabularx}
+\end{center}
+
+
+Extensions RFC 5878 et 5746
 \subsection{Implémentation}
 
+On retrouve les constantes dans \verb+ssl/tls1.h+ :
+\begin{verbatim}
+/* ECDH HMAC based ciphersuites from RFC5289 */
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_128_SHA256         0x0300C023
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_256_SHA384         0x0300C024
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_128_SHA256          0x0300C025
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_256_SHA384          0x0300C026
+#define TLS1_CK_ECDHE_RSA_WITH_AES_128_SHA256           0x0300C027
+#define TLS1_CK_ECDHE_RSA_WITH_AES_256_SHA384           0x0300C028
+#define TLS1_CK_ECDH_RSA_WITH_AES_128_SHA256            0x0300C029
+#define TLS1_CK_ECDH_RSA_WITH_AES_256_SHA384            0x0300C02A
+
+/* ECDH GCM based ciphersuites from RFC5289 */
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256	    0x0300C02B
+#define TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384	    0x0300C02C
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_128_GCM_SHA256      0x0300C02D
+#define TLS1_CK_ECDH_ECDSA_WITH_AES_256_GCM_SHA384      0x0300C02E
+#define TLS1_CK_ECDHE_RSA_WITH_AES_128_GCM_SHA256       0x0300C02F
+#define TLS1_CK_ECDHE_RSA_WITH_AES_256_GCM_SHA384       0x0300C030
+#define TLS1_CK_ECDH_RSA_WITH_AES_128_GCM_SHA256        0x0300C031
+#define TLS1_CK_ECDH_RSA_WITH_AES_256_GCM_SHA384        0x0300C032
+\end{verbatim}
+
+\subsection{Failles}
+\subsubsection{CVE-2012-2333}
+
+Voir \ref{CVE-2012-2333}
 
 \end{document}
