@@ -118,6 +118,163 @@ et en sortie :
 \end{itemize}
 
 
+\subsection{Forces et faiblesses des différents PRNG}
+
+	Nos machines utilise ce qu'on appel des PRNG (Pseudo Random Number Generator), 
+	ce sont des algorithmes qui génèrent une séquence de nombre s'apparentant
+	à de l'aléatoire. En réalité rien est aléatoire car tout est déterminé par
+	des valeurs initiales (État du PRNG) et des contextes d'utilisation.\\
+	
+	Un bon PRNG se doit d'avoir une très forte entropie (proche de un), afin
+	d'éviter de délivrer de l'information.
+
+	Comme l'entropie est fourni majoritairement (si ce n'est totalement) par 
+	l'OS, il est donc nécessaire de détailler les PRNG les plus utilisés
+	(Surtout par les systèmes Linux et BSD - qui sont les ceux qui générent le
+	plus de certificats SSL).\\
+
+	Nous nous basons sur la RFC 4086 \cite{rfc4086}: 
+	Randomness requirements for security
+	pour le choix des PRNG selon les différents	systèmes.
+
+	\subsubsection{/dev/urandom et /dev/random sous Linux}
+	
+		Sous Linux, un pool est initialisé avec 512 octets, auquel on ajoute
+		le temps émis par un évènement et son état parmis : 
+		\begin{itemize}
+			\item Les interruptions clavier - heure et code d'interruption
+			\item Les interruptions de disques - heure de lecture ou écriture
+			\item Les mouvements de souris - heure et position\\
+		\end{itemize}
+	
+		Quand des octets aléatoires sont demandés, la pool est haché avec SHA-1 
+		(20 octets). S’il est demandé plus que 20 octets, le haché est mélangé 
+		dans la pool pour rehacher la pool ensuite etc. À chaque fois que l’on 
+		prend des octets dans la pool, l’entropie estimée est décrémentée.\\
+
+		Pour assurer un niveau minimum d’entropie au démarrage, la pool est 
+		écrite dans un fichier à l’extinction de la machine.\\
+
+		/dev/urandom fonctionne selon le même principe sauf qu’il n’attend pas 
+		qu’il y ait assez d’entropie pour donner de l’aléatoire. Il convient 
+		pour une génération de clefs de session.\\
+
+		Pour générer des clefs cryptographiques de longue durée, il est 
+		recommandé d’utiliser /dev/random pour assurer un niveau minimum 
+		d’entropie.\\
+		
+		En effet, sur un serveur sans souris ni clavier, définir l'entropie avec
+		/dev/urandom est très risqué. On recommande donc l'utilisation de 
+		/dev/random lors de l'audit OpenSSL sur les versions Linux.\\
+
+		/dev/random utilise une pool d’entropie de 4096 bits (512 octets) génère 
+		de l’aléa et s’arrête lorsqu’il n’y a plus assez d’entropie et attend 
+		que la pool se remplisse à nouveau.\\
+		
+		Si vous souhaitez connaître l'entropie disponible, la commande est : \\
+		cat /proc/sys/kernel/random/entropy\_avail\\
+
+		Désormais, la taille de la pool est hardcodée dans le noyau Linux 
+		(/drivers/char/random.c:275)\\
+		
+		Linux offre également la possibilité de récupérer de l’aléa depuis un 
+		RNG matériel avec la fonction get\_random\_bytes\_arch
+		\cite{archlinuxRNG}\\
+	
+		Un patch est également disponible afin de générer de l'aléa avec un 
+		débit de 100kB/s \cite{mueller2013rng}. 
+		L'entropie est récupérée par le CPU timing jitter.\\
+		
+		En conclusion, /dev/random doit être utilisé pour une haute qualité
+		d'entropie (i.e. haute sécurité de chiffrement, one-time pad).\\
+		Tandis que /dev/urandom doit être utilisé pour des applications non
+		sensibles à des attaques cryptographiques (i.e. jeu en temps réel),
+		car elle génère plus d'entropie que /dev/random sur un temps donné, 
+		mais s'arrêtera même si il n'a pas récolté suffisamment d'entropie. 
+	
+
+	\subsection{/dev/random sous FreeBSD et /dev/arandom sous OpenBSD}
+	
+		Il faut faire attention au faux ami, le /dev/random du FreeBSD n'est pas 
+		le même que celui de Linux.
+		En fait, il est semblable au /dev/urandom de Linux, et est donc tout 
+		autant proscrit lors de notre audit.\\
+		
+		Même principe avec le /dev/arandom de OpenBSD, qui a également une 
+		entropie faible pour du chiffrement cryptographique sûr. Il se base
+		en fait sur un algorithme modifié du RC4 nommé ARC4 (Alleged RC4) pour 
+		générer des données aléatoires.\\
+		Pour rappel, RC4 était un projet commercial de la RSA Security, et un 
+		hacker anonyme a publié un code identique, devenu légitime, identifié par
+		ARC4.\\
+		De nos jours, il est fortement conseillé de ne plus utiliser RC4 car le 
+		flux de données aléatoire n’est pas vraiment aléatoire et il existe des 
+		attaques qui prédisent la sortie de l’algorithme (Attaque de Fluhrer, 
+		Mantin et Shamir) \cite{fmsrc42009}.\\
+		Sur plusieurs de nos sources (plus anciennes), il est recommandé
+		d'utiliser /dev/arandom pour sa rapidité (71 Mb/s) et sa bonne source
+		d'entropie. Ce n'est plus vraiment le cas aujourd'hui.\\
+		
+		
+		
+	
+	\subsection{CryptGenRandom sous Windows}
+	
+		Du coté de Microsoft, il recommande aux utilisateurs de Windows 
+		d’utiliser CryptGenRandom, qui est un appel système de génération d’un 
+		nombre pseudo-aléatoire. La génération est réalisée par une librairie 
+		cryptographique (Cryptographic service provider library). Celui ci gère 
+		un pointeur vers un buffer en lui fournissant de l’entropie afin de 
+		générer un nombre pseudo aléatoire en retour avec en plus, le nombre 
+		d’octet d’aléatoire désiré.\\
+
+		\lstset{language=Java}
+		\begin{lstlisting}
+		BOOL WINAPI CryptGenRandom(
+			_In_     HCRYPTPROV hProv,
+			_In_     DWORD dwLen,
+			_Inout_  BYTE *pbBuffer
+		);
+		\end{lstlisting}
+	
+		Le service provider sauvegarde une variable d’état d’un sel pour chaque 
+		utilisateur. Lorsque CryptGenRandom est appelé, celui ci est combiné 
+		avec un nombre aléatoire généré par la librairie en plus de différentes 
+		données systèmes et utilisateurs telles que : \\
+		\begin{itemize}
+		\item l’ID du processus
+		\item l'ID du thread
+		\item l'horloge système
+		\item l'heure système
+		\item l'état de la mémoire
+		\item l’espace de disque disponible du cluster
+		\item le haché du block d'environnement mémoire de l’utilisateur\\
+		\end{itemize} 
+		
+		Le tout est envoyé à la fonction de hachage SHA-1 et le nombre en sortie 
+		est utiliser comme sel pour une clef RC4. \\
+		
+		Cette clef est enfin utilisé pour produire des données pseudo aléatoire 
+		et mettre à jour la variable d’état du sel de l’utilisateur. 
+
+	
+	
+	\subsection{Autres systèmes}
+	
+		Nous avons également d'autres RNG comme srandom, prandom ou
+		encore wrandom \cite{miros2013}\\
+		
+		/dev/srandom est simple et lent, il n'est pas recommandé de l'utilisé.\\
+	
+		Certains systèmes ne disposant pas de /dev/*random, il est alors possible
+		d'utiliser l'EGD (Entropy Gathering Daemon) \cite{egdsf.net}.\\
+		
+		Il faut pour cela utiliser les fonctions OpenSSL RAND\_egd, 
+		RAND\_egd\_bytes et RAND\_query\_egd\_bytes. \\
+		
+		L'EGD est également utilisé par GPG, et peut être utilisé comme seed.
+
+
 
 
 \subsection{Standards}
@@ -171,9 +328,92 @@ Dans OpenBSD, on trouve des sources d'aléatoire supplémentaires par rapport à
 
 
 \section{Audits}
-	\subsection{Audit 1 : X }
+	\subsection{Audit 1 : Le cas Debian 4.0 et OpenSSL 0.9.8}
 	\subsubsection{Norme visée}
 	\subsubsection{Faille}
+		\subsubsubsection{Description}
+		Le 13 Mai 2008, Luciano Bello découvert une faille critique du 
+		paquet d'OpenSSL sur les systèmes Debian
+		\cite{faille2008linux.org}. Un mainteneur Debian 	
+		souhaitant corriger quelques bugs aurait malencontreusement 	
+		supprimé une grosse source d'entropie lors de la génération des 
+		clés. \\
+		Il ne restait plus que le PID comme source d'entropie!\\
+		Comme celui-ci ne pouvait dépasser 32.768 (qui le PID maximal
+		atteignable), l'espace des clés a été restreint à 264.148 clés
+		distinctes.\\
+		
+		Analysons plus en détail cette faille. Elle se situe au niveau de 
+		la fonction \textbf{md\_rand.c}.
+		La ligne \textbf{MD\_Update(\&m, buf, j);} a été commentée.
+		La conséquence est le blocage de la graine (seed) que l'on 
+		passe ensuite au PRNG.\\
+	
+		Cette ligne a été commentée par erreur en voulant corriger un
+		avertissement soulevé par le compilateur Valgrind sur une valeur
+		non initialisé.\\
+	
+		Le 14 Mai 2008, Steinar H. Gunderson démontre simplement comment
+		en connaissant le secret $k$ d'une signature, on peut retrouver
+		la clé privée d'un certificat immédiatement \cite{gunderson2008}.\\
+	
+		Ce secret k étant généré avec un PRNG prévisible, on peut stocker
+		deux signatures utilisant le même $k$, où le prédire directement.\\
+	
+		Une signature DSA consiste en deux nombres $r$ et $s$ tels que :\\
+		$r = (g^k [p]) [q]$\\
+		$s = (k^{-1} * (H(m) + x * r)) [q]$\\
+	
+		La clé publique = $(p, q, g)$.\\
+		Le message en clair = $m$, et $H(m)$ est le fingerprint de $m$ connu.\\
+	
+		Attaque \no 1 : En connaissant $k$	\\
+		$s * k [q] = (H(m) + x*r) [q]$\\
+		$\iff (s * k - H(m)) [q] = x*r [q]$\\
+		$\iff ((s*k - H(m))*r^{-1})[q] = x$\\
+		$\iff (s*k - H(m))*r^{-1} = x$\\
+
+		Attaque \no 2 : Deux messages possèdent le même $k$\\
+		$s_1 = (k^{-1} (H(m_1) + x*r)) [q]$\\
+		$s_2 = (k^{-1} (H(m_2) + x*r)) [q]$\\
+		$\iff s_1 - s_2 = (k^{-1} (H(m_1) - H(m_2)) [q]$\\
+		$\iff (s_1 - s_2)*(H(m_1) - H(m_2))^{-1} = k^{-1} [q]$\\
+		$\iff$ On connaît $k \implies$ Attaque 1\\
+
+		Pour savoir si une clé SSL, SSH, DNSSEC ou OpenVPN est affectée, 
+		plusieurs détecteur de données \cite{dowkd.pl} 
+		\cite{openssl-blacklist} de clés faibles sont 
+		fournis par l'équipe Security de Debian, en même temps que
+		l'avertissement de sécurité \cite{debian2008bug}.\\ 
+
+		\subsubsubsection{Tests}
+
+		Nous avons décidé de tester le nombre de certificats vulnérables 
+		causés 	par le bug OpenSSL de Debian (qui reste le plus populaire), et
+		connaissant la blacklist des clés privés. \\
+	
+		Les résultats nous montrent que sur 500.000 certificats récupérés, au moins
+		\footnote{Le logiciel ne prend pas en compte les clés $\leq$ à 512 bits et 
+		celles $\geq$ à 4096 bits, et ne prend en compte que les certificats RSA} 
+		769 sont vulnérables.\\
+		
+		Vous pouvez trouver nos scripts parcourant un fichier contenant un 
+		certificat sur chaque ligne, ou un dossier contenant des certificats sous 
+		forme de fichiers PEM et nos résultats, dans le dossier consacré à l'audit des clés
+		cryptographiques.\\
+		
+		Le format de nos résultats est : \\
+		
+		\textbf{COMPROMISED:} \textit{<haché\_du\_certificat>} \textit{<nom
+		\_fichier\_corrompu (sous forme d'adresse IP)}\\
+		
+		Évidemment, nous ne mettons pas ces résultats sur le net puisqu'il indique 
+		très clairement les adresses IP contenant le certificat friable, et sa clé
+		privée (que l'on peut facilement retrouvé parmi la courte blacklist).\\
+		
+		Pour information, parmi les entreprises vulnérables nous trouvons les géants
+		IBM et CISCO.
+	
 	\subsubsection{Implémentation}
 		
 		\paragraph{Version OpenSSL.\\}
@@ -208,6 +448,120 @@ int main()
 		
 		\paragraph{Audit.\\}
 
+	\subsection{Audit 2 : Le cas LinuxMintDebianEdition sous Android}
+	\subsubsection{Norme visée}
+	\subsubsection{Faille}
+	
+		Récemment, en Août 2013 précisément, un patch de sécurité pour les 
+		systèmes Android utilisant la version LinuxMintDebianEdition/OpenSSL, 
+		dévoile une réparation du générateur de nombres pseudo-aléatoire (PRNG) 
+		qui ne donnait pas suffisamment d'entropie
+		\cite{alex2013android} \cite{bochum2013randomly}. \\
+		
+		Le patch indique que le PRNG de cette version d'OpenSSL utilise dorénavant 
+		une combinaison de données plus ou moins prévisibles associées à 
+		l'entropie générées par /dev/urandom. \\
+		Mais sachant que le PRNG d'OpenSSL utilise lui-même /dev/urandom, on a du 
+		mal à comprendre pourquoi en rajouter davantage.\\
+	
+		Eric Wong et Martin Boßlet apporte la solution sur leur site
+		\cite{boblet2013android}, l'erreur 
+		provient d'un bug "à la Debian", une simple ligne diffère de la version 
+		officielle d'OpenSSL (utilisant SecureRandom) à celle de OpenSSL::Random 
+		ce situant dans la fonction ssleay\_rand\_bytes. \\
+	
+		La cause est là même que celle de Debian, un patch de sécurité atteint la 
+		source d'entropie du PRNG. Alors que tout semblait être rentré dans 
+		l'ordre, un résidu de cette erreur reste dans cette version. Les 
+		développeurs d'OpenSSL assure que ça n'a pas d'impact (ou alors très peu) 
+		sur la sécurité globale. 
+		Mais à cause de la mémoire non initialisé des systèmes Android, la source 
+		d'entropie ne nous permet pas de générer des nombres non-prédictibles. \\
+	
+		La conséquence n'est pas aussi lourde que celle de Debian, tout d'abord 
+		parce que le système Android est rarement utilisé pour du 
+		chiffrement de données sensible, et une attaque par prédiction bien que
+		plus rapide qu'une attaque par brute-force, reste infaisable. 
+		Mais l'erreur est quand même là. \\
+
+	
+	\subsubsection{Implémentation}
+		
+		\paragraph{Version OpenSSL.\\}
+		
+		\paragraph{Fonction.\\}
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+		
+		
+		\paragraph{Audit.\\}
+
+	\subsection{Audit 3 : Le cas LinuxMintDebianEdition sous Android}
+	\subsubsection{Norme visée}
+	\subsubsection{Faille}
+	
+	C'est le syndrome OpenSSH de Debian qui frappe une nouvelle fois.\\
+	Du fait d'une parenthèse mal placée dans le code du fichier 
+	/src/sys/kern/subr\_cprng.c, il s'avère que le générateur pseudo-aléatoire 
+	de NetBSD 6.0 est bien moins solide que ce qui était attendu.\\
+	Sa sortie est prévisible et il faut d'urgence changer les clés SSH qui ont été générées avec ce noyau.\\
+	
+	\subsubsection{Implémentation}
+		
+		\paragraph{Version OpenSSL.\\}
+		
+		\paragraph{Fonction.\\}
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+		
+		
+		\paragraph{Audit.\\}
 
 
 
