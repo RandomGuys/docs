@@ -123,8 +123,51 @@ et en sortie :
 \subsection{Standards}
 \subsubsection{RFC 4086}
 \subsubsubsection{Sous Linux}
-Suivant la RFC 4086 intitulée \textit{Randomness requirements for security} \nocite{rfc4086}, 
-Il existe plusieurs niveaux de récupération de d'aléatoire sous linux  :
+Suivant la RFC 4086 \nocite{rfc4086} intitulée \textit{Randomness requirements for security} \nocite{rfc4086}, 
+Il existe plusieurs niveaux de récupération d'aléatoire sous linux  :
+\begin{itemize}
+\item Point primaire (\textit{Primary pool}) :\\
+512o (128 mots de 4o) + ajout d’entropie
+\item Point secondaire (\textit{Secondary pool}) :\\
+128o pour générer le fichier \texttt{/dev/random}. Un autre point secondaire existe : \texttt{/dev/urandom}\\
+\end{itemize}
+
+L'entropie est récupérée par exemple lorsqu'un événement apparaît (telle qu'une interruption du disque dur), la date et l'heure de l'événement est récupéré et XORée dans le \textit{pool}, puis  est "mélangée" avec une primitive polynomiale possédant un degré de 128. Le \textit{pool} devient ensuite une boucle où de nouvelles données sont XORées ("mélangées" encore par la primitive polynomiale) tout le long du \textit{pool}.\\
+
+
+A chaque appel qui rajoute de l'entropie dans le \textit{pool}, celui-ci calcule une estimation de la probabilité d'une réelle entropie des données. Le pool contient alors l'accumulation des estimations de l'entropie totale contenue dans le pool.\\
+
+
+Les sources d'entropie sont les suivantes :
+\begin{itemize}
+\item Interruption Clavier  
+\item Interruption des complétions du disque
+\item Mouvements de la souris
+\end{itemize}
+
+Quand des octets aléatoires sont demandés, la \textit{pool} est haché avec SHA-1 (20 octets). Si plus de 20 octets  est demandé plus que 20 octets, le haché est mélangé dans la pool pour rehacher la pool ensuite etc. À chaque fois que l’on prend des octets dans la pool, l’entropie estimée est décrémentée. Pour assurer un niveau minimum d'entropie au démarrage, la \textit{pool} est écrite dans un fichier à l'extinction de la machine.\\
+
+\texttt{/dev/urandom} fonctionne selon le même principe sauf qu'il n'attend pas qu'il y ait assez d'entropie pour donner de l'aléatoire. Il convient pour une génération de clefs de session. Pour générer des clefs cryptographiques de longue durée, il est recommandé d'utiliser \texttt{/dev/random} pour assurer un niveau minimum d'entropie.\\
+
+\subsubsubsection{Sous Windows}
+Du coté de Microsoft, il est recommandé aux utilisateurs d'utiliser \texttt{CryptGenRandom}, qui est un appel système de génération d'un nombre pseudo-aléatoire. La génération est réalisée par une librairie cryptographique (\textit{Cryptographic service provider library}). Celle-ci gère un pointeur vers un \textit{buffer} en lui fournissant de l'entropie afin de générer un nombre pseudo aléatoire en retour avec en plus, le nombre d'octets d'aléatoires désirés.
+
+\begin{verbatim}
+BOOL WINAPI CryptGenRandom(
+  _In_     HCRYPTPROV hProv,
+  _In_     DWORD dwLen,
+  _Inout_  BYTE *pbBuffer
+);
+\end{verbatim}
+
+
+Le service \textit{provider} sauvegarde une variable d'état d'un sel pour chaque utilisateur. Lorsque \texttt{CryptGenRandom} est appelé, celui-ci est combiné avec un nombre aléatoire généré par la librairie en plus de différentes données systèmes mais aussi de l'utilisateur tels que l'ID du processus  du \textit{thread}, l'horloge système, l'heure système, l'état de la mémoire, l'espace de disque disponible du \textit{cluster} et le haché du block d'environnement mémoire de l'utilisateur. \\
+
+Le tout est envoyé à la fonction de hachage SHA-1 et le nombre en sortie est utilisé comme sel de clef RC4.  Cette clef est enfin utilisée pour produire des données pseudo-aléatoires et mettre à jour la variable d'état du sel de l'utilisateur. 
+
+\subsubsubsection{OpenBSD}
+Dans OpenBSD, on trouve des sources d'aléatoire supplémentaires par rapport à Linux. On trouve notamment \texttt{/dev/arandom} qui génère de l'aléatoire selon une version leakée de RC4 : \texttt{ARC4} (Alleged RC4). Pour rappel, RC4 était un projet commercial de RSA Security et un hacker anonyme a publié un code qui faisait la même chose, code légitime identifié par ARC4. De nos jours, il est fortement conseillé de ne plus utiliser RC4 car le flux de données aléatoires n'est pas vraiment aléatoire et il existe des attaques qui prédisent la sortie de l'algorithme (Attaque de Fluhrer, Mantin et Shamir) \nocite{Fluhrer01weaknessesin}.
+
 
 
 \section{Audits}
