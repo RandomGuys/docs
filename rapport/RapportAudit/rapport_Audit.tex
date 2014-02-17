@@ -1,0 +1,123 @@
+\documentclass[a4paper,11pt,french]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{float}
+\usepackage{lmodern}
+\usepackage{tikz}        
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[toc,page]{appendix} 
+\usepackage{pgfplots}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+%\usepackage{cmbright}
+\usepackage[hidelinks]{hyperref}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+
+% displaying in table of contents
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+
+
+%listing
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\include{listing}
+
+
+
+
+
+
+\setlength{\headheight}{40pt}
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{images/logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{Claire Smets, William Boisseleau,\\ &&Pascal Edouard, Mathieu Latimier,\\ &&Julien Legras} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Rapport préliminaire -- Audit d'OpenSSL} % Document name
+
+\newcommand{\version}{1.2} % Document version
+\newcommand{\docDate}{5 février 2014} % Document date
+\newcommand{\checked}{} % Checker name
+\newcommand{\approved}{Ayoub Otmani} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{À l'attention de} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+\pagebreak
+
+\tableofcontents
+
+\listoffigures
+
+\lstlistoflistings
+
+
+
+\pagebreak
+
+\include{introduction}
+\include{entropie}
+\include{generationCles}
+\include{poigneeDeMain} 
+\include{conclusion}
+
+
+
+
+
+\end{document}
