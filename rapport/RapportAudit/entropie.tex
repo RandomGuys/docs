@@ -326,6 +326,33 @@ Le tout est envoyé à la fonction de hachage SHA-1 et le nombre en sortie est u
 Dans OpenBSD, on trouve des sources d'aléatoire supplémentaires par rapport à Linux. On trouve notamment \texttt{/dev/arandom} qui génère de l'aléatoire selon une version leakée de RC4 : \texttt{ARC4} (Alleged RC4). Pour rappel, RC4 était un projet commercial de RSA Security et un hacker anonyme a publié un code qui faisait la même chose, code légitime identifié par ARC4. De nos jours, il est fortement conseillé de ne plus utiliser RC4 car le flux de données aléatoires n'est pas vraiment aléatoire et il existe des attaques qui prédisent la sortie de l'algorithme (Attaque de Fluhrer, Mantin et Shamir) \nocite{Fluhrer01weaknessesin}.
 
 
+\subsection{FIPS 140}
+Le FIPS 140 (\textit{Ferderal Information Processing Standards}  est un standard du gouvernement américain spécifique aux modules cryptographiques déployés par des éléments du gouvernement. Il inclue notamment des standards de tests qui permettent de qualifier la qualité et/ou validation des générateurs d'entropie ou générateurs pseudos aléatoires. 
+La dernière version en présence est le FIPS 140-2, qui décrit plusieurs niveaux de tests.\\
+
+
+Les test du FIPS 140-1 permet de s'assurer que les sources d'entropies produisent suffisamment de "bonnes" données, pourvu que les sources d'entropies n'utilisent pas quelques opérations cryptographiques internes. Si elle en utilise, la source d'entropie réussira les tests avec quasi- certitude, même si la source d'entropie est faible. Pour la même raison,  ces jeux de tests ne sont pas bon pour tester des des générateurs de nombres pseudo-aléatoires cryptographiques, car ceux-ci passeront facilement les tests même si les générateurs d'entropie sont faibles. Par exemple, si l'on hache une suite d'entiers (par pas de 1), les tests seront tous validés bien qu'ils n'auront pas été tirés aléatoirement, ceci en vertu de la fonction de hachage. Pourtant, la donnée est hautement prédictible.\\
+
+
+Les tests du FIPS 140-2 ne sont également pas très efficaces, excepté si un matériel commence à produire un motif répété. Ils consistent à comparer différentes sorties consécutives d'un générateur.  De telle sorte, si le "générateur aléatoire" consiste à produire une simple incrémentation, les tests passeront sans problème.
+
+Il est donc conseillé d'utiliser les tests du FIPS 140-1 pour vérifier uniquement si la source d'entropie produit de bonnes données, au démarrage et périodiquement lorsque c'est possible. 
+
+
+Le FIPS 140-1 définit 4 tests statistiques à lancer sur 20000 bits consécutifs, tests au démarrage ou à la demande : 
+\begin{enumerate}
+\item Le \textbf{test Monobit}, où le nombre de bits à 1 sont comptés. Le test est considéré comme réussi si le nombre de bits à 1 est raisonnablement proche de 10000.
+\item Le \textbf{test Poker}, pour lequel les données sont séparées en une suite consécutive de 4bits pour déterminer combien de fois les 16 configurations de 4 bits apparaissent. Les carrés du résultats sont sommés  et permettent de définir si le test passe ou non. 
+\item Le \textbf{test runs}, que nous développerons dans les recommandations du NIST.
+\item Le test \textbf{long runs}, qui effectue le test de runs sur 34 bits ou davantage.\\
+\end{enumerate}
+
+
+Le FIPS 140-2 définit enfin des tests continuels de sortie (\textit{continuous output tests}). Les données de sorties sont découpés en blocs de 16 octets (ou davantage). Le premier block est stocké et comparé second. S'ils sont identiques, alors le test est échoué. On passe à la paire suivante, le 2e bloc est comparé avec le 3e, etc.
+
+
+
+
 
 \section{Audits}
 	\subsection{Audit 1 : Le cas Debian 4.0 et OpenSSL 0.9.8}
