@@ -565,15 +565,535 @@ int main()
 
 
 
-\section{Recommandations générales}
+\section{Recommandations sur la conception}
+Le NIST propose des recommandations à plusieurs niveaux concernant la conception de la source d'entropie. Nous n'en reporterons ici que les recommandations génériques. Les éléments ci-dessous sont basés 
+
+\subsection{Modélisation et validation}
+La source d'entropie doit suivre les exigences suivantes 
+\begin{enumerate}
+\item Le développeur doit documenter complètement la modélisation de la source d'entropie, incluant toutes les interactions entre les composants. De ce fait, la documentation doit pouvoir justifier en quoi la source d'entropie est de confiance. 
+\item Il doit définir de façon précise les limites conceptuelles de sécurité de la source d'entropie, qui doivent elles mêmes être équivalentes à un module cryptographique délimitant un périmètre de sécurité (cf. \textit{Cryptographic module boundary} du FIPS 140).
+\item Le développeur doit définir le champ des conditions optimales de fonctionnement du générateur d'entropie.
+\item La source source d'entropie doit être possiblement validée suivant les recommandations du FIPS 140, ainsi que les tests s'y référant.
+\item Le comportement du bruit de la source doit être documenté, validant en quoi le taux d'entropie ne fluctue pas lors d'une utilisation normale.
+\item Dès lors qu'un test de validation n'est pas réussi, la source d'entropie doit immédiatement cesser d'envoyer des données de sortie, et doit notifier à l'application l'erreur rencontrée.\\
+
+Enfin, une recommandation optionnelle : 
+\item La source d'entropie doit contenir différent types de bruits pour améliorer le comportement global de la source, et prévenir des tentatives de contrôle externe. Chaque bruit doit vérifier les spécifications du 3.1. 
+\end{enumerate}
+
+\subsection{Source d'entropie absolue}
+Certains générateurs de bits aléatoire demandent une source d'entropie absolue, à savoir qu'elle approxime une sortie qui est uniformément distribuée et indépendante des autres sorties. 
+\begin{enumerate}
+\item La chaine de bit générée doit fournir au moins $(1-\epsilon)n$ bits d'entropie, où : 
+	\begin{itemize}
+	\item $n$ est la taille de chaque sortie
+	\item $\epsilon$ tel que : $0\leqslant \epsilon \leqslant 2^{-64}$
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Bruit de la source}
+Le bruit fournit par la source doit suivre les recommandations suivantes :
+\begin{enumerate}
+\item Le bruit doit avoir un comportement probabiliste et ne doit en aucun cas être définissable par quelconque algorithme ou règle.
+\item Le développeur doit pouvoir documenter l'opération sur le fonctionnement du bruit de la source, en montrant en quoi le choix de ce bruit fournit une sortie d'entropie acceptable. Ceci comprend le référencement d'articles de recherche et autre littérature pertinente.
+\item Le bruit de la source doit pouvoir être testable, de telle sorte que l'on puisse s'assurer qu'il effectue l'opération attendue. Il doit donc être possible de récupérer des données sur la source de bruit sur lesquels on puisse lancer la batterie de tests. La récupération des données sur la source de bruit ne doit en aucun cas altérer le comportement du bruit, ou de la sortie.
+\item Toute défaillance du bruit doit être rapidement détectable. Les méthodes de détection doivent être documentées.
+\item La documentation de la source du bruit doit également décrire sous quelles conditions le bruit est connu pour mal fonctionner. Ceci consiste ainsi à répertorier les environnements dans lesquels la source peut fonctionner correctement. 
+\item La source de bruit doit être protégée au maximum contre toute attaque/tentative de conditionnement ou simple connaissance de fonctionnement de la part d'un adversaire. 
+\end{enumerate}
+
+\subsection{Composant de conditionnement}
+Le composant de conditionnement doit suivre les recommandations suivantes :
+\begin{enumerate}
+\item Le développeur doit documenter si la source d'entropie nécessite ou non un conditionnement. 
+\item La méthode de conditionnement doit être décrite et argumentée. Elle doit en effet expliciter en quoi elle permet de diminuer l'alignement d'une source de bruit, ou en quoi la sortie créée correspond à l'entropie attendue
+\item La méthode de conditionnement doit pouvoir être validée par des tests
+\item Le développeur doit pouvoir estimer l'alignement en sortie de conditionnement. 
+\item Le développeur doit prévoir une documentation expliquant le comportement de la méthode de conditionnement en cas de variation de comportement de la part de la source de bruit.
+\end{enumerate}
+
+\subsection{Batterie de tests}
+Globalement, les tests doivent suivre les recommandations suivantes :
+\begin{enumerate}
+\item Les tests doivent être effectués au démarrage puis de façon continuelle pour s'assurer que les composants du générateur d'entropie fonctionnent correctement.
+\item Tous les tests doivent être documentés, en particulier sur les conditions sous lesquels ils doivent être exécutés, les résultats attendus pour chacun de ceux-ci, et une explication rationnelle indiquant en quoi chaque test est approprié pour la détection de dysfonctionnement de la part de la source d'entropie. 
+\end{enumerate}
+
+\subsubsection{Tests sur le bruit}
+Les tests sur le bruit sont pour la plupart du temps dépendants de la technologie utilisée. Dans la majorité des cas, il faut tester via des procédures traditionnelles de tests (type test monobit, test du $\chi_2$, et tests d'exécution) si celui-ci est bien non biaisé et produit des données indépendantes.
+\begin{enumerate}
+\item Au minimum, des tests continus doivent être implémentés, et ceci de façon indépendante. Le développeur doit de plus documenter toutes les sources de défaillance.
+\item Les tests sont implémentés sur les données binaires récupérées via le bruit source.
+\item La source de bruit doit être testé dans son ensemble (suivant la variation du bruit).
+\item Le bruit généré durant la démarrage ayant passé avec succès les tests de démarrage peut être utilisé pour produire de l'entropie.
+\item Lorsqu'un test est échoué, le générateur doit en être notifié.\\
+
+Optionnel : 
+\item Une étude peut être requise sur les bords du bruit bruit généré, dans les cas ou le comportement du générateur est altéré.
+\end{enumerate}
+
+
+\subsubsection{Tests sur le conditionnement}
+Le rôle du conditionnement est de réduire l'alignement  présent chez certaines sources d'entropie afin de s'assurer que l'entropie est construite à un taux acceptable. Les recommandations sont les suivantes :
+\begin{enumerate}
+\item Les composants de conditionnements doivent être testés dès le démarrage, afin d'être certain que le générateur fonctionne comme prévu
+\item Le développeur doit documenter les tests implémentés et inclure les conditions d'échecs pour chacun d'entre eux.
+\end{enumerate}
 
 
 
+\section{Tests effectifs sur l'entropie fournie par les sources d'entropie}
 
-%Si nécessaire, Code de figure : 
+\subsection{Déterminer si les données sont IID}
+
+\paragraph{Définition.\\}
+On dit que des variables sont \textbf{IID} (indépendantes et identiquement distribuées) si elle suivent toute la même loi de probabilité et si elles sont mutuellement indépendantes. \\
+
+Les tests suivants ont été conçus pour montrer si les données en sortie du bruit et/ou en sortie du conditionnement sont bien IID, ceci en effectuant des tests sur la distribution des données. Le but est de vérifier l'hypothèse $H_0$. Pour la vérifier, nous allons considérer ici deux types de tests : 
+\begin{itemize}
+\item Des tests de répartition aléatoire sur l'ensemble
+\item Des tests statistiques\\
+\end{itemize}
+
+Si un des tests est passé, alors on passe au suivant. La défaillance d'un seul des tests impliquera le caractère non IID des données. 
+
+
+\subsubsection{Tests sur l'indépendance et la stabilité}
+Nous travaillons sur le test statistique bilatéral suivant : 
+\begin{itemize}
+\item l'hypothèse $H_0$ : "Les données sont IID". 
+\item l'hypothèse $H_1$ : "Les données ne sont pas IID". \\
+
+\end{itemize}
+
+
+Suivant un jeu de données $(|donnees|=n)$, on divise celui-ci en 10 sous ensemble de tailles égales ($\frac{N}{10}$). On effectue enfin nos tests sur chacune de ces données. La stratégie de test est effectuée comme suit : 
+\begin{enumerate}
+\item On calcule tout d'abord différents scores statistiques parmi les suivants :
+	\begin{itemize}
+	\item Score de compression, un score par sous ensemble de données
+	\item Score \textit{Over/Under Runs}, deux scores par sous ensemble
+	\item Score excursion, un score par sous ensemble
+	\item Score \textit{Runs} directionnel, trois scores par sous ensemble
+	\item Score de covariance, un score par sous ensemble 
+	\item Score de collision, trois scores par sous ensemble\\
+	\end{itemize}
+	
+\item Pour chaque calcul de score : 
+	\begin{enumerate}
+	\item On stocke pour chaque type de score les résultats dans un vecteur de $J$ scores
+	\item On répète les étapes suivantes 1000 fois :
+		\begin{enumerate}
+		\item On permute les sous ensembles précédents en utilisant un générateur pseudo aléatoire, suivant l'algorithme de permutation  \textit{Fisher–Yates shuffle}. 
+		\item On calcule les nouveaux scores suivant cette nouvelle organisation de sous-ensembles
+		\item On récupère ce vecteur de $J$ scores
+		\end{enumerate}
+	\item On classifie les scores de 2a) en le comparant avec tous les scores liés permutés. Par exemple, si le score des données originelles est plus grand que tous ceux des permutations, alors ce premier a le score de 1000, et les répertoires permutés on un score inférieur à 1000. Il est possible que les données permutées aient le même score. Lorsque le score originel est le même que certains de scores des données permutées, on considère le score en récupérant celui le plus proche de la médiane. \\
+	
+Plus généralement, étant donné : 
+		\begin{itemize}
+		\item Un score $S$
+		\item Une liste de scores des données permutées $L$
+		\end{itemize}
+	On détermine le \textbf{rang de $S$} tel que : 	
+	
+	$$
+	Rang(S) = \left\{
+		\begin{array}{llllll}
+		max(j) & \text{tel que} & L[j] \leqslant S,& si& L[500]>S & (1)\\
+		500 & &si& L[500]=S & (2)\\ 
+		min(j) & \text{tel que} & L[j] \geqslant S,& si& L[500]<S & (3)\\
+		\end{array}			
+	\right.
+	$$ 
+	\newline	
+	
+		\begin{enumerate}	
+		\item Exemple cas (1) :
+			\begin{itemize}
+			\item Soit $S=20$ et $L[500]=22$. On est dans le cas (1). On va chercher le $max(j)$ tel que $ L[j] \leqslant S$.
+			\item On a $L[299]=19$, $L[300]=20$, $L[301]=20$, $L[302]=22$.
+			\item On retourne au score $301$, ainsi $Rang(S)=301$.\\
+			\end{itemize}
+			
+		\item Exemple cas (3) :
+			\begin{enumerate}
+			\item Soit $S=20$ et $L[500]=18$. On est dans le cas (3). On va chercher le $max(j)$ tel que $ L[j] \geqslant S$.
+			\item On a $L[599]=19$, $L[600]=20$, $L[601]=20$.
+			\item On retourne au score $600$, ainsi $Rang(S)=600$.\\
+			\end{enumerate}
+			
+		\end{enumerate}
+	\end{enumerate}
+	
+\item Le rang alors obtenu est considéré comme une \textit{p-value} pour un test bilatéral. Pour rappel, une \textit{p-value} est la probabilité d'obtenir la même valeur de test si l'hypothèse nulle est vraie. Ainsi, on compte pour chacun des 6 tests un ensemble de $10*J$ \textit{p-values}.\\
+
+\item On gère enfin les \textit{p-values} de la façon suivante : 
+	\begin{enumerate}
+	\item Tous les rangs compris entre 50 et 950 sont relevés. Ces événements ont une probabilité d'arriver de 10\% au total. 
+	\item Si le nombre de rangs relevés est supérieur ou égal à 8, on considère le test comme échoué.
+		\begin{enumerate}
+		\item Si le test est effectué sur la source du bruit, alors celle-ci n'est pas considérée comme IID
+		\item Si le test est effectué sur le conditionnement, alors  la source d'entropie n'est pas validée.
+		\end{enumerate}
+	\end{enumerate}
+\end{enumerate}
+
 \begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.2]{images/logo_univ.png}
-	\caption{Titre de Figure 1.1}
-	\label{fig1}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node 	(titre) 		[]{\textbf{Test $t$}};
+\node	(donnees) 	[process,below of=titre,yshift=1cm, xshift=6cm]	{Données (taille $n$)};
+\node	(n101) 		[process,below of=donnees,xshift=-3cm]	{$\frac{n}{10}$};
+\node	(n102) 		[process,below of=donnees,xshift=3cm]	{$...$};
+\node	(n1010) 		[process,below of=donnees,xshift=9cm]	{$\frac{n}{10}$};
+\node	(permut) 	[process,below of=n101,xshift=2cm]	{$permutation$};
+\node	(ini) 		[process,below of=n101,xshift=-2cm]	{$score_t^{ini}$};
+\node	(score) 		[process,below of=permut]	{$score_t[j]$};	
+\node 	(dec) 		[decision, below of=score,yshift=-0.4cm] {$j<1000$}; 
+\node 	(rangs) 		[process, below of=dec,yshift=-0.4cm] {$rangs[j]$}; 
+\node 	(dec2) 		[decision, below of=rangs,yshift=-0.4cm] {$Out>8$}; 
+\node 	(fail) 		[below of=dec2, yshift=-0.4cm] {Test échoué}; 
+\node 	(reussi) 	[right of=dec2,xshift=3cm] {Test réussi}; 
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(titre)(donnees)(n101)(n102)(n1010)(permut)(ini)(score)(dec)(rangs)(dec2)(fail)(reussi), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+\draw	[arrow]		(donnees)	-|		(n101);
+\draw	[arrow]		(donnees)	-|		(n102);
+\draw	[arrow]		(donnees)	-|		(n1010);
+\draw	[arrow]		(n101) 	-|	node[anchor=west] {$j=0$}	(permut);
+\draw	[arrow]		(n101)	-|		(ini);
+\draw	[arrow]		(permut)	--	node[anchor=west] {$j++$}	(score);
+\draw	[arrow]		(score)	--	(dec);
+\draw 	[arrow]		(dec) --++ (+3,0) node [near start,anchor=south] {vrai} |- (permut);
+\draw	[arrow]		(dec)	-- node[near start,anchor=west] {faux}	(rangs);
+\draw	[arrow]		(ini)	|-	(rangs);
+\draw	[arrow]		(rangs)	--	(dec2);
+\draw	[arrow]		(dec2)	-- node[near start,anchor=west] {faux} (fail);
+\draw	[arrow]		(dec2)	-- node[near start, anchor=south] {vrai} (reussi);
+
+\end{tikzpicture}
+\end{center}
+\caption{Structure de validation de données $d$ par un test $t$. $Out$ vaut "$|Rangs\leq 50$ \&\& $Rangs \geq 950|$"  }
 \end{figure}
+
+%\node 	(source)		[process,below of=titre,yshift=1cm, xshift=0.5cm]	{Source d'entropie};
+%\node 	(conver)		[process,below of=source,xshift=1cm]		{Convertisseur};
+%\node 	(bz2) 		[process,right of=conver, xshift=5cm]	{BZ2};
+%\node	(score)		[right of=bz2, xshift=2cm] {Score};
+%
+%\begin{pgfonlayer}{background}
+%\node[punkt, fit=(titre)(source)(conver)(bz2)(score), fill=yellow!5] (groupclient) {};
+%\end{pgfonlayer}
+%
+%\draw	[arrow] (source)		-- node[anchor=west] {144 21 139 0 0 15}		(conver);
+%\draw	[arrow] (conver)		-- node[anchor=north] {"144,21,139,0,0,15"}		(bz2);
+%\draw	[arrow] (bz2)		-- node[anchor=north] {21}		(score);
+
+
+\subsubsubsection{Score de compression}
+Les algorithmes de compressions sont habituellement bien adaptés pour supprimer les données redondantes des chaînes de caractère. Suivant un algorithme de compression choisi, le score de compression est la longueur de la donnée compressée obtenue. 
+
+\paragraph{Calcul du score.\\}
+Le score est calculé de la façon suivante :
+\begin{enumerate}
+\item Les sous ensembles de données sont encodés en chaîne de caractère séparés par une virgule
+\item La chaîne de caractère est compressée suivant l'algorithme de compression de bzip2 \footnote{cf. \url{www.bzip.org}}
+\item Le score retourné correspond à la longueur de la chaîne de caractère compressée
+\end{enumerate}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node 	(titre) 		{\textbf{Score de compression}};
+\node 	(source)		[process,below of=titre,yshift=1cm, xshift=0.5cm]	{Source d'entropie};
+\node 	(conver)		[process,below of=source,xshift=1cm]		{Convertisseur};
+\node 	(bz2) 		[process,right of=conver, xshift=5cm]	{BZ2};
+\node	(score)		[right of=bz2, xshift=2cm] {Score};
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(titre)(source)(conver)(bz2)(score), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+\draw	[arrow] (source)		-- node[anchor=west] {144 21 139 0 0 15}		(conver);
+\draw	[arrow] (conver)		-- node[anchor=north] {"144,21,139,0,0,15"}		(bz2);
+\draw	[arrow] (bz2)		-- node[anchor=north] {21}		(score);
+\end{tikzpicture}
+\end{center}
+\caption{Calcul du score de compression}
+\end{figure}
+
+\subsubsubsection{Scores \textit{Over/Under Runs} (2)}
+\paragraph{Définition.\\}
+On définit le \textbf{\textit{run test}} comme la série des valeurs montantes ou la série des valeurs décroissantes. Le terme de \texttt{run} peut être expliqué comme la successions d'éléments de la même classe. Le nombre d'augmentations ou de réductions définit la longueur du test.  Dans un jeu de données aléatoire, la probabilité que la $(i+1)$ème valeur est plus grande ou plus petite que la $i$ème valeur doit suivre la loi binomiale.\\
+
+Le \textit{run test} est défini tel que : 
+\begin{itemize}
+\item $H_0$ : la séquence a été produite de manière aléatoire
+\item $H_1$ : la séquence n'a pas été produite de manière aléatoire
+\item Test statistique : 
+	$$ Z = \frac{R - \overline{R}}{s_R}$$
+	où : 
+	\begin{itemize}
+	\item $R$ : le nombre de \textit{runs} observés
+	\item $\overline{R}$, la moyenne (le nombre de runs attendus) telle que  :
+	$$\overline{R}= \frac{2  N_+ N_-}{N}+1$$
+	\item $s_R$ la variance (déviation standard) calculée telle que : 
+	$$s_R^2 = \frac{2 N_+ N_-(2N_+ N_- -N)}{N^2(N-1)}  = \frac{(\overline{R}-1)(\overline{R}-2)}{N-1}$$
+	\end{itemize}
+\item Niveau significatif : $\alpha$
+\item Zone critique : Le \textit{run test} rejette l'hypothèse nulle $H_0$  si $ |Z| > Z_{1-\alpha/2}$
+
+
+\end{itemize}
+
+
+
+
+
+\paragraph{Exemple de Run test.\\}
+Soit la suite binaire $X=(x_1,x_2,...,x_n)$ sortie d'un générateur aléatoire. Pour tous les $i$ allant de $1$ à $n-1$. On stocke dans un vecteur de taille $n-1$ le signe de $x_{i+1}-x_i$. Le nombre de run consiste au nombre de changements de signe.
+
+Si $X=111001111000110$, alors son vecteur associé sera $(++-+++++-++++-)$, soit 6 \textit{runs}. Dans le cas des suites binaires, il s'agit simplement de compter le nombre de changement d'éléments (ou classes), l'ensemble de données étant $\lbrace 0,1 \rbrace$. Si l'élément $i$ est équivalent au précédent, alors on passe au suivant, sinon on incrémente de un le nombre de \textit{runs}.\\
+
+Ici on a donc : 
+\begin{itemize}
+\item $R = 6$
+\item $\overline{R}= \frac{2*3*3}{15}+1 = 2.2 $
+\item $s_R^2 = \frac{1.2*0.2}{14} = 0,017142857$
+\item D'où $ Z = \frac{6 -2.2}{0,130930734} = 29.0229794$
+\item On choisit un niveau $\alpha=0.05$
+\item On cherche $Z_{1-\alpha/2}$. $\frac{1-\alpha}{2}=0.475$ soit suivant la courbe normale une valeur de  $Z_{1-\alpha/2}=1.96$. Ceci correspond à la valeur critique. La zone de rejet de $H_0$ est telle que $|Z| > 1.96$
+\item Étant donné que $|Z| > 1.96$, on en conclu que les données ne sont pas aléatoires au risque de 5\%.\\
+
+\end{itemize}
+
+
+\paragraph{Calcul des scores \textit{Over/Under Runs}.\\}
+Pour chaque sous-ensemble, on calcule la médiane des données. On identifie ensuite les données en 3 sous-ensembles :
+\begin{itemize}
+\item Soit elles sont égales à la médiane
+\item Soit elles sont inférieures à la médiane
+\item Soit elles sont supérieures à la médiane
+\end{itemize}
+Les sous ensembles inférieurs et supérieurs à la médiane sont susceptible d'avoir un \textit{run score} relativement faible, si les données sont suffisamment bien IID.\\
+
+ 
+Les deux scores de \textit{over/under runs} sont calculés comme suit : 
+\begin{enumerate}
+\item On récupère la médiane de notre sous ensemble de données. Pour des données binaires, la médiane sera de 0.5
+\item Pour chaque sous ensemble original et chaque sous ensemble permuté, un sous ensemble temporaire est construit comme suit. Pour chaque élément : 
+	\begin{enumerate}
+	\item Si l'élément est plus grand que la médiane, on ajoute \texttt{+1} au vecteur temporaire
+ 	\item Si l'élément est plus petit que la médiane, on ajoute \texttt{-1} au vecteur temporaire
+	\item Si l'élément est égal à la médiane, on passe à l'élément suivant	
+	\end{enumerate}
+\item La plus grande  taille du \textit{run} sur les \texttt{+1} ou les \texttt{-1} est considéré comme le premier score 
+\item La taille du \textit{run} sur les \texttt{+1} et les \texttt{-1} est considéré comme le second score.
+\end{enumerate}
+
+\paragraph{Exemple.\\}
+Considérant l'ensemble de taille 7 ayant les données suivantes : $\lbrace 5,15,12,1,13,9,4\rbrace$.
+\begin{enumerate}
+\item  On récupère la médiane : $9$
+\item  Création du vecteur temporaire : $5<9 \Rightarrow -1 ...$. Vecteur final : $\lbrace -1, +1,+1,-1,+1,-1 \rbrace$. On note que pour ce vecteur la valeur 9 a été omise.
+\item Le \textit{run} le plus long pour le \texttt{+1} et le \texttt{-1} est de taille 2, (score 1)
+\item Le \textit{run} global est de taille 5, (score 2)
+\end{enumerate}
+
+\subsubsubsection{Score excursion}
+Le score d'excursion mesure la déviation en chaque point d'une somme d'éléments suivant leur moyenne.
+
+\paragraph{Définition.\\}
+ Étant donné les éléments $(s_0,s_1,...,s_i)$, et leur moyenne $\mu_i$,  \textbf{l'excursion} $Esc_i$ est définie telle que :
+ $$ Esc_i= s_0+ s_1 + ... + s_i - i*\mu$$ 
+Le score retourné est l'excursion maximale en valeur absolue du sous ensemble de données. \\
+
+\paragraph{Calcul du score.\\}
+Le score est ainsi calculé comme suit. $\mu$ est défini comme la moyenne des valeurs d'un ensemble donné.
+\begin{enumerate}
+\item Pour $j=1$ à $ \lfloor\frac{N}{10}\rfloor$ (taille des données du sous ensemble), on calcule $d_j=|Esc_j| = |\sum\limits_{i=0}^{j} s_i|$
+\item $\text{Score} = \Max\limits_{j=0,j<=\lfloor\frac{N}{10}\rfloor} (d_j)$
+\end{enumerate}
+
+\paragraph{Exemples.\\}
+Étant donné le sous ensemble suivant : $ \lbrace 2, 15, 4, 10, 9 \rbrace$. 
+\begin{enumerate}
+\item On calcule $\mu$, ici $\mu=8$
+\item Calcul des $d_j$ :\\
+$d_1=|2-8|=6$, $d_2=|2+15-2*8|$, $d_3=3$, $d_4=1$, $d_5=0$
+\item Le score est donc de $6$\\
+\end{enumerate}
+
+\subsubsubsection{Scores Runs directionnel (3)}
+Le principe du run test reste le même que celui évoqué précédement à l'exception suivante près:  lorsqu'il y a égalité entre deux éléments consécutifs, on le référence comme étant 0 dans le vecteur temporaire plutôt que de passer directement à l'élément suivant. 
+
+\paragraph{Calcul des scores pour des données quelconques.\\}
+Le score est calculé de la façon suivante : 
+\begin{enumerate}
+\item Le nombre total de runs (sans considérer le 0 comme un changement de "signe") (score 1)
+\item La longueur du plus long run (les 0 sont également ignorés)  (score 2)
+\item Le maximum entre le nombre de données \texttt{+1} et le nombre de données \texttt{-1} (score 3)\\
+
+\end{enumerate}
+
+
+\textbf{Exemple :} \\
+Étant donné l'ensemble suivant : $\lbrace 2, 2, 2, 5, 7, 7, 9, 3, 1, 4, 4 \rbrace$. 
+\begin{enumerate}
+\item  On calcule son vecteur temporaire lié $ \lbrace 0, 0, +1, +1, 0, +1, -1, -1, +1, 0 \rbrace $
+\item Nous comptons 3 séries de run : $(0,0,+1,+1,0,+1)$, $(-1,-1)$ et $(+1,0)$ (score 1)
+\item Le run le plus long est de $4$ : $(+1,+1,0,+1)$ (score 2)
+\item On compte 4 \texttt{+1} et 4 \texttt{-1}, le maximum des deux est donc de 4 (score 3).
+\end{enumerate}
+
+
+\paragraph{Données binaires.\\}
+Dans le cadre des données binaires en sortie de source d'entropie, il convient de faire un pré-traitement sur les données : 
+\begin{enumerate}
+\item On convertit les bits en bytes.
+\item On calcule le poids de hamming pour ces éléments : \\
+Pour $i=0$ à  $\frac{\lfloor\frac{N}{10}\rfloor}{8} -1 $, on stocke dans $W_i$ son poids de Hamming, tel que $W_i=hamming\_weight(s_i,...,s_{i+7})$
+\item On réitère l'opération des données quelconques à partir de ce vecteur $W_i$.
+\end{enumerate}
+
+\paragraph{Poids de Hamming.\\}
+Le \textbf{poids de hamming} d'un sous ensemble $(s_i,...,s_{i+n})$ , donné par $hamming\_weight(s_i,...,s_{i+n})$ est défini comme le nombre de 1 de la suite $(s_i,...,s_{i+n})$.
+
+
+
+\subsubsubsection{Score de covariance}
+Le score de covariance permet de détecter la relation entre les valeurs numériques successives. En effet, toute relation linéaire entre des paires successives va affecter directement ce score. On pourra alors constater une différence entre la covariance calculée sur le sous ensemble de données originales et la covariances calculée sur le sous ensemble de données permutées. La covariance est calculée entre chaque paire consécutive du sous ensemble S tel que $s_i$ est apparié avec $s_{i+1}$.\\
+
+\paragraph{Calcul du score.\\}
+Le score est calculé comme suit : 
+\begin{enumerate}
+\item la variable $count$ est initialisée à 0.
+\item $\mu$, moyenne des données de $s_0$ à $s_{\lfloor\frac{N}{10}\rfloor-1}$ est calculée.
+\item Pour $i=1$ à $\lfloor\frac{N}{10}\rfloor$ on incrémente $count$ tel que :
+$$count = count + (s_i - \mu)(s_{i-1} - \mu)$$
+\item On obtient enfin le score : $Score = \lfloor \frac{count}{\lfloor\frac{N}{10}\rfloor-1} \rfloor$
+\end{enumerate}
+
+\paragraph{Exemple.\\}
+Étant donné le sous-ensemble  : $\lbrace 15, 2 ,6 , 10; 12 \rbrace$ de 5 éléments :
+\begin{enumerate}
+\item $\mu = 9$
+\item 	\begin{itemize}
+		\item Pour $i=1$, $count =0 + (2-9)(15-9) = -42$
+		\item Pour $i=2$, $count = -42 + (6-9)(2-9) = -21$
+		\item Pour $i=3$, $count = -24$
+		\item Pour $i=4$, $count = -21$
+		\end{itemize}
+\item $Score = \lfloor \frac{-21}{4} \rfloor = -5$
+\end{enumerate}
+
+\subsubsubsection{Score de collision (3)}
+Une façon naturelle de tester l'entropie d'un générateur est de mesurer le nombre d'essais nécessaires pour obtenir une valeur identique à la première, en d'autres termes, le nombre d'essais nécessaires pour obtenir une collision. Ainsi,  notre score de collision va mesurer le nombre d'essais successifs jusqu'à ce qu'un élément identique soit trouvé.\\
+
+
+Dans le cas des données binaires, un sous ensemble de données binaires est converti en séquence de 8bits avant d'être testé. \\
+
+\paragraph{Calcul des scores.\\}
+Les 3 scores de collisions sont calculés comme suit : 
+\begin{enumerate}
+\item $Counts$  est une liste d'échantillons nécessaires pour trouver une collision. La liste est vide à l'initialisation.
+\item $pos=0$
+\item Tant que $pos < \lfloor\frac{N}{10}\rfloor$
+	\begin{enumerate}
+	\item Trouver le plus petit $j$ tel que $s_{pos} ... s_{pos+j}$
+		\begin{enumerate}
+		\item Si aucun $j$ de ce type n'existe, on sort de la boucle tant que
+		\end{enumerate}
+	\item Ajouter $j$ à la liste $Counts$
+	\item $pos = pos + j + 1$
+	\end{enumerate}
+\item On retourne les scores suivants : 
+	\begin{enumerate}
+	\item La valeur minimale de la liste $Counts$ (score 1)
+	\item La moyenne de la liste $Counts$ (score 2)
+	\item La valeur maximale de la liste $Counts$ (score 3)
+	\end{enumerate}
+\end{enumerate}
+
+\paragraph{Exemple.\\}
+Considérant les données : $ \lbrace 2, 1, 1, 2, 0, 1, 0, 1, 1, 2 \rbrace$ de taille $10$.
+\begin{enumerate}
+\item On exécute le contenu de la boucle tant que : 
+	\begin{enumerate}
+	\item Considérant $2$ comme la $0$e valeur, la première collision apparaît à $j=2$, pour la valeur \texttt{1}.
+	\item On passe à une analyse sur le reste de l'ensemble initial non analysé : $ \lbrace 2, 0, 1, 0, 1, 1, 2 \rbrace$. La première collision de ce sous-ensemble apparaît en $j=3$, pour la valeur \texttt{0}.
+	\item On travaille à présent sur l'ensemble  $ \lbrace  1, 1, 2 \rbrace$. La première collision apparaît en $j=1$
+	\item Enfin, on ne trouve aucune collision sur l'ensemble $\lbrace 2 \rbrace $
+	\end{enumerate}
+\item On retourne les scores : 
+	\begin{enumerate}
+	\item $min(Counts) = 1$ (score 1)
+	\item $\mu_{Counts} = 2$ (score 2)
+	\item $Max(Counts) = 3$ (score 3)
+	\end{enumerate}
+
+\end{enumerate}
+
+\subsubsection{Test statistique spécifique : \chidpdf}
+Dès lors que source d'entropie est considérée comme IID, alors la distribution de ces valeurs peut être considérée comme une distribution indépendante, une distribution multinomiale.
+
+\paragraph{Définition.\\}
+La \textbf{loi multinomiale} est une généralisation de la loi binomiale. On considère $m$ résultats possibles (2 pour la loi binomiale). Soit $N_i$ pour $i \in \lbrace1,...,m\rbrace$ la variable aléatoire multinomiale ayant une probabilité $p_i$, telle que :
+\begin{center}
+$ \sum \limits_{i=1}^{m} N_i = 1$ et  $\sum \limits_{i=1}^{m} p_i = 1$ 
+\end{center}
+La densité de probabilité de cette loi s'écrit : 
+$$ \mathbb{P}(N_1=n_1, ..., N_m = n_m) = \frac{n!}{n_1! ... n_m!}p_1^{n_1}...p_m^{n_m}$$
+Pour respectivement les espérances et variances suivantes :
+\begin{center}
+$ \mathbb{E}[N_i]=np_i$ et $\mathbb{V}[N_i]=np_i(1-p_i)$
+\end{center}
+
+\paragraph{Approximation.\\}
+Si les variables sont indépendantes, $\sum \limits_{i=1}^m \frac{(N_i - np_i)^2}{np_i(1-p_i)}$ suit une loi du \chidpdf à $m$ degrés de libertés. Ainsi, le test du \chidpdf peut ici être utilisé pour tester si des données suivent une distribution multinomiale.\\
+
+
+Plus généralement, le test peut être utilisé pour vérifier si des données suivent une distribution particulière, pourvu que celles-ci ne soient pas de trop grande taille. Deux types de tests sont proposés sur la source d'entropie : 
+\begin{itemize}
+\item Le test d'indépendance entre des données successives obtenues (tests différents pour des données binaires et non binaires)
+\item Le test d'ajustement sur les 10 sous-ensembles de données, qui permet de vérifier si le modèle adopté pour les données est satisfaisant, ie. dans quelle mesure les résidus sont dus au hasard (tests différents pour des données binaires et non binaires). 
+
+Nous ne détaillerons pas dans ce rapport ces tests respectifs. Ils sont toutefois décrits dans le document du NIST SP800-90b.
+
+\end{itemize}
+
+
+
+\subsection{Déterminer l'entropie minimale des sources IID}
+On souhaite à présent estimer l'entropie fournie par une source IID (données indépendantes et identiquement distribuées). 
+Ce test est basé sur le nombre d'observations d'un échantillon le plus courant de la source de bruit ($pmax$). Le but est de calculer la borne minimale d'entropie de la source.\\
+
+\paragraph{Calcul de l'entropie minimale.\\}
+Étant donné N échantillons $\lbrace x_1, ... x_n \rbrace$
+\begin{enumerate}
+\item Trouver la valeur la plus souvent rencontrée dans le jeu de données
+\item Compter le nombre d’occurrences de cette valeur, stocké dans $C_{MAX}$
+\item Calculer  $pmax= \frac{C_{MAX}}{N}$
+\item Calculer $C_{BOUND} = C_{MAX} + 2.3 \sqrt{N*pmax(1-pmax)} $
+\item Calculer $ H = -log_2(\frac{C_{BOUND}}{N})$
+\item Calculer le nombre d'éléments dans l'échantillon, que l'on stocke dans W. 
+\item $min(W,H)$ est l'entropie minimale
+\end{enumerate}
+
+
+\paragraph{Exemple.\\}
+Considérant le jeu de données  $\lbrace 0,1,1,2,0,1,2,2,0,1,0,1,1,0,2,2,1,0,2,1 \rbrace$ de 20 données :
+\begin{itemize}
+\item La valeur la plus courant du jeu de données est \texttt{1} (On compte 6 \texttt{0}, 8 \texttt{1} et 6 \texttt{2})
+\item $C_{MAX} = 8$
+\item $pmax = \frac{8}{20} = 0.4$
+\item $ C_{BOUND} = 8 + 2.3 \sqrt{20*0.4*0.6} = 13.04$
+\item $ H = -log_2(\frac{13.04}{20}) = 0.186$
+\item $ W = 3$
+\item Entropie minimale calculée : $ min(3,0.186) = 0.186$
+\end{itemize}
+
