@@ -1,0 +1,143 @@
+\chapter{Signature et authentification}
+\section{Définitions et contexte}
+
+\section{Audits}
+	\subsection{Audit 1 : Attaque par injection de fautes sur les certificats RSA}
+		\subsubsection{Normes visées}
+	
+		
+		\subsubsection{Faille}
+		
+			L'Université du Michigan a réussi l'exploit de récupérer la 
+			clé privée d'un certificat RSA en un peu plus de 100h
+			\cite{andrea2010RSA} \cite{opensslvuln2010}.\\
+			L'attaque fonctionne par injection de fautes \cite{fault2008lawson} 
+			sur la méthode d'authentification. 
+			La technique est donc très poussée, mais le résultat en vaut 
+			le détour.\\
+		
+			L'injection de faute doit se faire sur quelques bits pour ne pas
+			disfonctionner le système tout entier. 
+			Les signatures erronées produites révèleront de l'information 
+			sur la clé privée. 
+			Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
+		
+			La cause venait de l'algorithme d'exponentiation modulaire 
+			(Fixed-Window Exponentiation), qui a l'inconvénient d'utiliser 
+			plus de 1000 multiplications.
+			La multiplication étant très sensible en cas de dégradation du
+			microprocesseur.\\
+			
+			"The fixed-window exponentiation algorithm in the OpenSSL library 
+			does not validate the correctness of the signature produced before
+			sending it to the client, a vulnerability that we exploit in our
+			attack"\\
+			
+			Malheureusement pour pouvoir exploiter cette faille il faut pouvoir
+			contrôler la machine (en ayant un accès au BIOS par exemple).
+	
+		
+		\subsubsection{Implémentation}
+			
+			\paragraph{Version OpenSSL.\\}
+			
+			\paragraph{Fonction.\\}
+			La fonction liée à cette norme est accessible sous le paquetage
+			\texttt{bla/bla/bla}, dont les composantes principales sont 
+			listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+\subsection{Audit 2 : Malformation des signatures DSA/ECDSA}
+		\subsubsection{Normes visées}
+	
+		
+		\subsubsection{Faille}
+		
+			
+		En 2008, une vulnérabilité sur la malformation des signatures 
+		survient sur OpenSSL (re-analysé en Novembre 2012)
+		\cite{openssl2009secadv} \cite{cve-2008-5077}.\\
+	
+		Dans les recommandations générales, il est clairement indiqué que ce sont 
+		les clients qui ne doivent plus utiliser une ancienne version d'OpenSSL
+		ou alors ne pas utiliser de certificats DSA/ECDSA\\
+	
+		Reste à savoir si c'est toujours d'actualité (e.g. si la faille est
+		toujours exploitable), et si les serveurs respectent bien la
+		recommandation.
+	
+		En 2009, un cas similaire a été trouvé dans un autre protocole 
+		(NTP) avec la même fonction EVP\_VerifyFinal \cite{cve-2009-0021}.
+		
+		\subsubsection{Implémentation}
+			
+			\paragraph{Version OpenSSL.\\}
+			
+			\paragraph{Fonction.\\}
+			La fonction liée à cette norme est accessible sous le paquetage
+			\texttt{bla/bla/bla}, dont les composantes principales sont 
+			listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+		
+		
+		
+		
+	
+
+\section{Recommandations générales}
+
+
+
+
+%Si nécessaire, Code de figure : 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.2]{images/logo_univ.png}
+	\caption{Titre de figure 2.1}
+	\label{fig21}
+\end{figure}
