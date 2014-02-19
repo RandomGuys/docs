@@ -40,3 +40,11 @@
   identifierstyle=\color{blue},
   stringstyle=\color{orange},
 }
+
+\lstdefinelanguage{diff}{
+  morecomment=[f][\color{blue}]{@@},     % group identifier
+  morecomment=[f][\color{red}]-,         % deleted lines 
+  morecomment=[f][\color{mygreen}]+,       % added lines
+  morecomment=[f][\color{mymauve}]{---}, % Diff header lines (must appear after +,-)
+  morecomment=[f][\color{mymauve}]{+++},
+}
