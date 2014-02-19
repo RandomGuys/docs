@@ -4,8 +4,31 @@
 \section{Audits}
 	\subsection{Audit 1 : Attaque par injection de fautes sur les certificats RSA}
 		\subsubsection{Normes visées}
-	
-		
+Dans la RFC : 3447, la signature est décrit telle qu'une primitive d'une signature qui produit la représentation de la signature depuis un message sous le contrôle d'une clef privée. La vérification se fait alors en récupérant la représentation du message depuis la représentation de la signature sous le contrôle de la clef publique correspondante.
+\\
+\\ La signature se déroule en par deux opérations qui sont la génération et la vérification. L'opération de génération consiste donc à générer une signature depuis un message avec la clef privée de l'utilisation (signataire) et l'opération de vérification consiste à vérifier la signature en se basant sur le message en utilisant la clef publique du signataire. 
+Ce schéma d'utilisation peut être utiliser dans de multiple application telle que pour les certificats X.509. 
+\\
+La norme spécifie deux type de schéma de signature qui sont :
+\begin{itemize}
+\item RSASSA-PSS
+\item RSASSA-PKCS1-v1\_5 \\
+\end{itemize}
+
+Même si aucune attaque n'est connue contre RSASSA-PKCS1-v1\_5, dans l'intérêt d'augmenter la robustesse, RSASSA-PSS est recommandé pour d'éventuelle adoption dans les nouvelles applications. RSASSA-PKCS1-v1\_5 est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'il est toujours approprié dans les nouvelles applications, une transition vers RSASSA-PSS est encouragée.
+\\ \\
+La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) qui combine les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite convertie en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.
+\\ \\
+Dans le sens inverse, l'opération de vérification de signature applique une primitive de vérification de signature à la signature pour récupérer la représentation du message, qui est alors convertie dans un message de chaîne de caractère encodé. L'opération de vérification est appliquée au message et le message encodé pour déterminer s'ils sont consistent l'un et l'autre.
+\\ \\
+\textbf{RSASSA-PSS : }
+\\ \\
+RSASSA-PSS combine les primitives RSASP1 et RSAVP1 avec la méthode d'encodage de EMSA-PSS. La longueur du message sur laquelle RSASSA-PSS peut travailler est soit illimité soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à RSASSA-PKCS1-v1\_5, un identificateur de fonction de hachage n'est pas inclue dans le message encodé par EMSA-PSS. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage (et potentiellement plus faible) que celui sélectionner par le signataire. Il est alors recommandée que la fonction de génération de masquage d'EMSA-PSS  soit basé sur la même fonction de hachage. De cette façon, l'encodage tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionner par le signataire.
+\\
+La comparaison entre fonction de hachage est seulement utilisé pour empêcher la substitution de fonction de hachage, et n'est pas nécessaire si la fonction de hachage est substituer d'une autre façon (e.g., le vérificateur n'accepte qu'une fonction de hachage désigner).
+\\ \\
+Ce qui est différent avec RSASSA-PSS avec les autres méthode de signature RSA c'est qu'il est probabiliste plutôt que déterministe, avec l'incorporation d'un aléa aléatoire. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
+
 		\subsubsection{Faille}
 		
 			L'Université du Michigan a réussi l'exploit de récupérer la 
