@@ -4,60 +4,57 @@
 \section{Audits}
 	\subsection{Audit 1 : Attaque par injection de fautes sur les certificats RSA}
 		\subsubsection{Normes visées}
-Dans la RFC : 3447, la signature est décrit telle qu'une primitive d'une signature qui produit la représentation de la signature depuis un message sous le contrôle d'une clef privée. La vérification se fait alors en récupérant la représentation du message depuis la représentation de la signature sous le contrôle de la clef publique correspondante.
-\\
-\\ La signature se déroule en par deux opérations qui sont la génération et la vérification. L'opération de génération consiste donc à générer une signature depuis un message avec la clef privée de l'utilisation (signataire) et l'opération de vérification consiste à vérifier la signature en se basant sur le message en utilisant la clef publique du signataire. 
-Ce schéma d'utilisation peut être utiliser dans de multiple application telle que pour les certificats X.509. 
-\\
-La norme spécifie deux type de schéma de signature qui sont :
+Dans la RFC 3447 \cite{rfc3447}, la signature est décrite telle une primitive de signature qui produit la représentation de la signature depuis un message sous le contrôle d'une clef privée. La vérification se fait alors en récupérant la représentation du message depuis la représentation de la signature sous le contrôle de la clef publique correspondante.\\
+
+La signature se déroule en  deux opérations qui sont la génération et la vérification. L'opération de génération consiste donc à générer une signature depuis un message avec la clef privée de l'utilisateur (signataire) et l'opération de vérification consiste à vérifier la signature en se basant sur le message en utilisant la clef publique du signataire. 
+Ce schéma peut être utilisé dans de multiples applications telles que les certificats X.509.\\
+
+
+La norme spécifie deux types de schéma de signature qui sont :
 \begin{itemize}
 \item RSASSA-PSS
 \item RSASSA-PKCS1-v1\_5 \\
 \end{itemize}
 
-Même si aucune attaque n'est connue contre RSASSA-PKCS1-v1\_5, dans l'intérêt d'augmenter la robustesse, RSASSA-PSS est recommandé pour d'éventuelle adoption dans les nouvelles applications. RSASSA-PKCS1-v1\_5 est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'il est toujours approprié dans les nouvelles applications, une transition vers RSASSA-PSS est encouragée.
-\\ \\
-La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) qui combine les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite convertie en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.
-\\ \\
-Dans le sens inverse, l'opération de vérification de signature applique une primitive de vérification de signature à la signature pour récupérer la représentation du message, qui est alors convertie dans un message de chaîne de caractère encodé. L'opération de vérification est appliquée au message et le message encodé pour déterminer s'ils sont consistent l'un et l'autre.
-\\ \\
-\textbf{RSASSA-PSS : }
-\\ \\
-RSASSA-PSS combine les primitives RSASP1 et RSAVP1 avec la méthode d'encodage de EMSA-PSS. La longueur du message sur laquelle RSASSA-PSS peut travailler est soit illimité soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à RSASSA-PKCS1-v1\_5, un identificateur de fonction de hachage n'est pas inclue dans le message encodé par EMSA-PSS. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage (et potentiellement plus faible) que celui sélectionner par le signataire. Il est alors recommandée que la fonction de génération de masquage d'EMSA-PSS  soit basé sur la même fonction de hachage. De cette façon, l'encodage tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionner par le signataire.
-\\
-La comparaison entre fonction de hachage est seulement utilisé pour empêcher la substitution de fonction de hachage, et n'est pas nécessaire si la fonction de hachage est substituer d'une autre façon (e.g., le vérificateur n'accepte qu'une fonction de hachage désigner).
-\\ \\
-Ce qui est différent avec RSASSA-PSS avec les autres méthode de signature RSA c'est qu'il est probabiliste plutôt que déterministe, avec l'incorporation d'un aléa aléatoire. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
+Même si aucune attaque n'est connue contre RSASSA-PKCS1-v1\_5,  RSASSA-PSS est recommandé dans l'intérêt d'augmenter la robustesse d'un système. RSASSA-PKCS1-v1\_5 est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'elle est toujours appropriée dans les nouvelles applications, une transition vers RSASSA-PSS est encouragée.\\ 
+
+
+La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) combinant les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite converti en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.\\ 
+
+
+Dans le sens inverse, l'opération de vérification de signature applique une primitive de vérification de signature à la signature pour récupérer la représentation du message, qui est alors convertie dans un message de chaîne de caractères encodée. L'opération de vérification est appliquée au message et au message encodé pour déterminer s'ils  consistent bien en  l'un et l'autre.\\ 
+
+
+\paragraph{RSASSA-PSS : \\}
+RSASSA-PSS combine les primitives RSASP1 et RSAVP1 avec la méthode d'encodage EMSA-PSS. La longueur du message sur laquelle RSASSA-PSS peut travailler est soit illimité, soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à RSASSA-PKCS1-v1\_5, un identificateur de fonction de hachage n'est pas inclu dans le message encodé par EMSA-PSS. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage ( potentiellement plus faible) que celle sélectionnée par le signataire. Il est alors recommandé que la fonction de génération de masquage d'EMSA-PSS  soit basée sur la même fonction de hachage. De cette façon, l'encodage de tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionné par le signataire.\\
+
+
+La comparaison entre fonctions de hachage est seulement utilisée pour empêcher la substitution de fonction de hachage, et n'est pas nécessaire si la fonction de hachage est substituée d'une autre façon (e.g., le vérificateur n'accepte qu'une fonction de hachage désignée).\\ 
+
+
+Ce qui est différent pour RSASSA-PSS des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
 
 		\subsubsection{Faille}
 		
 			L'Université du Michigan a réussi l'exploit de récupérer la 
 			clé privée d'un certificat RSA en un peu plus de 100h
-			\cite{andrea2010RSA} \cite{opensslvuln2010}.\\
-			L'attaque fonctionne par injection de fautes \cite{fault2008lawson} 
+			\cite{andrea2010RSA} \cite{opensslvuln2010}. 	L'attaque fonctionne par injection de fautes \cite{fault2008lawson} 
 			sur la méthode d'authentification. 
 			La technique est donc très poussée, mais le résultat en vaut 
-			le détour.\\
-		
-			L'injection de faute doit se faire sur quelques bits pour ne pas
-			disfonctionner le système tout entier. 
-			Les signatures erronées produites révèleront de l'information 
+			la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire 	dysfonctionner le système tout entier. 
+			Les signatures erronées produites révéleront de l'information 
 			sur la clé privée. 
 			Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
+			
 		
 			La cause venait de l'algorithme d'exponentiation modulaire 
 			(Fixed-Window Exponentiation), qui a l'inconvénient d'utiliser 
-			plus de 1000 multiplications.
-			La multiplication étant très sensible en cas de dégradation du
-			microprocesseur.\\
-			
-			"The fixed-window exponentiation algorithm in the OpenSSL library 
+			plus de 1000 multiplications, la multiplication étant très sensible en cas de dégradation du	microprocesseur.	\textit{"The fixed-window exponentiation algorithm in the OpenSSL library 
 			does not validate the correctness of the signature produced before
 			sending it to the client, a vulnerability that we exploit in our
-			attack"\\
+			attack"}\\
 			
-			Malheureusement pour pouvoir exploiter cette faille il faut pouvoir
-			contrôler la machine (en ayant un accès au BIOS par exemple).
+			Malheureusement, il faut pouvoir 	contrôler la machine (en ayant un accès au BIOS par exemple) pour pouvoir exploiter cette faille .
 	
 		
 		\subsubsection{Implémentation}
@@ -101,18 +98,12 @@ int main()
 			
 		En 2008, une vulnérabilité sur la malformation des signatures 
 		survient sur OpenSSL (re-analysé en Novembre 2012)
-		\cite{openssl2009secadv} \cite{cve-2008-5077}.\\
-	
-		Dans les recommandations générales, il est clairement indiqué que ce sont 
+		\cite{openssl2009secadv} \cite{cve-2008-5077}. Dans les recommandations générales, il est clairement indiqué que ce sont 
 		les clients qui ne doivent plus utiliser une ancienne version d'OpenSSL
-		ou alors ne pas utiliser de certificats DSA/ECDSA\\
-	
-		Reste à savoir si c'est toujours d'actualité (e.g. si la faille est
+		ou alors ne pas utiliser de certificats DSA/ECDSA. 	Reste à savoir si c'est toujours d'actualité (e.g. si la faille est
 		toujours exploitable), et si les serveurs respectent bien la
-		recommandation.
-	
-		En 2009, un cas similaire a été trouvé dans un autre protocole 
-		(NTP) avec la même fonction EVP\_VerifyFinal \cite{cve-2009-0021}.
+		recommandation. 	En 2009, un cas similaire a été trouvé dans un autre protocole 
+		(NTP) avec la même fonction \texttt{EVP\_VerifyFinal} \cite{cve-2009-0021}.
 		
 		\subsubsection{Implémentation}
 			
