@@ -2,10 +2,50 @@
 \section{Définitions et contexte}
 
 \section{Audits}
-	\subsection{Audit 1 : X }
-	\subsubsection{Norme visée}
-	\subsubsection{Faille}
-	\subsubsection{Implémentation}
+	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
+		\subsubsection{Normes visées}
+
+		Voici l'algorithme de génération de g, d'après la RFC 2631 \cite{rfc2631}
+		datant de 1999 et dérivé de la FIPS-186 : \\
+		\begin{itemize}
+		\item 1- Soit j = (p - 1)/q.
+		\item 2- Choisir h $\in \mathbb{N}$, tel que 1 < h < p - 1
+		\item 3- Calculer g = $h^j$ mod p
+		\item 4- Si g = 1 recommencer l'étape 2\\
+		\end{itemize}
+	
+		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (Pour 
+		une utilisation SSH) : \\
+		" It is recommended to use 2 as generator, because it improves
+		efficiency in multiplication performance.  It is usable even when it
+		is not a primitive root, as it still covers half of the space of
+		possible residues. "\\
+	
+		\subsubsection{Faille}
+	
+		Lorsque nous avons étudiés le code de Diffie-Hellman dans OpenSSL, nous nous
+		sommes penchés sur un choix plutôt étrange . \\
+		La valeur du générateur est toujours fixé à 2 ou à 5. \\
+	
+		Le générateur de Diffie-Hellman n'étant pas une racine primitive dans 
+		$\mathbb{Z}/\mathbb{Z}_p$, les conséquences sont :
+		\begin{itemize}
+		\item L'espace des clés possibles est fortement réduit (Si g=2 => espace 
+		divisé par deux)
+		\item Deux clés privées distinctes pourront avoir une clé publique commune
+		\item La méthode de cryptanalyse Baby-step Giant-step peut s'en trouver 
+		facilité.\\
+		\end{itemize}
+	
+		Évidemment, ce choix n'est pas une faille en soit, il n'est juste pas 
+		optimal et résulte d'un bon compromis entre vitesse et sécurité.\\
+		
+		Pour une sécurité optimale, il est conseillé de choisir un générateur qui 
+		soit une racine primitive, pour être certain que personne ne puisse 
+		signer, déchiffrer des messages à votre place!\\
+	
+	
+		\subsubsection{Implémentation}
 		
 		\paragraph{Version OpenSSL.\\}
 		
@@ -36,8 +76,147 @@ int main()
 		\end{lstlisting}
 		
 		
+	\subsection{Audit 2 : Diffie-Hellman Ephémère en mode FIPS}
+		\subsubsection{Normes visées}
+
+	
+		\subsubsection{Faille}
+	
+		Une faille plus grave concerne le mode FIPS (Federal Information 
+		Processing Standard) d'OpenSSL.
+		Qui peut être compilé avec la commande "./config fipscanisterbuild". \\
+
+		En effet, un attaquant situé entre le client et le serveur, 
+		et connaissant la clé secrète du serveur, peut déchiffrer une 
+		session SSL/TLS. \\
+	
+		L'algorithme EDH/DHE (Diffie-Hellman Ephémère) permet de calculer 
+		une nouvelle clé connue uniquement du client et du serveur, donc
+		l'attaquant intermédiaire ne peut plus déchiffrer la session.
+		Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q 
+		faibles pour EDH/DHE.
+
+		Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-
+		middle peut donc forcer la génération d'un secret Diffie Hellman 
+		prédictible.
+
+	\textbf{Source} : \\
+	\href{http://vigilance.fr/vulnerabilite/OpenSSL-Man-in-the-middle-FIPS-Diffie-Hellman-10585}
+	{vigilance.fr/vulnerabilite/OpenSSL-Man-in-the-middle-FIPS-Diffie-Hellman-10585}
+
+	\textbf{Date} : Avril 2011	
+	
+		\subsubsection{Implémentation}
 		
-		\paragraph{Audit.\\}
+			\paragraph{Version OpenSSL.\\}
+		
+			\paragraph{Fonction.\\}
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+
+	
+		
+	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
+		\subsubsection{Normes visées}
+
+	
+		\subsubsection{Faille}
+	
+	
+	
+		\subsubsection{Implémentation}
+		
+			\paragraph{Version OpenSSL.\\}
+		
+			\paragraph{Fonction.\\}
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
+	
+		
+	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
+		\subsubsection{Normes visées}
+
+	
+		\subsubsection{Faille}
+	
+	
+	
+		\subsubsection{Implémentation}
+		
+			\paragraph{Version OpenSSL.\\}
+		
+			\paragraph{Fonction.\\}
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		
+		
+		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+#include <stdio.h>
+#define N 10
+/* Block
+ * comment */
+ 
+int main()
+{
+    int i;
+ 
+    // Line comment.
+    puts("Hello world!");
+ 
+    for (i = 0; i < N; i++)
+    {
+        puts("LaTeX is also great for programmers!");
+    }
+ 
+    return 0;
+}
+		\end{lstlisting}
+		
 
 
 

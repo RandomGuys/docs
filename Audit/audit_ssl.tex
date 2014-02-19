@@ -173,7 +173,17 @@ Ce document présente l'audit réalisé sur la partie SSL/TLS d'OpenSSL. Pour ch
 \end{itemize}
 
 %-------------------------------------------------
-\pagebreak
+\section{Description}
+
+SSL et TLS (successeur de SSL) sont des protocoles de sécurisation des échanges sur internet. Les version 2 et 3 de SSL ont été développées par Netscape puis le brevet a été racheté par l'IETF en 2001 qui a publié une évolution de ce protocole en TLS. Ce protocole fonctionne selon un mode client-serveur et fournit les objectifs de sécurité suivants :
+\begin{itemize}
+\item authentification serveur/client;
+\item confidentialité des données échangées;
+\item intégrité des données échangées.
+\end{itemize}
+
+Du point de vue réseau, ce protocole se situe dans la couche session du modèle OSI et entre transport et application dans le modèle TCP.
+
 \section{Schéma global d'une connexion SSL/TLS}
 Pour simplifier la compréhension des parties suivantes, voici un schéma qui représente de manière large l'établissement d'une connexion SSL/TLS. Les données entre accolades sont chiffrées avec la clef indiquée en indice. La $masterkey$ est la clef principale qui sera dérivée pour chiffrer chaque message.
 
@@ -773,7 +783,6 @@ Session Ticket& oui (\verb+t1_lib.c+)\\ \hline
 \subsection{Failles}
 \subsection{Attaque sur le padding CBC de Serge Vaudenay}
 Voir \ref{Vaudenay}
-
 %-------------------------------------------------
 \pagebreak
 \section{TLS version 1.1}
@@ -869,6 +878,24 @@ index 201ca9a..f7bdeb3 100644
 Ici, la variable \verb+bs+ est la taille de bloc utilisée dans l'algorithme de chiffrement.
 On constate que, sans vérification, il était possible de déplacer les pointeurs \verb+rec->data+, \verb+rec->input+ et \verb+rec->length+  au-delà de la longueur du paquet et ainsi créer une erreur de segmentation.
 
+\subsubsection{Lucky Thirteen CVE-2013-0169}
+
+Cette attaque a été trouvée par Nadhem Alfardan et Kenny Paterson de l'Université de Londres le 5 février 2005 et a été corrigée par Adam Langley et Emilia Kasper. Versions touchées :
+\begin{itemize}
+\item $\le$ 1.0.1c 
+\item $\le$ 1.0.0j 
+\item 0.9.8x
+\end{itemize}
+
+Cette attaque reprend le principe de l'attaque de Vaudenay (\ref{Vaudenay}).
+
+ 
+Lorsqu'un message chiffré incorrect est reçu, un message d'erreur fatale est renvoyé vers l'expéditeur. Cependant, le temps de génération de ce message d'erreur dépend du nombre d'octets valides, utilisé par un haché MAC.
+
+Un attaquant peut donc injecter des messages chiffrés erronés dans une session TLS/DTLS en mode CBC, et mesurer le temps nécessaire à la génération du message d'erreur, afin de progressivement déterminer le contenu en clair de la session.
+
+Il faut $2^{23}$ sessions TLS pour retrouver un bloc en clair. Pour mener l'attaque, le client TLS doit alors continuer en permanence à ouvrir une nouvelle session, dès que la précédente s'est terminée en erreur fatale.
+
 
 %-------------------------------------------------
 \pagebreak
@@ -950,5 +977,25 @@ On retrouve les constantes dans \verb+ssl/tls1.h+ :
 \subsubsection{CVE-2012-2333}
 
 Voir \ref{CVE-2012-2333}
+
+\subsubsection{CVE-2013-6449}
+
+Cette faille a été découverte en novembre 2013 et a été corrigée le 19 décembre 2013 par l'équipe d'OpenSSL.
+Elle affecte les versions < 1.0.2. Elle consiste à créer un déni de service du serveur en envoyant une structure de données mal formée. Le crash se situe dans la fonction \verb+ssl_get_algorithm2+ du fichier \verb+ssl/s3_lib.c+
+Le patch correctif :
+\begin{Verbatim}
+index bf832bb..c4ef273 100644 (file)
+--- a/ssl/s3_lib.c
++++ b/ssl/s3_lib.c
+@@ -4286,7 +4286,7 @@ need to go to SSL_ST_ACCEPT.
+ long ssl_get_algorithm2(SSL *s)
+        {
+        long alg2 = s->s3->tmp.new_cipher->algorithm2;
+-       if (TLS1_get_version(s) >= TLS1_2_VERSION &&
++       if (s->method->version == TLS1_2_VERSION &&
+            alg2 == (SSL_HANDSHAKE_MAC_DEFAULT|TLS1_PRF))
+                return SSL_HANDSHAKE_MAC_SHA256 | TLS1_PRF_SHA256;
+        return alg2;
+\end{Verbatim}
 
 \end{document}
