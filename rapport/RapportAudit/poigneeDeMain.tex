@@ -2,17 +2,18 @@
 
 \section{Définitions et contexte}
 
-SSL et TLS (successeur de SSL) sont des protocoles de sécurisation des échanges sur internet. Les version 2 et 3 de SSL ont été développées par Netscape puis le brevet a été racheté par l'IETF en 2001 qui a publié une évolution de ce protocole en TLS. Ce protocole fonctionne selon un mode client-serveur et fournit les objectifs de sécurité suivants :
+SSL et TLS (successeur de SSL) sont des protocoles de sécurisation des échanges sur internet. Les versions 2 et 3 de SSL ont été développées par Netscape puis le brevet a été racheté par l'IETF en 2001 qui a publié une évolution de ce protocole en TLS. Ce protocole fonctionne selon un mode client-serveur et fournit les objectifs de sécurité suivants :
 \begin{itemize}
 \item authentification serveur/client;
 \item confidentialité des données échangées;
-\item intégrité des données échangées.
+\item intégrité des données échangées.\\
 \end{itemize}
 
-Du point de vue réseau, ce protocole se situe dans la couche session du modèle OSI et entre transport et application dans le modèle TCP.
+Du point de vue réseau, ce protocole se situe dans la couche session du modèle OSI et entre transport et application dans le modèle TCP.\\
 
 
-Pour simplifier la compréhension des parties suivantes, voici un schéma qui représente de manière large l'établissement d'une connexion SSL/TLS. Les données entre accolades sont chiffrées avec la clef indiquée en indice. La $masterkey$ est la clef principale qui sera dérivée pour chiffrer chaque message.
+
+Pour simplifier la compréhension des parties suivantes, le schéma \ref{schema-ssltls} représente de manière large l'établissement d'une connexion SSL/TLS. Les données entre accolades sont chiffrées avec la clef indiquée en indice. La $masterkey$ est la clef principale qui sera dérivée pour chiffrer chaque message.
 
 \begin{figure}[H]
 \begin{center}
@@ -51,7 +52,7 @@ Pour simplifier la compréhension des parties suivantes, voici un schéma qui re
 
 
 \paragraph{hello client}
-Version du protocole SSL avec laquelle le client souhaite communiquer, challenge, algorithmes de chiffrement supportés par le client, méthodes de compressiosn supportées par le client.
+Version du protocole SSL avec laquelle le client souhaite communiquer, challenge, algorithmes de chiffrement supportés par le client, méthodes de compressions supportées par le client.
 
 \paragraph{hello serveur}
 Version du protocole SSL calculée par le serveur (plus haute version du serveur supportée également par le client), challenge, id de session, algorithmes de chiffrement supportés par le serveur, méthodes de compression supportées par le serveur.
@@ -62,8 +63,10 @@ Version du protocole SSL calculée par le serveur (plus haute version du serveur
 \subsubsection{Spécifications}
 Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé et développé par la société Netscape Communications. Cette version est sortie en 1994. Toutefois, on trouve des morceaux d'informations dans la RFC 6176 \cite{rfc6176} et le draft de Hickman \cite{hickman1995}.
 
-\paragraph{Algorithmes supportés} 
-\begin{center}
+%\paragraph{Algorithmes supportés} 
+
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -83,16 +86,19 @@ Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé
 \verb+SSL_CK_RC4_128_EXPORT40_WITH_MD5+&RSA.512&RSA&RC4.40&MD5\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supportés SSLV2}
+\label{algos}
+\end{table}
 
 \paragraph{Remarque} Le \verb+CK+ signifie \verb+CIPHER-KIND+.
 
 	
 	
 	\subsubsection{Implémentation}
-	Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s2_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl2.h+, on retrouve bien les algorithmes du draft :
+	Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s2_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl2.h+, on retrouve bien les algorithmes du draft comme montré sur le  tableau \ref{algosOpenssl}.
 
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|X|}
 \hline
 \textbf{Identifiant} & \textbf{Constante OpenSSL}\\
@@ -112,7 +118,10 @@ Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé
 \verb+SSL_CK_RC4_128_EXPORT40_WITH_MD5+&\verb+SSL2_CK_RC4_128_EXPORT40_WITH_MD5+\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supportés par OpenSSL SSLv2}
+\label{algosOpenssl}
+\end{table}
+
 
 On y trouve également des constantes non définies dans le draft avec des commentaires très succincts :
 \begin{itemize}
@@ -121,7 +130,8 @@ On y trouve également des constantes non définies dans le draft avec des comme
 \item \verb+SSL2_CK_DES_192_EDE3_CBC_WITH_SHA /* v3 */+
 \item \verb+SSL2_CK_RC4_64_WITH_MD5 /* MS hack */+
 \item \verb+SSL2_CK_DES_64_CFB64_WITH_MD5_1 /* SSLeay */+
-\item \verb+SSL2_CK_NULL /* SSLeay */+
+\item \verb+SSL2_CK_NULL /* SSLeay */+  \\
+
 \end{itemize}
 
 Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de rétro-compatilibité depuis SSL v3. Celles commentées par \verb+SSLeay+ sont des vestiges de l'ancêtre d'OpenSSL : SSLeay. Elles sont sûrement conservées pour la rétro-compatibilité avec des vieux logiciels utilisant SSLeay. La \verb+MS hack+ est spécifique à Windows
@@ -129,10 +139,10 @@ Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de r�
 
 \subsection{Audit 2 : SSL version 3}
 \subsubsection{Spécifications}
-La version 3 du protocole SSL est décrite dans la RFC 6101 \cite{rfc6101}. On y trouve notamment en section A.6 la liste des algorithmes de chiffrement pouvant être utilisés avec cette version :
+La version 3 du protocole SSL est décrite dans la RFC 6101 \cite{rfc6101}. On y trouve notamment en section A.6 la liste des algorithmes de chiffrement pouvant être utilisés avec cette version, référencés sur la tableau \ref{algosV3}.
 
-\paragraph{Algorithmes supportés} 
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -200,14 +210,17 @@ La version 3 du protocole SSL est décrite dans la RFC 6101 \cite{rfc6101}. On y
 \verb+SSL_FORTEZZA_KEA_WITH_RC4_128_SHA+ & FRTZA	&KEA&	RC4.128	&SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supportés SSLv3}
+\label{algosV3}
+\end{table}
 
 
 \subsubsection{Implémentation}
 
-Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s3_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl3.h+, on y retrouve les algorithmes de la RFC :
+Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s3_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl3.h+, on y retrouve les algorithmes de la RFC, référencés en table \ref{algosOpensslV3}.
 
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|X|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{Constante OpenSSL} \\
@@ -275,7 +288,9 @@ Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichie
 \verb+SSL_FORTEZZA_KEA_WITH_RC4_128_SHA+ & \verb+SSL3_CK_FZA_DMS_RC4_SHA+\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supportés par OpenSSL, SSLv3}
+\label{algosOpensslV3}
+\end{table}
 
 \paragraph{Attention} Les 3 algorithmes FORTEZZA sont commentés dans OpenSSL depuis le commit\\
  89bbe14c506b9bd2fd00e6bae22a99ef1ee7ad19 de 2006.
@@ -328,7 +343,7 @@ index 8de149a..0a259b1 100644
 
 \subsubsubsection{\label{Vaudenay}Attaque sur le padding CBC de Serge Vaudenay}
 
-Cette attaque \cite{vaudenay2002} fait partie de la famille des attaques par canaux auxiliaires et plus particulièrement des timing attacks. En effet, lorsqu'openssl déchiffre en mode CBC, le temps varie en fonction de la longueur du message et du padding. Pour que l'attaque fonctionne, il faut utiliser un oracle de padding qui valide ou non le padding d'un chiffré.
+Cette attaque \cite{vaudenay2002} fait partie de la famille des attaques par canaux auxiliaires et plus particulièrement des timing attacks. En effet, lorsqu'OpenSSl déchiffre en mode CBC, le temps varie en fonction de la longueur du message et du padding. Pour que l'attaque fonctionne, il faut utiliser un oracle de padding qui valide ou non le padding d'un chiffré.
 
 Ben Laurie a appliqué un correctif du code OpenSSL le 28 janvier 2013 qui rend le décodage CBC constant, que le padding soit correct ou non. Le code a été placé dans un nouvelle fonction \verb+tls1_cbc_remove_padding+ du fichier \verb+ssl/s3_cbc.c+
 
@@ -360,10 +375,10 @@ index 0ddfe19..c5df2cb 100644
 
 La version 1 de TLS est décrite dans la RFC 2246 \cite{rfc2246}. Ce protocole est assez similaire à SSL 3 mais il y a quelques différences notables. Il y est notamment prévu un mécanisme de rétro-compatibilité vers SSL 3. La plus grosse différence est que TLS, contrairement à SSL, permet de commencer une connexion non chiffré sur un port usuel tel que le 80 et bascule en mode chiffré avec la commande STARTTLS.
 
-Du point de vue des algorithmes de chiffrement, on a globalement la même liste que SSL 3 et les algorithmes de Fortezza ont été retirés :
+Du point de vue des algorithmes de chiffrement, on a globalement la même liste que SSL 3 et les algorithmes de Fortezza ont été retirés, comme on peut le constater sur le tableau \ref{algosTLS1}.
 
-\paragraph{Algorithmes supportés} 
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -425,13 +440,16 @@ Du point de vue des algorithmes de chiffrement, on a globalement la même liste 
 \verb+TLS_DH_anon_WITH_3DES_EDE_CBC_SHA+ & DH	&None	&3DES.168 CBC&	SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supportés TLS1}
+\label{algosTLS1}
+\end{table}
 
 
 \paragraph{Algorithmes supplémentaires de la RFC 3268}
-La RFC prévoit la possibilité d'étendre cette liste. Ainsi, la RFC 3268 \cite{rfc3268} apporte des nouvelles constantes avec AES et SHA-1 :
+La RFC prévoit la possibilité d'étendre cette liste. Ainsi, la RFC 3268 \cite{rfc3268} apporte des nouvelles constantes avec AES et SHA-1, listés sur le tableau \ref{algosTLSRFC}.
  
-\begin{center}
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -461,11 +479,16 @@ La RFC prévoit la possibilité d'étendre cette liste. Ainsi, la RFC 3268 \cite
 \verb+TLS_DH_anon_WITH_AES_256_CBC_SHA+& DH&NULL&AES 256 CBC&SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supplémentaires AES - RFC3268 TLS1}
+\label{algosTLSRFCAES}
+\end{table}
 
 \paragraph{Algorithmes supplémentaires de la RFC 4132} 
-La RFC 4132 \cite{rfc4132} apporte également une liste supplémentaire utilisant l'algorithme de chiffrement Camellia :
-\begin{center}
+La RFC 4132 \cite{rfc4132} apporte également une liste supplémentaire utilisant l'algorithme de chiffrement Camellia (cf. tableau \ref{algosTLSRFCCAM}).
+
+
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -495,11 +518,16 @@ La RFC 4132 \cite{rfc4132} apporte également une liste supplémentaire utilisan
 \verb+TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA+& DH&NULL&Camellia 256 CBC&SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supplémentaires Camellia - RFC3268 TLS1}
+\label{algosTLSRFCCAM}
+\end{table}
 
 \paragraph{Algorithmes supplémentaires de la RFC 4162} 
-La RFC 4162 \cite{rfc4162} ajoute l'algorithme de chiffrement SEED :
-\begin{center}
+La RFC 4162 \cite{rfc4162} ajoute l'algorithme de chiffrement SEED, dont la liste est consultable sur le tableau \ref{algosTLSRFCSEED}.
+
+
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -517,7 +545,9 @@ La RFC 4162 \cite{rfc4162} ajoute l'algorithme de chiffrement SEED :
 \verb+TLS_DH_anon_WITH_SEED_CBC_SHA+ &DH&NULL&SEED CBC&SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supplémentaires SEED - RFC3268 TLS1}
+\label{algosTLSRFCSEED}
+\end{table}
 
 
 \paragraph{Extensions TLS}
@@ -592,7 +622,8 @@ Pour les constantes représentant les algorithmes disponibles, tout est dans \ve
 
 Pour ce qui est de la poignée de main, OpenSSL utilise la même fonction que pour SSL 3 : \verb+ssl3_connect+ \verb+(s3_clnt.c)+/\verb+ssl3_accept (s3_srvr.c)+ et la gestion des extensions se trouve dans la fonction\\ \verb+ssl_scan_clienthello_tlsext+ \verb+(t1_lib.c)+.
 
-\begin{center}
+\begin{table}
+\centering
 \begin{tabularx}{16cm}{|X|l|}
 \hline
 \textbf{Extension}&\textbf{Implémentée}\\ \hline
@@ -605,7 +636,9 @@ Certificate Status Request& oui (\verb+t1_lib.c+)\\ \hline
 Supported Elliptic Curves& oui (\verb+t1_lib.c+)\\ \hline
 Session Ticket& oui (\verb+t1_lib.c+)\\ \hline
 \end{tabularx}
-\end{center}
+\caption{Gestion des extensions dans la poignée de main avec OpenSSL}
+\label{extensionsOpenssl}
+\end{table}
 
 
 \subsubsection{Failles}
@@ -624,8 +657,10 @@ La version 1.1 de TLS est spécifiée par la RFC 4346 \cite{rfc4346}. Différenc
 \end{itemize}
 
 \paragraph{Algorithmes supplémentaires de la RFC 5054} 
-La RFC 5054 \cite{rfc5054} ajoute l'échange de clef/authentification SRP :
-\begin{center}
+La RFC 5054 \cite{rfc5054} ajoute l'échange de clef/authentification SRP, listé sur le tableau \ref{algosTLS1.1RFC5054}
+
+\begin{table}
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -649,7 +684,9 @@ La RFC 5054 \cite{rfc5054} ajoute l'échange de clef/authentification SRP :
 \verb+TLS_SRP_SHA_DSS_WITH_AES_256_CBC_SHA+&SRP SHA1&DSS&AES 256 CBC&SHA1\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supplémentaires RFC 5054 TLSv1.1}
+\label{algosTLS1.1RFC5054}
+\end{table}
 
 \paragraph{Extensions TLS}
 Une extension TLS du hello client est décrite dans la RFC 5054 :
@@ -715,25 +752,26 @@ Cette attaque \cite{CVE20130169} a été trouvée par Nadhem Alfardan et Kenny P
 \item 0.9.8x
 \end{itemize}
 
-Cette attaque reprend le principe de l'attaque de Vaudenay (\ref{Vaudenay}).
+Cette attaque reprend le principe de l'attaque de Vaudenay (\ref{Vaudenay}).\\
 
  
-Lorsqu'un message chiffré incorrect est reçu, un message d'erreur fatale est renvoyé vers l'expéditeur. Cependant, le temps de génération de ce message d'erreur dépend du nombre d'octets valides, utilisé par un haché MAC.
+Lorsqu'un message chiffré incorrect est reçu, un message d'erreur fatale est renvoyé vers l'expéditeur. Cependant, le temps de génération de ce message d'erreur dépend du nombre d'octets valides, utilisé par un haché MAC. Un attaquant peut donc injecter des messages chiffrés erronés dans une session TLS/DTLS en mode CBC, et mesurer le temps nécessaire à la génération du message d'erreur, afin de progressivement déterminer le contenu en clair de la session.\\
 
-Un attaquant peut donc injecter des messages chiffrés erronés dans une session TLS/DTLS en mode CBC, et mesurer le temps nécessaire à la génération du message d'erreur, afin de progressivement déterminer le contenu en clair de la session.
 
 Il faut $2^{23}$ sessions TLS pour retrouver un bloc en clair. Pour mener l'attaque, le client TLS doit alors continuer en permanence à ouvrir une nouvelle session, dès que la précédente s'est terminée en erreur fatale.
 
 
 
-\subsection{Aduit 5 : TLS version 1.2}
+\subsection{Audit 5 : TLS version 1.2}
 \subsubsection{Spécifications}
 
 La version 1.2 de TLS est décrite dans la RFC 5246 \cite{rfc5246}.
 
 \paragraph{Algorithmes supplémentaires de la RFC 5289} 
-La RFC 5289 \cite{rfc5289} ajoute les codes MAC SHA256 et SHA384 ainsi que le mode GCM (Galois Counter Mode) :
-\begin{center}
+La RFC 5289 \cite{rfc5289} ajoute les codes MAC SHA256 et SHA384 ainsi que le mode GCM (Galois Counter Mode), rapportés dans le tableau \ref{algosTLSRFCv1.2}.
+
+\begin{table}[H]
+\centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
 \textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
@@ -771,7 +809,9 @@ La RFC 5289 \cite{rfc5289} ajoute les codes MAC SHA256 et SHA384 ainsi que le mo
 \verb+TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384+&ECDH&RSA&AES 256 GCM&SHA384\\
 \hline
 \end{tabularx}
-\end{center}
+\caption{Algorithmes supplémentaires - RFC 5289 TLSv1.2}
+\label{algosTLSRFCv1.2}
+\end{table}
 
 
 \subsubsection{Implémentation}
