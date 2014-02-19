@@ -93,6 +93,7 @@
 	0.2 & 11/12/13 & Complétion  \\
 	1.0 & 12/12/13 & Correctifs appliqués \\
 	2.0 & 21/01/14 & Correctifs et nouvelles procédures de tests \\
+	2.1 & 19/02/14 & Correctif sur procédure de test P7\\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -228,9 +229,9 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \texttt{A1=VA1} et \texttt{A2=VA2}. } & UC1 & / \\
+1 & On lance ZMAP sur \texttt{R} avec \texttt{lA} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1} et \texttt{A2}. On vérifie que \texttt{A1=VA1} et \texttt{A2=VA2}. } & UC1 & OK \\
 \hline
-2 & On relance ZMAP sur \texttt{R'} avec \texttt{A2} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1'} et \texttt{A2'}. On vérifie que \texttt{A1'=VA1'} et \texttt{A2'=VA2'}. } & &  / \\
+2 & On relance ZMAP sur \texttt{R'} avec \texttt{A2} en entrée  & \multicolumn{2}{p{6cm}|}{ZMAP retourne \texttt{A1'} et \texttt{A2'}. On vérifie que \texttt{A1'=VA1'} et \texttt{A2'=VA2'}. } & &  OK \\
 \hline
 \end{tabular}
 
@@ -282,7 +283,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P1 & / \\
+1 & RC lit \texttt{LAd}. & \multicolumn{2}{p{6cm}|}{RC ne retourne pas d'erreur, il reconnaît les $M_i$ comme valides} & P1 & OK \\
 \hline
 \end{tabular}
 
@@ -301,9 +302,9 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P2 & / \\
+1 & RC échange de certificats avec $M_i$. & \multicolumn{2}{p{6cm}|}{Si $M_i$ autorise l'échange, récupération de $C_i$ et $C_i=VC_i$, sinon RC passe à $M_{i+1}$} & P2 & OK \\
 \hline
-2 & RC stocke le certificat s'il existe dans un dossier & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P2 & / \\
+2 & RC stocke le certificat s'il existe dans un dossier & \multicolumn{2}{p{6cm}|}{Le certificat est stocké correctement et $C_i$ et $C_i'=VC_i'$} & P2 & OK \\
 \hline
 \end{tabular}
 
@@ -332,7 +333,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & GD s'exécute sur B & \multicolumn{2}{p{6cm}|}{GD s'exécute correctement et BA=VBA et BB=VBB} & P3 & / \\
+1 & GD s'exécute sur B & \multicolumn{2}{p{6cm}|}{GD s'exécute correctement et BA=VBA et BB=VBB} & P3 & OK \\
 \hline
 \end{tabular}
 
@@ -370,9 +371,9 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline et $lF_1=VlF_1$} & UC2 & / \\
+1 & On calcule $F1(lA_1)=lF_1$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline et $lF_1=VlF_1$} & UC2 & OK \\
 \hline
-2 & On calcule $F1(lA_2)=lF_2$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline  et $lF_2=VlF_2$} & & / \\
+2 & On calcule $F1(lA_2)=lF_2$ & \multicolumn{2}{p{6cm}|}{$F1$ s'exécute correctement \newline  et $lF_2=VlF_2$} & & OK \\
 \hline
 \end{tabular}
 
@@ -391,7 +392,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & On calcule \newline $F2(P)=(modP1,modP2)$ & \multicolumn{2}{p{6cm}|}{$F2$ s'exécute correctement \newline et $modP1=VmodP1$ \newline et $modP2=VmodP2$} & P5 & / \\
+1 & On calcule \newline $F2(P)=(modP1,modP2)$ & \multicolumn{2}{p{6cm}|}{$F2$ s'exécute correctement \newline et $modP1=VmodP1$ \newline et $modP2=VmodP2$} & P5 & OK \\
 \hline
 
 \end{tabular}
@@ -417,7 +418,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & Recherche des données sur $S$ & \multicolumn{2}{p{6cm}|}{Les données accessibles doivent être les suivantes :\newline [indispensables] filtrage des données par taille de clé, \textit{issuer}, IP, zone, doublons existants, premiers identiques, temps de récupération, échecs de récupération	 \newline [facultatives] géolocalisation, etc. } & UC3 & / \\
+1 & Recherche des données sur $S$ & \multicolumn{2}{p{6cm}|}{Les données accessibles doivent être les suivantes :\newline [indispensables] filtrage des données par taille de clé, \textit{issuer}, IP, zone, doublons existants, premiers identiques, temps de récupération, échecs de récupération	 \newline [facultatives] géolocalisation, etc. } & UC3 & OK \\
 
 \hline
 \end{tabular}
@@ -444,7 +445,7 @@ Sont définis les acronymes suivants :
 \hline
 \textbf{N.} & \textbf{Actions} & \multicolumn{2}{p{5cm}|}{\textbf{Résultats attendus}} & \textbf{Exig.} & \textbf{OK/NOK} \\
 \hline
-1 & Affichage des données d'une fonction suite à audit & \multicolumn{2}{p{6cm}|}{Les données renseignent les éléments suivants : \newline Auteur, Date, Nom de la fonction, Implémentation, Implantation, Norme visée, Respect de la norme, Conséquences-Criticités, Améliorations proposées} & UC4 & / \\
+1 & Affichage des données d'une fonction suite à audit & \multicolumn{2}{p{6cm}|}{Les données renseignent les éléments suivants : \newline Standards/Normes visée, Nom de la fonction, Implémentation, Audit, Failles, Observations et alternatives} & UC4 & OK \\
 
 \hline
 \end{tabular}
