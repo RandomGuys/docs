@@ -6,26 +6,24 @@
 		\subsubsection{Normes visées}
 
 		Voici l'algorithme de génération de g, d'après la RFC 2631 \cite{rfc2631}
-		datant de 1999 et dérivé de la FIPS-186 : \\
+		datant de 1999 et dérivé de la FIPS-186 : 
 		\begin{itemize}
-		\item 1- Soit j = (p - 1)/q.
-		\item 2- Choisir h $\in \mathbb{N}$, tel que 1 < h < p - 1
-		\item 3- Calculer g = $h^j$ mod p
-		\item 4- Si g = 1 recommencer l'étape 2\\
+		\item 1- Soit $j = (p - 1)/q$.
+		\item 2- Choisir $h \in \mathbb{N}$, tel que $1 < h < p - 1$
+		\item 3- Calculer $g = h^j \mod p$
+		\item 4- Si $g = 1$ recommencer l'étape 2\\
 		\end{itemize}
 	
-		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (Pour 
-		une utilisation SSH) : \\
-		" It is recommended to use 2 as generator, because it improves
+		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (pour 
+		une utilisation SSH) : "It is recommended to use 2 as generator, because it improves
 		efficiency in multiplication performance.  It is usable even when it
 		is not a primitive root, as it still covers half of the space of
-		possible residues. "\\
+		possible residues."\\
 	
 		\subsubsection{Faille}
 	
-		Lorsque nous avons étudiés le code de Diffie-Hellman dans OpenSSL, nous nous
-		sommes penchés sur un choix plutôt étrange . \\
-		La valeur du générateur est toujours fixé à 2 ou à 5. \\
+		Lorsque nous avons étudié le code de Diffie-Hellman dans OpenSSL, nous nous
+		sommes penchés sur un choix plutôt étrange. La valeur du générateur est toujours fixé à 2 ou à 5. \\
 	
 		Le générateur de Diffie-Hellman n'étant pas une racine primitive dans 
 		$\mathbb{Z}/\mathbb{Z}_p$, les conséquences sont :
@@ -38,9 +36,7 @@
 		\end{itemize}
 	
 		Évidemment, ce choix n'est pas une faille en soit, il n'est juste pas 
-		optimal et résulte d'un bon compromis entre vitesse et sécurité.\\
-		
-		Pour une sécurité optimale, il est conseillé de choisir un générateur qui 
+		optimal et résulte d'un bon compromis entre vitesse et sécurité.	Pour une sécurité optimale, il est conseillé de choisir un générateur qui 
 		soit une racine primitive, pour être certain que personne ne puisse 
 		signer, déchiffrer des messages à votre place!\\
 	
@@ -83,20 +79,14 @@ int main()
 		\subsubsection{Faille}
 	
 		Une faille plus grave concerne le mode FIPS (Federal Information 
-		Processing Standard) d'OpenSSL.
-		Qui peut être compilé avec la commande "./config fipscanisterbuild". \\
-
-		En effet, un attaquant situé entre le client et le serveur, 
-		et connaissant la clé secrète du serveur, peut déchiffrer une 
+		Processing Standard) d'OpenSSL, qui peut être compilé avec la commande \texttt{./config fipscanisterbuild}". En effet, un attaquant situé entre le client et le serveur connaissant la clé secrète du serveur peut déchiffrer une 
 		session SSL/TLS. \\
 	
 		L'algorithme EDH/DHE (Diffie-Hellman Ephémère) permet de calculer 
 		une nouvelle clé connue uniquement du client et du serveur, donc
 		l'attaquant intermédiaire ne peut plus déchiffrer la session.
 		Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q 
-		faibles pour EDH/DHE.
-
-		Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-
+		faibles pour EDH/DHE. Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-
 		middle peut donc forcer la génération d'un secret Diffie Hellman 
 		prédictible.
 
