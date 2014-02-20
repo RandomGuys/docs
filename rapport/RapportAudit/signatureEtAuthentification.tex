@@ -16,7 +16,7 @@ La norme spécifie deux types de schéma de signature qui sont :
 \item \texttt{RSASSA-PKCS1-v1\_5} \\
 \end{itemize}
 
-Même si aucune attaque n'est connue contre \texttt{RSASSA-PKCS1-v1\_5},  \texttt{RSASSA-PSS} est recommandé dans l'intérêt d'augmenter la robustesse d'un système. \texttt{RSASSA-PKCS1-v1\_5} est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'elle est toujours appropriée dans les nouvelles applications, une transition vers \texttt{RSASSA-PSS} est encouragée.\\ 
+Même si aucune attaque n'est connue contre \texttt{RSASSA-PKCS1-v1\_5},  \texttt{RSASSA-PSS} est recommandé dans l'intérêt d'augmenter la robustesse d'un système. \texttt{RSASSA-PKCS1-v1\_5} est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même si elle est toujours appropriée dans les nouvelles applications, une transition vers \texttt{RSASSA-PSS} est encouragée.\\ 
 
 
 La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) combinant les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite converti en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.\\ 
@@ -91,7 +91,14 @@ int main()
 		
 \subsection{Audit 2 : Malformation des signatures DSA/ECDSA}
 		\subsubsection{Normes visées}
-	
+
+		La RFC R979 \cite{rfc6979} définie l'utilisation de DSA (\textit{Digital Signature Algorithm}) et ECDSA (\textit{Elliptic Curve Digital Signature Algorithm}) de façon déterministe. DSA et ECDSA sont deux standards de signature digital qui offrent l'intégrité et authenticité dans de nombreux protocoles.\\
+
+		Une caractéristique de DSA et ECDSA est qu'ils ont besoin de produire, pour chaque génération de signature, une valeur aléatoire toute fraîche (k). Pour une bonne sécurité, k doit être choisi aléatoirement et uniformément depuis un groupe d'entier modulaire, en utilisant un processus cryptographiquement sûre. Même une petite erreur dans le processus peut devenir une attaque sur la méthode de signature. De ce fait, un système qui génère mal ou pas suffisamment d'entropie lors de la génération d'un nombre aléatoire peut poser de grosse faille dans le déploiement du schéma de signature DSA et ECDSA.\\
+
+		Cette méthode d'utilisation de l'aléatoire avec DSA et ECDSA fait son implémentation plus difficile à tester. Les tests automatiques ne sont pas fiable lorsqu'il s'agit de détecter si implémentation utilise une source aléatoire de grande qualité. De ce fait, le processus d'implémentation est alors plus vulnérable à un échec catastrophique, souvent découvert après le déploiement du système et suite à des attaques réussies.\\
+
+		Il est possible de retourner DSA et ECDSA en une utilisation déterministe en utilisant un processus déterministe de génération d'une valeur "aléatoire", k. Ce processus doit remplir quelques caractéristiques cryptographique afin de maintenir les propriétés de vérifiabilité et d'infalsifiabilité attendues par cette méthode de signature. De ce fait, pour une personne ne connaissent pas la clef privée de la signature, la transformation du message en valeur correspondante, k, doit être calculatoirement indiscernable du retour de la fonction aléatoire et uniforme.
 		
 		\subsubsection{Faille}
 		
