@@ -43,7 +43,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 		
 			L'Université du Michigan a réussi l'exploit de récupérer la clé privée d'un certificat RSA en un peu plus de 100h \cite{andrea2010RSA} \cite{opensslvuln2010}. 	L'attaque fonctionne par injection de fautes \cite{fault2008lawson} sur la méthode d'authentification. La technique est donc très poussée, mais le résultat en vaut la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire dysfonctionner le système tout entier. Les signatures erronées produites révéleront de l'information sur la clé privée. Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
 
-			La technique consite à renseigner de fausses signatures afin de vérifier les fautes avec la clé publique de la machine. Lorsque la signature est identifié comme fausse, elle est envoyé à un analyseur contenant l'algorithme suivant :
+			La technique consite à renseigner de fausses signatures afin de vérifier les fautes avec la clé publique de la machine. Lorsque la signature est identifié comme fausse, elle est envoyé à un analyseur contenant l'algorithme du \textit{Listing} \ref{windowssearch}
 
 			\begin{lstlisting}[style=customc,caption=window\_search.c, label=windowssearch]
 			window\_search (m, s, e, win\_size, win\_idx) {
@@ -88,18 +88,18 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 
 			C'est le fait que la fenêtre soit fixe qui la rend insensible à une attaque par timing.\\
 
-			Voici l'algorithme FWE :
+			L'algorithme FWE est donnée en \textit{Listing} \ref{fwe}
 		
 			\begin{lstlisting}[style=customc,caption=fwe.c, label=fwe]
-				FWE(m, d, n, win\_size) {
-					num\_win = card(bits(d)) / win\_size;
+				FWE(m, d, n, win_size) {
+					num_win = card(bits(d)) / win_size;
 					acc = 1;
-					for(win\_idx in [num\_win-1..0])
-						for(sqr\_iter in [0..win\_size-1])
-							acc = (acc * acc) mod n
-						d[win\_idx] =
-							bits(d, win\_idx * win\_size, win\_size)
-						acc = (acc * m^d[win\_idx]) mod n
+					for(win_idx in [num_win-1..0])
+						for(sqr_iter in [0..win_size-1])
+							acc = (acc * acc) mod n;
+						d[win_idx] =
+							bits(d, win_idx * win_size, win_size);
+						acc = (acc * m^d[win_idx]) mod n;
 					return acc;
 				}
 			\end{lstlisting}
@@ -152,10 +152,10 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 			La faille concerne toutes les versions antérieurs à OpenSSL 0.9.8j, lorsqu'un client SSL/TLS utilise des clés DSA/ECDSA pour s'authentifier sur un serveur. 
 
 			\paragraph{Fonction.\\}
-			La fonction EVP\_VerifyFinal() est accessible sous le paquetage \texttt{openssl/crypto/evp/p\_verify.c}.
+			La fonction EVP\_VerifyFinal() (cf. \textit{Listing} \ref{evp}) est accessible sous le paquetage \texttt{openssl/crypto/evp/p\_verify.c}.
 		
 		
-			\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+			\begin{lstlisting}[style=customc,caption=EVP\_VerifyFinal.c, label=evp]
 				int EVP_VerifyFinal(EVP_MD_CTX *ctx, const unsigned char *sigbuf,
 				     unsigned int siglen, EVP_PKEY *pkey)
 				{

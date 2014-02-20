@@ -37,7 +37,7 @@
 		La version actuelle d'OpenSSL : 1.1.0
 		
 		\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{openssl/crypto/dh/dh\_gen.c} (cf. \ref{dhgen}). Les commentaires sont très intéressant pour comprendre le choix du générateur par l'équipe de développement.
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{openssl/crypto/dh/dh\_gen.c} (cf. \textit{Listing} \ref{dhgen}). Les commentaires sont très intéressant pour comprendre le choix du générateur par l'équipe de développement.
 		
 		
 		\begin{lstlisting}[style=customc,caption=dh\_gen.c, label=dhgen]
@@ -103,23 +103,24 @@
 		
 			La version vulnérable d'OpenSSL est la 0.9.8, en mode FIPS uniquement.
 
-			\paragraph{.\\}
+			\paragraph{Fonction.\\}
 
-			La fonction est accessible au chemin \texttt{openssl/crypto/dh/dh\_key.c} (cf. \ref{dhkey})
+			La fonction est accessible au chemin \texttt{openssl/crypto/dh/dh\_key.c}. La figure \textit{Listing} \ref{dhkey} montre le diff entre les deux versions.
 
-			\begin{lstlisting}[style=customc,caption=dh\_key.c, label=dhkey]
-				if (!DH_check_pub_key(dh, pub_key, &check_result) || check_result)
-				{
-					DHerr(DH_F_COMPUTE_KEY,DH_R_INVALID_PUBKEY);
-					goto err;
-				}
+			\begin{lstlisting}[language=diff,caption=dh\_key.c, label=dhkey]
+			-------------------------------- dh/dh_key.c --------------------------------
+			-	if (!DH_check_pub_key(dh, pub_key, &check_result) || check_result)
+			-	{
+			-		DHerr(DH_F_COMPUTE_KEY,DH_R_INVALID_PUBKEY);
+			-		goto err;
+			-	}
 			\end{lstlisting}
 
 			Cette partie causait un faux positif sous certaines conditions pouvant fragiliser le système.
 
-			\paragraph{Test.\\}
+			\paragraph{Solution logicielle.\\}
 
-			Nessus Vulnerability Scanner est un logiciel permettant de tester la configuration du serveur afin d'identifier entre autres de problèmes d'authentification \cite{nessus}. Le système RedHat 
+			Nessus Vulnerability Scanner est un logiciel permettant de tester la configuration du serveur afin d'identifier entre autres de problèmes d'authentification \cite{nessus}. Le système RedHat préconise son utilisation pour savoir si cette vulnérabilité concerne notre système.
 		
 	\subsubsection{Conclusion}
 
