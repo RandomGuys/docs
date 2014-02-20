@@ -5,8 +5,7 @@
 	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
 		\subsubsection{Normes visées}
 
-		Voici l'algorithme de génération de g, d'après la RFC 2631 \cite{rfc2631}
-		datant de 1999 et dérivé de la FIPS-186 : 
+		Voici l'algorithme de génération de g, d'après la RFC 2631 \cite{rfc2631} datant de 1999 et dérivé de la FIPS-186 : 
 		\begin{itemize}
 		\item 1- Soit $j = (p - 1)/q$.
 		\item 2- Choisir $h \in \mathbb{N}$, tel que $1 < h < p - 1$
@@ -14,212 +13,118 @@
 		\item 4- Si $g = 1$ recommencer l'étape 2\\
 		\end{itemize}
 	
-		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (pour 
-		une utilisation SSH) : "It is recommended to use 2 as generator, because it improves
-		efficiency in multiplication performance.  It is usable even when it
-		is not a primitive root, as it still covers half of the space of
-		possible residues."\\
+		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (pour une utilisation SSH) : "It is recommended to use 2 as generator, because it improves	efficiency in multiplication performance.  It is usable even when itis not a primitive root, as it still covers half of the space of possible residues."\\
 	
 		\subsubsection{Faille}
 	
-		Lorsque nous avons étudié le code de Diffie-Hellman dans OpenSSL, nous nous
-		sommes penchés sur un choix plutôt étrange. La valeur du générateur est toujours fixé à 2 ou à 5. \\
+		Lorsque nous avons étudié le code de Diffie-Hellman dans OpenSSL, nous nous	sommes penchés sur un choix plutôt étrange. La valeur du générateur est toujours fixé à 2 ou à 5. \\
 	
-		Le générateur de Diffie-Hellman n'étant pas une racine primitive dans 
-		$\mathbb{Z}/\mathbb{Z}_p$, les conséquences sont :
+		Le générateur de Diffie-Hellman n'étant pas une racine primitive dans $\mathbb{Z}/\mathbb{Z}_p$, les conséquences sont :
 		\begin{itemize}
-		\item L'espace des clés possibles est fortement réduit (Si g=2 => espace 
-		divisé par deux)
+		\item L'espace des clés possibles est fortement réduit (Si $g=2 \implies$ espace divisé par deux)
 		\item Deux clés privées distinctes pourront avoir une clé publique commune
 		\item La méthode de cryptanalyse Baby-step Giant-step peut s'en trouver 
 		facilité.\\
 		\end{itemize}
 	
-		Évidemment, ce choix n'est pas une faille en soit, il n'est juste pas 
-		optimal et résulte d'un bon compromis entre vitesse et sécurité.	Pour une sécurité optimale, il est conseillé de choisir un générateur qui 
-		soit une racine primitive, pour être certain que personne ne puisse 
-		signer, déchiffrer des messages à votre place!\\
+		Évidemment, ce choix n'est pas une faille en soit, il n'est juste pas optimal et résulte d'un bon compromis entre vitesse et sécurité. Pour une sécurité optimale, il est conseillé de choisir un générateur qui soit une racine primitive, pour être certain que personne ne puisse signer, déchiffrer des messages à votre place!\\
 	
 	
 		\subsubsection{Implémentation}
 		
-		\paragraph{Version OpenSSL.\\}
+		\paragraph{Configuration visée.\\}
+
+		La version actuelle d'OpenSSL : 1.1.0
 		
 		\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{openssl/crypto/dh/dh\_gen.c} (cf. \ref{dhgen}). Les commentaires sont très intéressant pour comprendre le choix du générateur par l'équipe de développement.
 		
 		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
+		\begin{lstlisting}[style=customc,caption=dh\_gen.c, label=dhgen]
+			if (generator <= 1)
+			{
+				DHerr(DH_F_DH_BUILTIN_GENPARAMS, DH_R_BAD_GENERATOR);
+				goto err;
+			}
+			if (generator == DH_GENERATOR_2)
+			{
+				if (!BN_set_word(t1,24)) goto err;
+				if (!BN_set_word(t2,11)) goto err;
+				g=2;
+			}
+			#if 0 /* does not work for safe primes */
+				else if (generator == DH_GENERATOR_3)
+				{
+					if (!BN_set_word(t1,12)) goto err;
+					if (!BN_set_word(t2,5)) goto err;
+					g=3;
+				}
+			#endif
+			else if (generator == DH_GENERATOR_5)
+			{
+				if (!BN_set_word(t1,10)) goto err;
+				if (!BN_set_word(t2,3)) goto err;
+				/* BN_set_word(t3,7); just have to miss
+				 * out on these ones :-( */
+				g=5;
+			}
+			else
+			{
+				/* in the general case, don't worry if 'generator' is a
+				 * generator or not: since we are using safe primes,
+				 * it will generate either an order-q or an order-2q group,
+				 * which both is OK */
+				if (!BN_set_word(t1,2)) goto err;
+				if (!BN_set_word(t2,1)) goto err;
+				g=generator;
+			}
 		\end{lstlisting}
 		
+		\subsubsection{Conclusion}
+
+		Ainsi selon la norme RFC-4419, le choix du générateur peut se résumer à un petit générateur qui ne serait pas une racine primitive. La criticité du risque est très grande, car si deux personnes possèdent la même clé publique pour deux clés privées distinctes, ils pourront alors déchiffrer les messages, et signer à la place de l'autre. Mais, la probabilité d'une telle collision est quasiment nulle, il est simplement deux fois plus efficace de générer deux clés privées possédant la même clé publique, que de retrouver la clé privée en brute force.
+		OpenSSL laisse en plus le choix au développeur de choisir une racine primitive comme générateur, pour des cas d'extrême sécurité.
 		
 	\subsection{Audit 2 : Diffie-Hellman Ephémère en mode FIPS}
 		\subsubsection{Normes visées}
 
-	
-		\subsubsection{Faille}
-	
-		Une faille plus grave concerne le mode FIPS (Federal Information 
-		Processing Standard) d'OpenSSL, qui peut être compilé avec la commande \texttt{./config fipscanisterbuild}". En effet, un attaquant situé entre le client et le serveur connaissant la clé secrète du serveur peut déchiffrer une 
-		session SSL/TLS. \\
-	
-		L'algorithme EDH/DHE (Diffie-Hellman Ephémère) permet de calculer 
-		une nouvelle clé connue uniquement du client et du serveur, donc
-		l'attaquant intermédiaire ne peut plus déchiffrer la session.
-		Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q 
-		faibles pour EDH/DHE. Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-
-		middle peut donc forcer la génération d'un secret Diffie Hellman 
-		prédictible.
 
-	\textbf{Source} : \\
-	\href{http://vigilance.fr/vulnerabilite/OpenSSL-Man-in-the-middle-FIPS-Diffie-Hellman-10585}
-	{vigilance.fr/vulnerabilite/OpenSSL-Man-in-the-middle-FIPS-Diffie-Hellman-10585}
+		\subsubsection{Description de la faille}
+	
+		Une faille plus grave concerne le mode FIPS (Federal Information Processing Standard) d'OpenSSL, qui peut être compilé avec la commande \texttt{./config fipscanisterbuild}". En effet, un attaquant situé entre le client et le serveur connaissant la clé secrète du serveur peut déchiffrer une session SSL/TLS. \\
+	
+		L'algorithme EDH/DHE (Diffie-Hellman Ephémère) permet de calculer une nouvelle clé connue uniquement du client et du serveur, donc l'attaquant intermédiaire ne peut plus déchiffrer la session. Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q faibles pour EDH/DHE. Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-middle peut donc forcer la génération d'un secret Diffie Hellman prédictible, en modifiant par exemple le traffic réseau. \cite{vigilance-vul-10585} \cite{CVE-2011-5095}.
 
-	\textbf{Date} : Avril 2011	
+		La faille en elle même n'est pas suffisante pour faire l'attaque, il requiert également une implémentation SSL faible. 
 	
 		\subsubsection{Implémentation}
 		
-			\paragraph{Version OpenSSL.\\}
+			\paragraph{Configuration visée.\\}
 		
-			\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
-		
-		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
-		\end{lstlisting}
-		
+			La version vulnérable d'OpenSSL est la 0.9.8, en mode FIPS uniquement.
 
-	
-		
-	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
-		\subsubsection{Normes visées}
+			\paragraph{.\\}
 
-	
-		\subsubsection{Faille}
-	
-	
-	
-		\subsubsection{Implémentation}
-		
-			\paragraph{Version OpenSSL.\\}
-		
-			\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
-		
-		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
-		\end{lstlisting}
-		
-	
-		
-	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
-		\subsubsection{Normes visées}
+			La fonction est accessible au chemin \texttt{openssl/crypto/dh/dh\_key.c} (cf. \ref{dhkey})
 
-	
-		\subsubsection{Faille}
-	
-	
-	
-		\subsubsection{Implémentation}
-		
-			\paragraph{Version OpenSSL.\\}
-		
-			\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{bla/bla/bla}, dont les composantes principales sont listées en \textit{listing} \ref{codeAleatoire}.
-		
-		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
-		\end{lstlisting}
-		
+			\begin{lstlisting}[style=customc,caption=dh\_key.c, label=dhkey]
+				if (!DH_check_pub_key(dh, pub_key, &check_result) || check_result)
+				{
+					DHerr(DH_F_COMPUTE_KEY,DH_R_INVALID_PUBKEY);
+					goto err;
+				}
+			\end{lstlisting}
 
+			Cette partie causait un faux positif sous certaines conditions pouvant fragiliser le système.
+
+			\paragraph{Test.\\}
+
+			Nessus Vulnerability Scanner est un logiciel permettant de tester la configuration du serveur afin d'identifier entre autres de problèmes d'authentification \cite{nessus}. Le système RedHat 
+		
+	\subsubsection{Conclusion}
+
+		Il est tout d'abord recommandé de passer à la version OpenSSL supérieur, sinon de désactiver le mode FIPS, ou encore de configurer la ciphersuite afin de ne pas permettre au serveur d'utiliser DH comme algorithme d'échange de clés.
 
 
 
 \section{Recommandations générales}
-
-
-
-
-%Si nécessaire, Code de figure : 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.2]{images/logo_univ.png}
-	\caption{Titre de figure 2.1}
-	\label{fig21}
-\end{figure}
