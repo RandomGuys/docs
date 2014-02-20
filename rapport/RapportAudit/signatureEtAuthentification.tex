@@ -34,60 +34,82 @@ La comparaison entre fonctions de hachage est seulement utilisée pour empêcher
 
 Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
 
-		\subsubsection{Faille}
+		\subsubsection{Description de la faille}
 		
-			L'Université du Michigan a réussi l'exploit de récupérer la 
-			clé privée d'un certificat RSA en un peu plus de 100h
-			\cite{andrea2010RSA} \cite{opensslvuln2010}. 	L'attaque fonctionne par injection de fautes \cite{fault2008lawson} 
-			sur la méthode d'authentification. 
-			La technique est donc très poussée, mais le résultat en vaut 
-			la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire 	dysfonctionner le système tout entier. 
-			Les signatures erronées produites révéleront de l'information 
-			sur la clé privée. 
-			Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
-			
-		
-			La cause venait de l'algorithme d'exponentiation modulaire 
-			(Fixed-Window Exponentiation), qui a l'inconvénient d'utiliser 
-			plus de 1000 multiplications, la multiplication étant très sensible en cas de dégradation du	microprocesseur.	\textit{"The fixed-window exponentiation algorithm in the OpenSSL library 
-			does not validate the correctness of the signature produced before
-			sending it to the client, a vulnerability that we exploit in our
-			attack"}\\
-			
-			Malheureusement, il faut pouvoir 	contrôler la machine (en ayant un accès au BIOS par exemple) pour pouvoir exploiter cette faille .
-	
+			L'Université du Michigan a réussi l'exploit de récupérer la clé privée d'un certificat RSA en un peu plus de 100h \cite{andrea2010RSA} \cite{opensslvuln2010}. 	L'attaque fonctionne par injection de fautes \cite{fault2008lawson} sur la méthode d'authentification. La technique est donc très poussée, mais le résultat en vaut la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire dysfonctionner le système tout entier. Les signatures erronées produites révéleront de l'information sur la clé privée. Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
+
+			La technique consite à renseigner de fausses signatures afin de vérifier les fautes avec la clé publique de la machine. Lorsque la signature est identifié comme fausse, elle est envoyé à un analyseur contenant l'algorithme suivant :
+
+			\begin{lstlisting}[style=customc,caption=window\_search.c, label=windowssearch]
+			window\_search (m, s, e, win\_size, win\_idx) {
+				found = 0;
+				for(d[win\_idx] in [0..2^win\_size-1];
+					sqr\_iter in [0..win\_size-1];
+					fault in [0..card(bits(d))-1]) {
+						found += test\_equation 10(m, s, e,
+						win\_idx, d[win\_idx], sqr\_iter, fault loc)
+					}
+				if (found == 1) 
+					return d[win\_idx]
+				else 
+					return -1
+			}
+			\end{lstlisting}
+
+			$d$ : fenêtre, $win\_size$ : taille fixé sur la fenêtre, w$in\_idx$ : index de la fenêtre. Et $m$, $s$, $e$ des entiers pour l'opération d'exponentiation modulaire :
+			$$ m^e [s]$$
+
+			En contrôlant le voltage, on arrive à savoir qu'un bit en particulier est mauvais. Bit après bit on reconstruit la clé privée, avec une signature erronée pour chacun des exposant de toute les fenêtres. L'étude montre que 650 signatures corrompues suffisent pour retrouver 100\% d'une clé privée RSA de 1024 bits. 
+
 		
 		\subsubsection{Implémentation}
 			
-			\paragraph{Version OpenSSL.\\}
+			\paragraph{Configuration utilisée.\\}
 			
-			\paragraph{Fonction.\\}
-			La fonction liée à cette norme est accessible sous le paquetage
-			\texttt{bla/bla/bla}, dont les composantes principales sont 
-			listées en \textit{listing} \ref{codeAleatoire}.
+			Le logiciel utilisée pour l'étude est OpenSSL 0.9.8i. L'attaque se fait sur la librairie d'authentification OpenSSL sous un système SPARC Linux qui implémente FPGA pour les systèmes cartes à puces.
+
+			\paragraph{Fonction Fixed-window modular exponentiation.\\}
+
+			Cette fonction est accessible dans plusieurs fonctions de chiffrement :
+			\begin{itemize}
+			\item RSA
+			\item ElGamal
+			\item DSA
+			\item Diffie-Hellman
+			\item etc...
+			\end{itemize}
 		
+			Elle garantit des opérations en temps constant afin d'éviter des attaques par timing, et elle reste très performante. Elle s'apparente à la technique square-and-multiply à la seule différence qu'elle utilise des fenêtres de largeur $w$ bits, et partitionne l'exposant dans ces fenêtres au lieu d'examiner l'exposant pour différentes opérations comme square-and-multiply. \\
+
+			C'est le fait que la fenêtre soit fixe qui la rend insensible à une attaque par timing.\\
+
+			Voici l'algorithme FWE :
 		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
-		\end{lstlisting}
+			\begin{lstlisting}[style=customc,caption=fwe.c, label=fwe]
+				FWE(m, d, n, win\_size) {
+					num\_win = card(bits(d)) / win\_size;
+					acc = 1;
+					for(win\_idx in [num\_win-1..0])
+						for(sqr\_iter in [0..win\_size-1])
+							acc = (acc * acc) mod n
+						d[win\_idx] =
+							bits(d, win\_idx * win\_size, win\_size)
+						acc = (acc * m^d[win\_idx]) mod n
+					return acc;
+				}
+			\end{lstlisting}
+		
+
+			L'inconvénient de cet algorithme est qu'il utilise plus de 1000 multiplications. Or, il est connu que pour une attaque par injection de fautes, la multiplication est l'opération la plus sensible en cas de dégradation du microprocesseur. \textit{"The fixed-window exponentiation algorithm in the OpenSSL library does not validate the correctness of the signature produced before sending it to the client, a vulnerability that we exploit in our attack"}\\
+			
+
+		\subsubsection{Conclusion}
+
+			Lorsque le système est vulnérable, OpenSSL ne le détecte pas forcément. Le risque est donc très fort, et les contre-mesures sont parfois difficile à trouver dans les phases de tests. Toutefois, cette étude soulève un choix de programmation qui semble à première vue anodin, mais qui peut avoir de lourdes conséquences.\\
+
+			Malheureusement, il faut pouvoir contrôler la machine (en ayant un accès au BIOS par exemple) pour pouvoir exploiter cette faille car il faut pouvoir toucher directement à l'alimentation de la faille.\\
+
+			Cependant, cette erreur n'est pas à prendre à la légère, car une attaque à base de faiseaux lumineux est en cours de développement afin de réaliser cette attaque à distance.
 		
 \subsection{Audit 2 : Malformation des signatures DSA/ECDSA}
 		\subsubsection{Normes visées}
@@ -100,65 +122,79 @@ int main()
 
 		Il est possible de retourner DSA et ECDSA en une utilisation déterministe en utilisant un processus déterministe de génération d'une valeur "aléatoire", k. Ce processus doit remplir quelques caractéristiques cryptographique afin de maintenir les propriétés de vérifiabilité et d'infalsifiabilité attendues par cette méthode de signature. De ce fait, pour une personne ne connaissent pas la clef privée de la signature, la transformation du message en valeur correspondante, k, doit être calculatoirement indiscernable du retour de la fonction aléatoire et uniforme.
 		
-		\subsubsection{Faille}
-		
+		\subsubsection{Description de la faille}
 			
-		En 2008, une vulnérabilité sur la malformation des signatures 
-		survient sur OpenSSL (re-analysé en Novembre 2012)
-		\cite{openssl2009secadv} \cite{cve-2008-5077}. Dans les recommandations générales, il est clairement indiqué que ce sont 
-		les clients qui ne doivent plus utiliser une ancienne version d'OpenSSL
-		ou alors ne pas utiliser de certificats DSA/ECDSA. 	Reste à savoir si c'est toujours d'actualité (e.g. si la faille est
-		toujours exploitable), et si les serveurs respectent bien la
-		recommandation. 	En 2009, un cas similaire a été trouvé dans un autre protocole 
-		(NTP) avec la même fonction \texttt{EVP\_VerifyFinal} \cite{cve-2009-0021}.
+		En 2008, une vulnérabilité sur la malformation des signatures survient sur OpenSSL (re-analysé en Novembre 2012) \cite{openssl2009secadv} \cite{cve-2008-5077}. 
+
+		La cause vient de plusieurs fonctions implémentant la fonction EVP\_VerifyFinal(). Elles valident de fausses signatures au lieu de retourner des erreurs, parmis les signatures corrompues peuvent se trouver :
+		\begin{itemize}
+		\item Des signatures DSA
+		\item Des signatures EDSA
+		\end{itemize}
+
+		En 2009, un cas similaire a été trouvé dans un autre protocole (NTP) avec la même fonction \texttt{EVP\_VerifyFinal} \cite{cve-2009-0021}.
+
+		La conséquence est très grave, car cette faille permet une attaque en man in the middle, en faisant par exemple une attaque par phishing en HTTPS où la validation de la chaîne des certificats serait valide.
+
+		\subsubsection{Tests}
+
+		Si la faille est toujours exploitable, les conséquences sont très graves. Nous pouvons tester sur d'anciennes versions OpenSSL si cette faille persiste.
 		
 		\subsubsection{Implémentation}
 			
-			\paragraph{Version OpenSSL.\\}
+			\paragraph{Configuration visée.\\}
 			
+			La faille concerne toutes les versions antérieurs à OpenSSL 0.9.8j, lorsqu'un client SSL/TLS utilise des clés DSA/ECDSA pour s'authentifier sur un serveur. 
+
 			\paragraph{Fonction.\\}
-			La fonction liée à cette norme est accessible sous le paquetage
-			\texttt{bla/bla/bla}, dont les composantes principales sont 
-			listées en \textit{listing} \ref{codeAleatoire}.
+			La fonction EVP\_VerifyFinal() est accessible sous le paquetage \texttt{openssl/crypto/evp/p\_verify.c}.
 		
 		
-		\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
-#include <stdio.h>
-#define N 10
-/* Block
- * comment */
- 
-int main()
-{
-    int i;
- 
-    // Line comment.
-    puts("Hello world!");
- 
-    for (i = 0; i < N; i++)
-    {
-        puts("LaTeX is also great for programmers!");
-    }
- 
-    return 0;
-}
-		\end{lstlisting}
-		
-		
-		
-		
-		
+			\begin{lstlisting}[style=customc,caption=codeAleatoire.c, label=codeAleatoire]
+				int EVP_VerifyFinal(EVP_MD_CTX *ctx, const unsigned char *sigbuf,
+				     unsigned int siglen, EVP_PKEY *pkey)
+				{
+				unsigned char m[EVP_MAX_MD_SIZE];
+				unsigned int m_len;
+				int i,ok=0,v;
+				MS_STATIC EVP_MD_CTX tmp_ctx;
+
+				for (i=0; i<4; i++)
+					{
+					v=ctx->digest->required_pkey_type[i];
+					if (v == 0) break;
+					if (pkey->type == v)
+						{
+						ok=1;
+						break;
+						}
+					}
+				if (!ok)
+					{
+					EVPerr(EVP_F_EVP_VERIFYFINAL,EVP_R_WRONG_PUBLIC_KEY_TYPE);
+					return(-1);
+					}
+				EVP_MD_CTX_init(&tmp_ctx);
+				EVP_MD_CTX_copy_ex(&tmp_ctx,ctx);     
+				EVP_DigestFinal_ex(&tmp_ctx,&(m[0]),&m_len);
+				EVP_MD_CTX_cleanup(&tmp_ctx);
+			        if (ctx->digest->verify == NULL)
+			                {
+					EVPerr(EVP_F_EVP_VERIFYFINAL,EVP_R_NO_VERIFY_FUNCTION_CONFIGURED);
+					return(0);
+					}
+
+				return(ctx->digest->verify(ctx->digest->type,m,m_len,
+					sigbuf,siglen,pkey->pkey.ptr));
+				}
+			\end{lstlisting}     
+
+			La fonction retourne 1 si la signature est valide, 0 si la signature est incorrecte et -1 pour toute autre raison. Mais dans certains cas cette fonction retournait toujours 0.
 	
+		\subsubsection{Conclusion}
+
+			Ici, la faille persistera tant que le serveur et le client resteront à une version antérieur à OpenSSL 0.9.8j, les clés quand à elles ne sont pas vulnérables, et peuvent être conservées. Malheureusement, le nombre de serveurs tournant sous OpenSSL 0.9.8 et versions antérieurs est très élevé.\\
+
+			Il est également recommandé aux développeurs utilisant OpenSSL de faire des audit régulier de la fonction EVP\_VerifyFinal() pour s'assurer que les vérifications sont bonnes. Les tests étants assez simple à effectuer.
 
 \section{Recommandations générales}
-
-
-
-
-%Si nécessaire, Code de figure : 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.2]{images/logo_univ.png}
-	\caption{Titre de figure 2.1}
-	\label{fig21}
-\end{figure}
