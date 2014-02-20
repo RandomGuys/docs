@@ -131,7 +131,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 			
 		En 2008, une vulnérabilité sur la malformation des signatures survient sur OpenSSL (re-analysé en Novembre 2012) \cite{openssl2009secadv} \cite{cve-2008-5077}. 
 
-		La cause vient de plusieurs fonctions implémentant la fonction EVP\_VerifyFinal(). Elles valident de fausses signatures au lieu de retourner des erreurs, parmis les signatures corrompues peuvent se trouver :
+		La cause vient de plusieurs fonctions implémentant la fonction EVP\_VerifyFinal() (cf. \textit{}). Elles valident de fausses signatures au lieu de retourner des erreurs, parmis les signatures corrompues peuvent se trouver :
 		\begin{itemize}
 		\item Des signatures DSA
 		\item Des signatures ECDSA
