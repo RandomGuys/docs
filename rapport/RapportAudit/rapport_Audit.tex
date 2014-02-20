@@ -90,6 +90,10 @@
 \def\l@subsubsubsection{\@dottedtocline{4}{10em}{5em}}
 \def\l@paragraph{\@dottedtocline{5}{10em}{5em}}
 \def\l@subparagraph{\@dottedtocline{6}{14em}{6em}}
+\@addtoreset{subsubsubsection}{section}
+\@addtoreset{subsubsubsection}{subsection}
+\@addtoreset{subsubsubsection}{subsubsection}
+
 \makeatother
 
 \setcounter{secnumdepth}{4}
@@ -126,6 +130,9 @@
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
 \definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+
+
 
 \begin{document}
 \pagestyle{fancy}
