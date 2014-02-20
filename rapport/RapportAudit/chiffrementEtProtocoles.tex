@@ -446,7 +446,7 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 			
 			\paragraph{Fonction.\\}
 			
-			La fonction auditée se nomme RSA\_padding\_check\_PKCS1\_OAEP() et est accessible à partir du chemin \texttt{openssl/crypto/rsa/rsa\_oaep.c}.
+			La fonction auditée se nomme RSA\_padding\_check\_PKCS1\_OAEP() (cf. \textit{Listing} \ref{rsaoaep}) et est accessible à partir du chemin \texttt{openssl/crypto/rsa/rsa\_oaep.c}.
 		
 		
 			\begin{lstlisting}[style=customc,caption=rsa\_oaep.c,
@@ -484,7 +484,7 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 			
 			La technique est basique, un individu enregistre plusieurs cookies de session auprès de divers sites officiels (banques, messageries, etc...). Puis, il clique malencontreusement sur du code Java malveillant (publicité, image, etc...). et l'attaque se déroule automatiquement. L'ensemble des cookies est envoyé au serveur malveillant qui n'a plus qu'à déchiffrer les clés de session.\\
 			
-			La cause viendrait du mode de chiffrement choisi : CBC. 	SSL/TLS est un protocole qui chiffre un canal de communication.	De ce fait il ne chiffre pas un fichier unique, mais une série d'enregistrements.	Il y a deux façons d'utiliser le mode CBC dans ce cas précis :
+			La cause viendrait du mode de chiffrement choisi : CBC. SSL/TLS est un protocole qui chiffre un canal de communication.	De ce fait il ne chiffre pas un fichier unique, mais une série d'enregistrements. Il y a deux façons d'utiliser le mode CBC dans ce cas précis :
 			\begin{itemize}
 			\item Prendre chacun de ces enregistrements indépendamment des autres. Générer un nouveau vecteur d'initialisation à chaque fois.
 			\item Traiter ces enregistrements comme un seul objet en les concaténant. Le vecteur d'initialisation est donc choisi aléatoirement pour le premier enregistrement et pour les autres, il aura pour valeur le dernier bloc de l'enregistrement précédent.\\
@@ -576,18 +576,5 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 
 			Nous conseillons surtout une meilleure documentation d'OpenSSL, et des rapports d'erreurs d'interfaces plus simples et plus consistants afin d'éviter les erreurs d'interprétation. L'idée des chercheurs de proposer des abstractions de haut niveau pour les applications semblent être une très bonne idée.
 		
-		
-
 
 \section{Recommandations générales}
-
-
-
-
-%Si nécessaire, Code de figure : 
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.2]{images/logo_univ.png}
-	\caption{Titre de figure 2.1}
-	\label{fig21}
-\end{figure}
