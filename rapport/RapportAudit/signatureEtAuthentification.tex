@@ -1,6 +1,11 @@
 \chapter{Signature et authentification}
 \section{Définitions et contexte}
 
+Une signature digital utilise le concept du traditionnel signature sur papier et le tourne en une empreinte électronique. Cette empreinte est un message encodé et est unique pour chaque document et le signataire. La signature permet alors de garantir l'authenticité du signataire pour son document. Toute modification dans le document après l'avoir signé rend la signature invalide, ce qui protège alors contre les fausses informations et la contrefaçon des signatures.\\
+
+De ce fait, il est important de faire attention à toute les formes de vulnérabilités des signatures afin de comprendre les attaques possible sur la contrefaçon des signatures. Dans cette partie est consacré à la bonne compréhension et implémentation qui sont définie dans la RFC, afin de se prémunir des différentes attaques possible. On verra, cependant, qu'il existe quand même des failles au niveaux des injections, surtout lorsque la librairie dépend trop du matérielle. 
+
+
 \section{Audits}
 	\subsection{Audit 1 : Attaque par injection de fautes sur les certificats RSA}
 		\subsubsection{Normes visées}
@@ -129,7 +134,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 		La cause vient de plusieurs fonctions implémentant la fonction EVP\_VerifyFinal(). Elles valident de fausses signatures au lieu de retourner des erreurs, parmis les signatures corrompues peuvent se trouver :
 		\begin{itemize}
 		\item Des signatures DSA
-		\item Des signatures EDSA
+		\item Des signatures ECDSA
 		\end{itemize}
 
 		En 2009, un cas similaire a été trouvé dans un autre protocole (NTP) avec la même fonction \texttt{EVP\_VerifyFinal} \cite{cve-2009-0021}.
