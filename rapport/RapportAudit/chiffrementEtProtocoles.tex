@@ -1,8 +1,217 @@
+
 \chapter{Chiffrement et Protocoles}
 
 \section{Définitions et contexte}
 
-A remplir.
+Nous allons tout d'abord apporter quelques précisions au contexte dans lequel nous travaillons. Plusieurs failles ont été trouvées sur RSA-OAEP ainsi que sur le mode CBC. Nous allons donc décrire ces deux principes.
+\subsection{OAEP : \textit{Optimal Asymmetric Encryption Padding}}
+Dans les chiffrements par blocs, cela nécessite généralement que tous les blocs soient d'une taille précise. Or ce n'est pas toujours le cas. Pour cela, on rajoute des bits de bourrage (padding).\\
+OAEP est un schéma de remplissage, généralement utilisé avec RSA (en prétraitement). Il a été introduit en 1994 par Mihir Bellare et Phil Rogaway1. L'OAEP est une forme de réseau de Feistel qui nécessite une source d'aléa ainsi que deux fonctions de hachage.\\
+RSA-OEAP peut être prouvé sûr dans un modèle théorique idéalisé, celui de l'oracle aléatoire. Il est recommandé par les PKCS.\\
+OAEP a deux buts : 
+\begin{itemize}
+	\item insérer un élément d'aléatoire qui permet de passer d'un schéma déterministe à un schéma non déterministe (le même message clair chiffré deux fois avec la même clef et le même algorithme n'aura pas le même message chiffré.)
+	\item prévenir un déchiffrement partiel en s'assurant que l'attaquant ne peut retrouver une portion du text clair sans être capable d'inverser la fonction trapdoor (par exemple la factorisation de deux grands nombres premiers : il est facile de multiplier, mais quand on n'a que le produit  il est très difficile de retrouver les facteurs).\\
+\end{itemize}
+Il n'est pas pouvé sûr pour une attaque IND-CCA (attaque à texte chiffré seulement). Victor Shoup a démontré qu'il n'existe pas de preuve générale.
+Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'êre cacpable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
+
+\subsubsection*{Réseau de Feistel}
+Il est utilisé dans les systèmes de chiffrement par bloc. Un réseau de Feistel repose sur des principes simples dont des permutations, des substitutions, des échanges de blocs de données et une fonction prenant en entrée une clé intermédiaire à chaque étage.\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=7cm]{images/Reseau_de_feistel.png}
+	\caption{Réseau de Feistel}
+	\label{Feistel}
+\end{figure}
+
+Le chiffrement DES par exemple repose sur ce réseau, et effectue 16 tours.\\
+Généralement les deux parties sont équilibrées même si par exemple des algorithme comme MacGuffin de Bruce Schneier utilise un réseau non équilibré.
+
+\subsection{RSA-OAEP}
+Dans la PKCS\#1 est décrit le standard de RSA-OAEP. RSAES-OAEP est le terme plus facilement utilisé dans le document : RSA Encryption Scheme OAEP.\\
+Il regroupe les primitives RSAEP et RSADP : respectivement RSA Encryption Protocole et RSA Decryption Protocole.
+
+\subsubsection{RSAES-OAEP-ENCRYPT}
+Options :
+\begin{description}
+	\item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de fonction de hachages);
+	\item [MGF :] fonction de génération de masque.\\
+\end{description} 
+Entrée :
+\begin{description}
+	\item [(n, e) : ] destinataire de la clef publique RSA (\texttt{k} contient la longueur en octets du modulo RSA \texttt{n});
+	\item [M : ] message à chiffrer, un chaîne d'octets de longueur \texttt{mLen}, quand \texttt{mLen <= k - 2hLen - 2};
+	\item [L : ] champ optionnel à associer au message, la valeur par défaut pour \texttt{L}, si \texttt{L} n'a aucune condition, est la chaîne vide.\\
+\end{description}
+Sortie :
+\begin{description}
+	\item [C : ] texte chiffré, une chaîne d'octets de longueur \texttt{k}.\\
+\end{description}
+Erreurs :  
+\begin{itemize}
+	\item "\textit{message too long}"; 
+	\item "\textit{label too long}".\\
+\end{itemize}
+Précondition : 
+\begin{itemize}
+	\item la clef publique RSA \texttt{(n, e)} est valide.\\
+\end{itemize}
+Étapes:
+\begin{enumerate}
+	\item vérifier de la longueur:
+	\begin{enumerate}
+		\item si la longueur de \texttt{L} est plus grande que la longueur limite en entrée de la fonction de hachage ($2^{61} - 1$ octets pour SHA-1), renvoyer "\textit{label too long}" et arrêter;      
+		\item si \texttt{mLen > k - 2hLen - 2}, le message "\textit{message too long}" est renvoyé et la fonction est stoppée.\\
+	\end{enumerate}
+	\item coder EME-OAEP (voir Figure 1 ci-dessous):
+	\begin{enumerate}
+		\item si l'étiquette \texttt{L} n'est pas spécifiée, laisser \texttt{L} à une chaîne vide. Laisser \texttt{lHash = Hash(L)}, une chaîne d'octets de taille \texttt{hLen} (voir note plus bas);
+		\item générer une chaîne d'octets PS consistant en \texttt{k - mLen - 2hLen - 2} d'octets zéro. La taille de \texttt{PS} peut être zéro;
+		\item concaténer \texttt{lHash}, \texttt{PS}, un unique octet avec la valeur hexadécimale \textit{0x01}, et le message \texttt{M} pour former un bloc de données DB de longueur \texttt{k - hLen - 1} octets, tel que : \texttt{DB} = \texttt{lHash} \textbar\textbar \texttt{PS} \textbar\textbar \textit{0x01} \textbar\textbar \texttt{M};
+		\item générer un une chaîne d'octets aléatoires de longueur \texttt{hLen};
+		\item laisser \texttt{dbMask = MGF(seed, k - hLen - 1)};
+		\item laisser \texttt{maskedDB = DB xor dbMask};
+		\item laisser \texttt{seedMask = MGF(maskedDB, hLen)};
+		\item laisser \texttt{maskedSeed = seed xor seedMask};
+		\item concaténer un unique octet avec la valeur hexadécimale \textit{0x00}, \texttt{maskedSeed}, et \texttt{maskedDB} pour former un message chiffré \texttt{EM} de longueur \texttt{k} octets tel que \texttt{EM = 0x00} \textbar\textbar \texttt{maskedSeed} \textbar\textbar \texttt{maskedDB}.\\
+	\end{enumerate}
+	\item chiffrement RSA :
+	\begin{enumerate}
+		\item convertir le message codé \texttt{EM} en un entier représentatif du message \texttt{m} (voir section 4.2) : \texttt{m = OS2IP (EM)};
+		\item appliquer la primitive de chiffrement \texttt{RSAEP}(Section 5.1.1) avec la clef RSA publique (n, e) pour produire un entier c représentatif du message chiffré : \texttt{c = RSAEP ((n, e), m)};
+		\item convertir le texte chiffré représentatif \texttt{c} en un texte chiffré \texttt{C} de taille \texttt{k} octets (voir Section 4.1) : \texttt{C = I2OSP (c, k)}.\\
+	\end{enumerate}
+	\item envoyer en sortie le texte chiffré \texttt{C}.\\
+\end{enumerate}
+\paragraph{Note}  Si \texttt{L} est une chaîne vide, la valeur du hash correspondante \texttt{lHash} a la représentation hexadécimale suivante pour différents choix de hash :
+
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{17cm}{Xllllll}
+SHA-1: &  (0x)da39a3ee & 5e6b4b0d & 3255bfef & 95601890 & afd80709 & \\
+SHA-256: 	& (0x)e3b0c442 	& 98fc1c14 	& 9afbf4c8 	& 996fb924 	& 27ae41e4 	& 649b934c\\
+			& a495991b 		& 7852b855 	& 			& 			& 			&\\
+SHA-384: 	& (0x)38b060a7 	& 51ac9638  	& 4cd9327e 	& b1b1e36a 	& 21fdb711 	& 14be0743\\
+			& 4c0cc7bf 		& 63f6e1da 	& 274edebf 	& e76f65fb 	& d51ad2f1 	& 4898b95b\\
+SHA-512: 	& (0x)cf83e135 	& 7eefb8bd 	& f1542850 	& d66d8007 	& d620e405 	& 0b5715dc\\
+			& 83f4a921 		& d36ce9ce 	& 47d0d13c 	& 5d85f2b0 	& ff8318d2 	& 877eec2f\\
+			& 63b931bd 		& 47417a81 	& a538327a 	& f927da3e	&			&\\
+\end{tabularx}
+\caption{représentations hexadécimales}
+\label{repres_hexa}
+\end{table}
+
+\begin{description}
+   	\item SHA-1:   (0x)da39a3ee 5e6b4b0d 3255bfef 95601890 afd80709;
+   	\item SHA-256: (0x)e3b0c442 98fc1c14 9afbf4c8 996fb924 27ae41e4 649b934c\\
+                a495991b 7852b855;
+   	SHA-384: (0x)38b060a7 51ac9638 4cd9327e b1b1e36a 21fdb711 14be0743\\
+                4c0cc7bf 63f6e1da 274edebf e76f65fb d51ad2f1 4898b95b;
+   	SHA-512: (0x)cf83e135 7eefb8bd f1542850 d66d8007 d620e405 0b5715dc\\
+                83f4a921 d36ce9ce 47d0d13c 5d85f2b0 ff8318d2 877eec2f\\
+                63b931bd 47417a81 a538327a f927da3e.\\
+\end{description}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=10cm]{images/schema.png}
+	\caption{opération de chiffrement EME-OAEP}
+	\label{fig21}
+\end{figure}
+
+\texttt{lHash} est le hash de l'étiquette optionnelle \texttt{L}. L'opération de déchiffrement suivant inverse les étapes pour retrouver \texttt{M} et vérifier \texttt{lHash} et \texttt{PS}.
+
+
+\subsubsection{RSAES-OAEP-DECRYPT (K, C, L)}
+
+Options :
+\begin{description}
+	\item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de la fonction de hachage);
+   	\item [MGF :] fonction de génération du masque.\\
+\end{description}
+Entrée :
+\begin{description}
+   	\item [K :] destinataire de la clef privée RSA (\texttt{k} contient la longueur en octets du modulo RSA \texttt{n});
+   	\item [C :] texte chiffré à déchiffrer, une chaîne de caractères de taille \texttt{k}, où \texttt{k = 2hLen + 2};
+   	\item [L :] champ optionnel dont l'association avec le message doit être garantie; la valeur par défaut pour \texttt{L} est, si pas de spécification, une chaîne vide.\\
+\end{description}
+Sortie :
+\begin{description}
+    \item [M :] message, une chaîne d'octets de longueur \texttt{mLen}, où \texttt{mLen <= k - 2hLen - 2}.\\
+\end{description}
+Erreur : 
+\begin{itemize}
+	\item "decryption error";
+\end{itemize}
+Étapes :
+\begin{enumerate}
+	\item Vérification des longueurs :
+	\begin{enumerate}
+     	\item Si la longueur de \texttt{L} est supérieur à la taille limite en entrée de la fonction de hachage (\texttt{$2^{61 - 1}$} octets pour SHA-1), renvoie "decryption error" et s'arrête;
+		\item Si la longueur du texte chiffré \texttt{C} n'est pas de \texttt{k} octets, renvoie "decryption error" et s'arrête;
+     \item Si \texttt{k < 2hLen + 2}, renvoie "decryption error" et s'arrête.\\
+	\end{enumerate}
+	\item déchiffrement RSA :
+	\begin{enumerate}
+     	\item Convertir le texte chiffré \texttt{C} en un entier \texttt{c} représentatif du message chiffré (voir Section 4.2) : \texttt{c = OS2IP (C)};
+     	\item Appliquer la primitive de déchiffrement \texttt{RSADP} à la clef privée RSA \texttt{K} et au message chiffré représentatif \texttt{c} pour produire un entier \texttt{m} représentatif du message clair : \texttt{m = RSADP (K, c)};\\
+      	si RSADP renvoie "ciphertext representative out of range" (signifie que \texttt{c >= n}), renvoie "decryption error" et s'arrête;
+      	\item convertir le message représentatif \texttt{m} en un un message déchiffré \texttt{EM} de longueur \texttt{k} octets (voir Section 4.1) : \texttt{EM = I2OSP (m, k)}.\\
+	\end{enumerate}
+	\item déchiffrement EME-OAEP :
+	\begin{enumerate}
+     	\item si l'étiquette \texttt{L} n'est pas spécifiée, laisser \texttt{L} à une chaîne vide, laisser \texttt{lHash = Hash(L)}, une chaîne d'octets de longueur \texttt{hLen} 
+      	\item séparer le message encodé \texttt{EM} dans un seul octet \texttt{Y}, une chaîne d'octets \texttt{maskedSeed} de longueur \texttt{hLen}, et une chaîne d'octets \texttt{maskedDB} de longueur \texttt{k - hLen - 1} telle que \texttt{EM = Y \textbar\textbar maskedSeed \textbar\textbar maskedDB};
+      	\item laisser \texttt{seedMask = MGF(maskedDB, hLen)};
+      	\item laisser \texttt{seed = maskedSeed xor seedMask};
+      	\item laisser \texttt{dbMask = MGF(seed, k - hLen - 1)};
+      	\item laisser \texttt{DB = maskedDB xor dbMask};
+      	\item séparer \texttt{DB} en une chaîne d'octet \texttt{lHash} de longueur \texttt{hLen}, une chaîne de padding (possiblement vide) \texttt{PS} consistant en des octets hexadécimaux de valeur \textit{0x00}, et un message \texttt{M} tel que \texttt{DB = lHash \textbar\textbar PS \textbar\textbar 0x01 \textbar\textbar M};
+		 \\ s'il n'y a pas d'octet avec la valeur hexadécimale \textit{0x01} pour séparer \texttt{PS} de \texttt{M}, si \texttt{lHash} n'est pas égal à \texttt{lHash}, ou si \texttt{Y} n'est pas une sortie non nulle, renvoyer "decryption error" et s'arrêter.\\
+	\end{enumerate}
+	\item Renvoyer le message M.\\
+\end{enumerate}
+\paragraph{Note}  Il faut faire attention qu'un adversaire ne puisse distinguer les différentes erreurs dans les conditions de l'étape 3, que ce soit par un message d'erreur, ou un temps de réponse différent, ou, plus généralement, apprendre une information partielle à propos du message en clair \texttt{EM}. Sinon un adversaire peut être en mesure d'obtenir des informations utiles sur le déchiffrement du texte chiffré \texttt{C}, conduisant à une attaque à chiffré choisi telle que celle observée par Manger.
+   
+\subsubsection{RSAES-PKCS1-v1\_ 5}
+
+   RSAES-PKCS1-v1\_5 combine les primitives RSAEP et RSADP avec la méthode de codage EME-PKCS1-v1\_ 5. Il est mathématiquement équivalent au schéma de chiffrement dans la PKCS \# 1 v1.5. RSAES-PKCS1-v1\_ 5 peut fonctionner sur des messages de longueur supérieure à \texttt{k - 11} octets (\texttt{k} est la longueur en octets du modulo RSA), bien qu'il faille faire attention aux attaques portant sur les faibles exposants RSA menée par Coppersmith, Franklin, Patarin, and Reiter quand les longs messages sont chiffrés (voir le troisième point dans les notes ci-dessous).\\
+En règle générale, l'utilisation de ce schéma pour chiffrer un message arbitraire, en opposition à une clef générée aléatoirement, n'est pas recommandé.\\   
+Il est possible de générer des textes chiffrés RSAES-PKCS1-v1\_5 valides sans connaître les messages clairs correspondants, avec une probabilité raisonnable de réussite.\\
+Cette possibilité peut être exploitée dans une attaque à chiffré choisi, comme montré en [6]. Par conséquent, si RSAES-PKCS1-v1\_5 doit être utilisé, certaines contre mesures faciles à implémenter devraient être mises en place afin de contrecarrer l'attaque trouvée en [6].\\
+Des exemples typiques comprennent l'ajout de la structure des données à encoder, le contrôle rigoureux de la conformité des PKCS\# 1v1.5 (et d'autres redondance) dans les messages déchiffrés, et la consolidation des messages d'erreur dans un protocole client-serveur basée sur PKCS \# 1 v1.5. Ils peuvent tous être des contre-mesures efficaces et n'entraînent pas de changement à un protocole n\degres 1 sur la base de v1.5-PKCS. Il a été récemment montré que la sécurité du protocole SSL / TLS handshake, qui utilise RSAES-PKCS1-v1\_5 et certaines contre-mesures, peut être liée à une variante du problème RSA.\\
+  
+\paragraph{Note}  Les passages suivants décrivent des recommandations concernant l'utilisation de RSAES-PKCS1-v1\_5. Les recommandations de la version 1.5 de ce document sont inclues ainsi que de nouvelles recommandations motivées par les avancées de cryptanalyse durant les années suivantes.
+\begin{itemize}
+	\item il est recommandé que les octets pseudo aléatoires soient générés indépendamment pour chaque processus de chiffrement, en particulier si la même donnée est en entrée pour plus d'un processus de chiffrement. Les résultats de Haastad sont une des motivations pour cette recommandation;
+	\item La chaîne de padding \texttt{PS} est d'une longueur d'au moins 8 octets, ce qui est une condition de sécurité pour les opérations sur les clefs publiques, et qui rend difficile pour les attaquants de récupérer les données en essayant tous les blocs chiffrés possibles.
+	\item les octets pseudo aléatoires peuvent aussi aider à contrecarrer une attaque grâce à Coppersmith et al. quand la taille du message à chiffrer est gardé petit. L'attaque marche sur les petits exposants RSA quand des messages similaires sont chiffrés avec la même clef publique. Plus spécifiquement, une façon peut être, quand deux entrées RSAEP correspondent sur une large portion de bits (8/9) et qu'un petit exposant RSA est utilisé (e = 3) pour chiffrer les deux, il peut être possible de retrouver les entrées avec l'attaque. Une autre façon d'attaquer est couronnée de succès pour déchiffrer un seul texte chiffré, quand une large proportion (2/3) des entrées de RSAEP est déjà connue. Pour des applications typiques, le message à chiffrer est court (par exemple une clef symétrique de 128 bits) donc peu d'informations seront connues ou en commun entre deux messages pour permettre l'attaque. Cependant, si un long message est chiffré, ou si une partie du message est connu, alors l'attaque peut fonctionner. Dans tous les cas, le schéma  RSAES-OAEP surmonte l'attaque.\\
+\end{itemize}
+
+\subsection{CBC : \textit{Cipher Block Chaining}}
+C'est un mode de chiffrement qui a été très utilisé : enchaînement des blocs.\\
+Sur chaque bloc, un OU exclusif avec le chiffrement du bloc précédent est appliqué. Un vecteur d'initialisation est lui aussi utilisé. Contrairement au mode ECB, les blocs identiques ne seront pas chiffrés de la même façon. On ne pourra donc pas repérer de chaîne de caractères récurrentes aussi facilement. Ce mode de chiffrement possède plusieurs inconvénients : 
+\begin{itemize}
+	\item un chiffrement de plusieurs blocs en parallèles est impossible (puisque chaque bloc dépend du chiffrement du précedent). Déchiffrer avec un IV incorrect entraînera une corruption dans le premier bloc en clair, mais les blocks suivants seront corects. C'est parce qu'un texte claire peut être récupéré grâce à deux blocs adjacents du texte chiffré. Le déchiffrement, contrairement au chiffrement, peut donc être parallélisé. À noter que si un seul bit change dans le texte chiffré, le bloc clair correspondant est complètement corrompu.
+	\item Si une erreur se produit sur un bloc, elle sera répercutée sur tous les suivants. La propagation d'erreur n'est pas limitée.
+\end{itemize} 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=13cm]{images/CBC_chiff.png}
+	\caption{Chiffrement CBC}
+	\label{CBC_chiff}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=13cm]{images/CBC_dechiff.png}
+	\caption{Déchiffrement CBC}
+	\label{CBC_dechiff}
+\end{figure}
+
+Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist.gov/fipspubs/fip81.htm}). Le standard a été publié en 1981.
 
 \section{Audits}
 	\subsection{Audit 1 : Les "Manger's attack" sur RSA-OAEP}
@@ -28,7 +237,7 @@ A remplir.
 			
 			\paragraph{Fonction.\\}
 			
-			La fonction auditée se nomme RSA\_padding\_check\_PKCS1\_OAEP() et est accessible à partir du chemin \texttt{openssl/crypto/rsa/rsa\_oaep.c}.
+			La fonction auditée se nomme \texttt{RSA\_padding\_check\_PKCS1\_OAEP()} et est accessible à partir du chemin \texttt{/crypto/rsa/rsa\_oaep.c}.
 		
 		
 			\begin{lstlisting}[style=customc,caption=rsa\_oaep.c,
