@@ -12,11 +12,11 @@ Ce schéma peut être utilisé dans de multiples applications telles que les cer
 
 La norme spécifie deux types de schéma de signature qui sont :
 \begin{itemize}
-\item RSASSA-PSS
-\item RSASSA-PKCS1-v1\_5 \\
+\item \texttt{RSASSA-PSS}
+\item \texttt{RSASSA-PKCS1-v1\_5} \\
 \end{itemize}
 
-Même si aucune attaque n'est connue contre RSASSA-PKCS1-v1\_5,  RSASSA-PSS est recommandé dans l'intérêt d'augmenter la robustesse d'un système. RSASSA-PKCS1-v1\_5 est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'elle est toujours appropriée dans les nouvelles applications, une transition vers RSASSA-PSS est encouragée.\\ 
+Même si aucune attaque n'est connue contre \texttt{RSASSA-PKCS1-v1\_5},  \texttt{RSASSA-PSS} est recommandé dans l'intérêt d'augmenter la robustesse d'un système. \texttt{RSASSA-PKCS1-v1\_5} est toujours inclue pour des raisons de compatibilités avec les applications existantes et, même s'elle est toujours appropriée dans les nouvelles applications, une transition vers \texttt{RSASSA-PSS} est encouragée.\\ 
 
 
 La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) combinant les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite converti en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.\\ 
@@ -26,13 +26,13 @@ Dans le sens inverse, l'opération de vérification de signature applique une pr
 
 
 \paragraph{RSASSA-PSS : \\}
-RSASSA-PSS combine les primitives RSASP1 et RSAVP1 avec la méthode d'encodage EMSA-PSS. La longueur du message sur laquelle RSASSA-PSS peut travailler est soit illimité, soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à RSASSA-PKCS1-v1\_5, un identificateur de fonction de hachage n'est pas inclu dans le message encodé par EMSA-PSS. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage ( potentiellement plus faible) que celle sélectionnée par le signataire. Il est alors recommandé que la fonction de génération de masquage d'EMSA-PSS  soit basée sur la même fonction de hachage. De cette façon, l'encodage de tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionné par le signataire.\\
+\texttt{RSASSA-PSS} combine les primitives \texttt{RSASP1} et \texttt{RSAVP1} avec la méthode d'encodage \texttt{EMSA-PSS}. La longueur du message sur laquelle \texttt{RSASSA-PSS} peut travailler est soit illimité, soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à \texttt{RSASSA-PKCS1-v1\_5}, un identificateur de fonction de hachage n'est pas inclue dans le message encodé par \texttt{EMSA-PSS}. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage ( potentiellement plus faible) que celle sélectionnée par le signataire. Il est alors recommandé que la fonction de génération de masquage d'\texttt{EMSA-PSS}  soit basée sur la même fonction de hachage. De cette façon, l'encodage de tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionné par le signataire.\\
 
 
 La comparaison entre fonctions de hachage est seulement utilisée pour empêcher la substitution de fonction de hachage, et n'est pas nécessaire si la fonction de hachage est substituée d'une autre façon (e.g., le vérificateur n'accepte qu'une fonction de hachage désignée).\\ 
 
 
-Ce qui est différent pour RSASSA-PSS des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
+Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
 
 		\subsubsection{Faille}
 		
