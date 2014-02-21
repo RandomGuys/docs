@@ -214,7 +214,7 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 
 
 \section{Audits}
-	\subsection{Audit 1 : Les "Manger's attack" sur RSA-OAEP}
+	\subsection{Audit 3.1 : Les "Manger's attack" sur RSA-OAEP}
 		\subsubsection{Normes visées}
 
 		A remplir.
@@ -264,7 +264,7 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 		
 			Il n'y a pas vraiment de quoi s'alarmer, cette attaque est en pratique infaisable sur un serveur car il y a suffisamment de variations de délais (différences de CPU, opérations multi-tâches, connexions réseaux, etc...) pour éviter une attaque par timing. Cependant, sur des systèmes embarqués l'attaque peut être réalisable, et il serait plus prudent de pallier ce problème.
 			
-	\subsection{Audit 2 : Chiffrement SSLv3 ou TLS 1.0 en mode CBC}
+	\subsection{Audit 3.2 : Chiffrement SSLv3 ou TLS 1.0 en mode CBC}
 		\subsubsection{Normes visées}
 	
 			A remplir.	
@@ -294,7 +294,7 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 
 			La faille existe tant que l'association de ces protocoles avec le mode de chiffrement CBC existe. Même si l'attaque est infaisable sur les navigateurs les plus répandus (Chrome, Firefox, IE, Safari, ...), OpenSSL devrait pouvoir interdire cette association, et ne pas laisser le travail aux navigateurs. 	Mais rien n'empêche l'utilisation de ce chiffrement par un navigateur plus léger, nous pourrons tester cette vulnérabilité lors de notre partie 3 si nous trouvons un navigateur acceptant ce type de chiffrement.				
 			
-	\subsection{Audit 3 : Non-validation des certificats SSL}
+	\subsection{Audit 3.3 : Non-validation des certificats SSL}
 		\subsubsection{Normes visées}
 	
 			A remplir.

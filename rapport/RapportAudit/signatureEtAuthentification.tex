@@ -7,7 +7,7 @@ De ce fait, il est important de faire attention à toute les formes de vulnérab
 
 
 \section{Audits}
-	\subsection{Audit 1 : Attaque par injection de fautes sur les certificats RSA}
+	\subsection{Audit 4.1 : Attaque par injection de fautes sur les certificats RSA}
 		\subsubsection{Normes visées}
 Dans la RFC 3447 \cite{rfc3447}, la signature est décrite telle une primitive de signature qui produit la représentation de la signature depuis un message sous le contrôle d'une clef privée. La vérification se fait alors en récupérant la représentation du message depuis la représentation de la signature sous le contrôle de la clef publique correspondante.\\
 
@@ -116,7 +116,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 
 			Cependant, cette erreur n'est pas à prendre à la légère, car une attaque à base de faiseaux lumineux est en cours de développement afin de réaliser cette attaque à distance.
 		
-\subsection{Audit 2 : Malformation des signatures DSA/ECDSA}
+\subsection{Audit 4.2 : Malformation des signatures DSA/ECDSA}
 		\subsubsection{Normes visées}
 
 		La RFC R979 \cite{rfc6979} définie l'utilisation de DSA (\textit{Digital Signature Algorithm}) et ECDSA (\textit{Elliptic Curve Digital Signature Algorithm}) de façon déterministe. DSA et ECDSA sont deux standards de signature digital qui offrent l'intégrité et authenticité dans de nombreux protocoles.\\
