@@ -1,6 +1,6 @@
 \chapter{Génération des clés}
-
 \section{Définitions et contexte}
+
 \subsection{Clés cryptographiques}
 
 La génération de clé est une notion fondamentale de cryptographie. En effet, les données sont protégées grâce à des algorithmes (ou des méthodes cryptographiques) et des clés cryptographiques. Les clés cryptographiques sont notamment utilisées pour le chiffrement et le déchiffrement de données. 
@@ -42,7 +42,7 @@ Les algorithmes symétriques utilisent pour leur chiffrement une clé symétriqu
 \draw	[arrow]	(E) -- node[anchor=north] {$E_k(m)=c$} (D);
 \end{tikzpicture}
 \end{center}
-\caption{Chiffrement symétrique - Alice envoie un message $c$ chiffré à Bob qui le déchiffre}
+\caption[Chiffrement symétrique]{Chiffrement symétrique - Alice envoie un message $c$ chiffré à Bob qui le déchiffre}
 \label{sym}
 \end{figure}
 
@@ -80,7 +80,7 @@ Les clés d'algorithmes symétriques sont de deux catégories, les clés privée
 
 \end{tikzpicture}
 \end{center}
-\caption{Chiffrement asymétrique - Alice envoie un message $c$ chiffré à Bob avec sa clé publique qui le déchiffre}
+\caption[Chiffrement asymétrique]{Chiffrement asymétrique - Alice envoie un message $c$ chiffré à Bob avec sa clé publique qui le déchiffre}
 \label{asym}
 \end{figure}
 
@@ -105,7 +105,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 
 \section{Audits}
-	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
+	\subsection{Audit 2.1 : Le générateur de Diffie-Hellman}
 		\subsubsection{Normes visées}
 
 		Voici l'algorithme de génération de g, d'après la RFC 2631 \cite{rfc2631} datant de 1999 et dérivé de la FIPS-186 : 
@@ -188,7 +188,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		Ainsi selon la norme RFC-4419, le choix du générateur peut se résumer à un petit générateur qui ne serait pas une racine primitive. La criticité du risque est très grande, car si deux personnes possèdent la même clé publique pour deux clés privées distinctes, ils pourront alors déchiffrer les messages, et signer à la place de l'autre. Mais, la probabilité d'une telle collision est quasiment nulle, il est simplement deux fois plus efficace de générer deux clés privées possédant la même clé publique, que de retrouver la clé privée en brute force.
 		OpenSSL laisse en plus le choix au développeur de choisir une racine primitive comme générateur, pour des cas d'extrême sécurité.
 		
-	\subsection{Audit 2 : Diffie-Hellman Ephémère en mode FIPS}
+	\subsection{Audit 2.2 : Diffie-Hellman Ephémère en mode FIPS}
 		\subsubsection{Normes visées}
 
 

@@ -59,7 +59,7 @@ Version du protocole SSL calculée par le serveur (plus haute version du serveur
 
 
 \section{Audits}
-	\subsection{Audit 1 : SSL version 2 }
+	\subsection{Audit 5.1 : SSL version 2 }
 \subsubsection{Spécifications}
 Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé et développé par la société Netscape Communications. Cette version est sortie en 1994. Toutefois, on trouve des morceaux d'informations dans la RFC 6176 \cite{rfc6176} et le draft de Hickman \cite{hickman1995}.
 
@@ -137,7 +137,7 @@ On y trouve également des constantes non définies dans le draft avec des comme
 Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de rétro-compatilibité depuis SSL v3. Celles commentées par \verb+SSLeay+ sont des vestiges de l'ancêtre d'OpenSSL : SSLeay. Elles sont sûrement conservées pour la rétro-compatibilité avec des vieux logiciels utilisant SSLeay. La \verb+MS hack+ est spécifique à Windows
 
 
-\subsection{Audit 2 : SSL version 3}
+\subsection{Audit 5.2 : SSL version 3}
 \subsubsection{Spécifications}
 La version 3 du protocole SSL est décrite dans la RFC 6101 \cite{rfc6101}. On y trouve notamment en section A.6 la liste des algorithmes de chiffrement pouvant être utilisés avec cette version, référencés sur la tableau \ref{algosV3}.
 
@@ -370,7 +370,7 @@ index 0ddfe19..c5df2cb 100644
 \end{lstlisting}
 
 
-\subsection{Audit 3 : TLS version 1}
+\subsection{Audit 5.3 : TLS version 1}
 \subsubsection{Spécifications}
 
 La version 1 de TLS est décrite dans la RFC 2246 \cite{rfc2246}. Ce protocole est assez similaire à SSL 3 mais il y a quelques différences notables. Il y est notamment prévu un mécanisme de rétro-compatibilité vers SSL 3. La plus grosse différence est que TLS, contrairement à SSL, permet de commencer une connexion non chiffré sur un port usuel tel que le 80 et bascule en mode chiffré avec la commande STARTTLS.
@@ -646,7 +646,7 @@ Session Ticket& oui (\verb+t1_lib.c+)\\ \hline
 \subsubsubsection{Attaque sur le padding CBC de Serge Vaudenay}
 Voir \ref{Vaudenay}
 
-\subsection{Audit 4 : TLS version 1.1}
+\subsection{Audit 5.4 : TLS version 1.1}
 \subsubsection{Spécifications}
 
 La version 1.1 de TLS est spécifiée par la RFC 4346 \cite{rfc4346}. Différences avec la version 1.0 :
@@ -762,7 +762,7 @@ Il faut $2^{23}$ sessions TLS pour retrouver un bloc en clair. Pour mener l'atta
 
 
 
-\subsection{Audit 5 : TLS version 1.2}
+\subsection{Audit 5.5 : TLS version 1.2}
 \subsubsection{Spécifications}
 
 La version 1.2 de TLS est décrite dans la RFC 5246 \cite{rfc5246}.
