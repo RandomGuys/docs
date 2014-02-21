@@ -1,9 +1,9 @@
 \chapter{Signature et authentification}
 \section{Définitions et contexte}
 
-Une signature digital utilise le concept du traditionnel signature sur papier et le tourne en une empreinte électronique. Cette empreinte est un message encodé et est unique pour chaque document et le signataire. La signature permet alors de garantir l'authenticité du signataire pour son document. Toute modification dans le document après l'avoir signé rend la signature invalide, ce qui protège alors contre les fausses informations et la contrefaçon des signatures.\\
+Une signature électronique utilise le concept de la traditionnelle signature sur papier et la tourne en une empreinte électronique. Cette empreinte est un message encodé et est unique pour chaque document et chaque signataire. La signature permet alors de garantir l'authenticité du signataire pour son document. Toute modification dans le document après l'avoir signé rend la signature invalide, ce qui protège alors contre les fausses informations et la contrefaçon des signatures.\\
 
-De ce fait, il est important de faire attention à toute les formes de vulnérabilités des signatures afin de comprendre les attaques possible sur la contrefaçon des signatures. Dans cette partie est consacré à la bonne compréhension et implémentation qui sont définie dans la RFC, afin de se prémunir des différentes attaques possible. On verra, cependant, qu'il existe quand même des failles au niveaux des injections, surtout lorsque la librairie dépend trop du matérielle. 
+De ce fait, il est important de faire attention à toute les formes de vulnérabilités des signatures afin de comprendre les attaques possibles sur la contrefaçon des signatures. Cette partie est consacrée à la bonne compréhension et l'implémentation qui sont définies dans la RFC, afin de se prémunir des différentes attaques possibles. On verra, cependant, qu'il existe quand même des failles au niveau des injections, surtout lorsque la librairie dépend trop du matériel. 
 
 
 \section{Audits}
@@ -27,23 +27,23 @@ Même si aucune attaque n'est connue contre \texttt{RSASSA-PKCS1-v1\_5},  \textt
 La norme décrit un modèle général à suivre (qui est également utilisé pour IEEE Std 1363-2000) combinant les primitives de signature et de vérification avec une méthode d'encodage sur les signatures. L'opération de génération de signature applique une opération d'encodage de message à un message pour produire un message encodé, qui est ensuite converti en un entier représentatif du message. Une primitive de signature est alors appliquée sur la représentation du message pour produire la signature.\\ 
 
 
-Dans le sens inverse, l'opération de vérification de signature applique une primitive de vérification de signature à la signature pour récupérer la représentation du message, qui est alors convertie dans un message de chaîne de caractères encodée. L'opération de vérification est appliquée au message et au message encodé pour déterminer s'ils  consistent bien en  l'un et l'autre.\\ 
+Dans le sens inverse, l'opération de vérification de signature applique une primitive de vérification de signature à la signature pour récupérer la représentation du message, qui est alors convertie dans un message de chaîne de caractères encodé. L'opération de vérification est appliquée au message et au message encodé pour déterminer s'ils  consistent bien en l'un et l'autre.\\ 
 
 
 \paragraph{RSASSA-PSS : \\}
-\texttt{RSASSA-PSS} combine les primitives \texttt{RSASP1} et \texttt{RSAVP1} avec la méthode d'encodage \texttt{EMSA-PSS}. La longueur du message sur laquelle \texttt{RSASSA-PSS} peut travailler est soit illimité, soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à \texttt{RSASSA-PKCS1-v1\_5}, un identificateur de fonction de hachage n'est pas inclue dans le message encodé par \texttt{EMSA-PSS}. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage ( potentiellement plus faible) que celle sélectionnée par le signataire. Il est alors recommandé que la fonction de génération de masquage d'\texttt{EMSA-PSS}  soit basée sur la même fonction de hachage. De cette façon, l'encodage de tout entier sera dépendant de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionné par le signataire.\\
+\texttt{RSASSA-PSS} combine les primitives \texttt{RSASP1} et \texttt{RSAVP1} avec la méthode d'encodage \texttt{EMSA-PSS}. La longueur du message sur laquelle \texttt{RSASSA-PSS} peut travailler est soit illimitée, soit contrainte par une très grande valeur, dépendant de la fonction de hachage. Contrairement à \texttt{RSASSA-PKCS1-v1\_5}, un identificateur de fonction de hachage n'est pas inclue dans le message encodé par \texttt{EMSA-PSS}. De ce fait, en théorie, il est possible pour un attaquant de substituer une autre fonction de hachage (potentiellement plus faible) que celle sélectionnée par le signataire. Il est alors recommandé que la fonction de génération de masquage d'\texttt{EMSA-PSS} soit basée sur la même fonction de hachage. De cette façon, l'encodage de tout entier dépendra de la fonction de hachage et il sera plus difficile pour un adversaire de substituer une autre fonction que ce qui a été sélectionné par le signataire.\\
 
 
 La comparaison entre fonctions de hachage est seulement utilisée pour empêcher la substitution de fonction de hachage, et n'est pas nécessaire si la fonction de hachage est substituée d'une autre façon (e.g., le vérificateur n'accepte qu'une fonction de hachage désignée).\\ 
 
 
-Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombre peut être employée plutôt, et avec une sécurité similaire.
+Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature RSA, c'est qu'il est probabiliste plutôt que déterministe, du fait de  l'incorporation d'un aléa. Cette valeur d'aléa augmente la sécurité de la méthode. Cependant, le fait que la valeur soit aléatoire n'est pas critique pour la sécurité. Dans les situations où l'aléatoire n'est pas possible, une valeur fixe ou une séquence de nombres peut être employée plutôt, et avec une sécurité similaire.
 
 		\subsubsection{Description de la faille}
 		
-			L'Université du Michigan a réussi l'exploit de récupérer la clé privée d'un certificat RSA en un peu plus de 100h \cite{andrea2010RSA} \cite{opensslvuln2010}. 	L'attaque fonctionne par injection de fautes \cite{fault2008lawson} sur la méthode d'authentification. La technique est donc très poussée, mais le résultat en vaut la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire dysfonctionner le système tout entier. Les signatures erronées produites révéleront de l'information sur la clé privée. Avec le bon matériel et 100h d'attente, la clé peut être reforgé.\\
+			L'Université du Michigan a réussi l'exploit de récupérer la clé privée d'un certificat RSA en un peu plus de 100h \cite{andrea2010RSA} \cite{opensslvuln2010}. L'attaque fonctionne par injection de fautes \cite{fault2008lawson} sur la méthode d'authentification. La technique est donc très poussée, mais le résultat en vaut la chandelle. L'injection de faute doit se faire sur quelques bits pour ne pas faire dysfonctionner le système tout entier. Les signatures erronées produites révéleront de l'information sur la clé privée. Avec le bon matériel et 100h d'attente, la clef peut être reforgée.\\
 
-			La technique consite à renseigner de fausses signatures afin de vérifier les fautes avec la clé publique de la machine. Lorsque la signature est identifié comme fausse, elle est envoyé à un analyseur contenant l'algorithme du \textit{Listing} \ref{windowssearch}
+			La technique consite à renseigner de fausses signatures afin de vérifier les fautes avec la clef publique de la machine. Lorsque la signature est identifié comme fausse, elle est envoyée à un analyseur contenant l'algorithme du \textit{Listing} \ref{windowssearch}
 
 			\begin{lstlisting}[style=customc,caption=window\_search.c, label=windowssearch]
 			window\_search (m, s, e, win\_size, win\_idx) {
@@ -61,10 +61,10 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 			}
 			\end{lstlisting}
 
-			$d$ : fenêtre, $win\_size$ : taille fixé sur la fenêtre, w$in\_idx$ : index de la fenêtre. Et $m$, $s$, $e$ des entiers pour l'opération d'exponentiation modulaire :
+			$d$ : fenêtre, $win\_size$ : taille fixée sur la fenêtre, w$in\_idx$ : index de la fenêtre. Et $m$, $s$, $e$ des entiers pour l'opération d'exponentiation modulaire :
 			$$ m^e [s]$$
 
-			En contrôlant le voltage, on arrive à savoir qu'un bit en particulier est mauvais. Bit après bit on reconstruit la clé privée, avec une signature erronée pour chacun des exposant de toute les fenêtres. L'étude montre que 650 signatures corrompues suffisent pour retrouver 100\% d'une clé privée RSA de 1024 bits. 
+			En contrôlant le voltage, on arrive à savoir qu'un bit en particulier est mauvais. Bit après bit on reconstruit la clef privée, avec une signature erronée pour chacun des exposant de toute les fenêtres. L'étude montre que 650 signatures corrompues suffisent pour retrouver 100\% d'une clef privée RSA de 1024 bits. 
 
 		
 		\subsubsection{Implémentation}
@@ -84,7 +84,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 			\item etc...
 			\end{itemize}
 		
-			Elle garantit des opérations en temps constant afin d'éviter des attaques par timing, et elle reste très performante. Elle s'apparente à la technique square-and-multiply à la seule différence qu'elle utilise des fenêtres de largeur $w$ bits, et partitionne l'exposant dans ces fenêtres au lieu d'examiner l'exposant pour différentes opérations comme square-and-multiply. \\
+			Elle garantit des opérations en temps constant afin d'éviter des attaques par timing, et elle reste très performante. Elle s'apparente à la technique \textit{square-and-multiply} à la seule différence qu'elle utilise des fenêtres de largeur $w$ bits, et partitionne l'exposant dans ces fenêtres au lieu d'examiner l'exposant pour différentes opérations comme \textit{square-and-multiply}. \\
 
 			C'est le fait que la fenêtre soit fixe qui la rend insensible à une attaque par timing.\\
 
@@ -110,22 +110,22 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 
 		\subsubsection{Conclusion}
 
-			Lorsque le système est vulnérable, OpenSSL ne le détecte pas forcément. Le risque est donc très fort, et les contre-mesures sont parfois difficile à trouver dans les phases de tests. Toutefois, cette étude soulève un choix de programmation qui semble à première vue anodin, mais qui peut avoir de lourdes conséquences.\\
+			Lorsque le système est vulnérable, OpenSSL ne le détecte pas forcément. Le risque est donc très fort, et les contre-mesures sont parfois difficiles à trouver dans les phases de tests. Toutefois, cette étude soulève un choix de programmation qui semble à première vue anodin, mais qui peut avoir de lourdes conséquences.\\
 
-			Malheureusement, il faut pouvoir contrôler la machine (en ayant un accès au BIOS par exemple) pour pouvoir exploiter cette faille car il faut pouvoir toucher directement à l'alimentation de la faille.\\
+			Toutefois, il faut pouvoir contrôler la machine (en ayant un accès au BIOS par exemple) pour pouvoir exploiter cette faille car il faut pouvoir toucher directement à l'alimentation de la faille.\\
 
 			Cependant, cette erreur n'est pas à prendre à la légère, car une attaque à base de faiseaux lumineux est en cours de développement afin de réaliser cette attaque à distance.
 		
 \subsection{Audit 4.2 : Malformation des signatures DSA/ECDSA}
 		\subsubsection{Normes visées}
 
-		La RFC R979 \cite{rfc6979} définie l'utilisation de DSA (\textit{Digital Signature Algorithm}) et ECDSA (\textit{Elliptic Curve Digital Signature Algorithm}) de façon déterministe. DSA et ECDSA sont deux standards de signature digital qui offrent l'intégrité et authenticité dans de nombreux protocoles.\\
+		La RFC R979 \cite{rfc6979} définit l'utilisation de DSA (\textit{Digital Signature Algorithm}) et ECDSA (\textit{Elliptic Curve Digital Signature Algorithm}) de façon déterministe. DSA et ECDSA sont deux standards de signature électronique qui offrent l'intégrité et authenticité dans de nombreux protocoles.\\
 
-		Une caractéristique de DSA et ECDSA est qu'ils ont besoin de produire, pour chaque génération de signature, une valeur aléatoire toute fraîche (k). Pour une bonne sécurité, k doit être choisi aléatoirement et uniformément depuis un groupe d'entier modulaire, en utilisant un processus cryptographiquement sûre. Même une petite erreur dans le processus peut devenir une attaque sur la méthode de signature. De ce fait, un système qui génère mal ou pas suffisamment d'entropie lors de la génération d'un nombre aléatoire peut poser de grosse faille dans le déploiement du schéma de signature DSA et ECDSA.\\
+		Une caractéristique de DSA et ECDSA est qu'ils ont besoin de produire, pour chaque génération de signature, une valeur aléatoire toute fraîche (\texttt{k}). Pour une bonne sécurité, \texttt{k} doit être choisi aléatoirement et uniformément depuis un groupe d'entiers modulaires, en utilisant un processus cryptographiquement sûr. Même une petite erreur dans le processus peut devenir une attaque sur la méthode de signature. De ce fait, un système qui génère mal ou pas suffisamment d'entropie lors de la génération d'un nombre aléatoire peut poser de grosses failles dans le déploiement du schéma de signature DSA et ECDSA.\\
 
-		Cette méthode d'utilisation de l'aléatoire avec DSA et ECDSA fait son implémentation plus difficile à tester. Les tests automatiques ne sont pas fiable lorsqu'il s'agit de détecter si implémentation utilise une source aléatoire de grande qualité. De ce fait, le processus d'implémentation est alors plus vulnérable à un échec catastrophique, souvent découvert après le déploiement du système et suite à des attaques réussies.\\
+		Cette méthode d'utilisation de l'aléatoire avec DSA et ECDSA fait son implémentation plus difficile à tester. Les tests automatiques ne sont pas fiables lorsqu'il s'agit de détecter si l'implémentation utilise une source aléatoire de grande qualité. De ce fait, le processus d'implémentation est alors plus vulnérable à un échec catastrophique, souvent découvert après le déploiement du système et suite à des attaques réussies.\\
 
-		Il est possible de retourner DSA et ECDSA en une utilisation déterministe en utilisant un processus déterministe de génération d'une valeur "aléatoire", k. Ce processus doit remplir quelques caractéristiques cryptographique afin de maintenir les propriétés de vérifiabilité et d'infalsifiabilité attendues par cette méthode de signature. De ce fait, pour une personne ne connaissent pas la clef privée de la signature, la transformation du message en valeur correspondante, k, doit être calculatoirement indiscernable du retour de la fonction aléatoire et uniforme.
+		Il est possible de retourner DSA et ECDSA en une utilisation déterministe en utilisant un processus déterministe de génération d'une valeur "aléatoire", k. Ce processus doit remplir quelques caractéristiques cryptographique afin de maintenir les propriétés de vérifiabilité et d'infalsifiabilité attendues par cette méthode de signature. De ce fait, pour une personne ne connaissent pas la clef privée de la signature, la transformation du message en valeur correspondante, \texttt{k}, doit être calculatoirement indiscernable du retour de la fonction aléatoire et uniforme.
 		
 		\subsubsection{Description de la faille}
 			
@@ -133,13 +133,13 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 
 		La cause vient de plusieurs fonctions implémentant la fonction EVP\_VerifyFinal() (cf. \textit{}). Elles valident de fausses signatures au lieu de retourner des erreurs, parmis les signatures corrompues peuvent se trouver :
 		\begin{itemize}
-		\item Des signatures DSA
-		\item Des signatures ECDSA
+		\item des signatures DSA;
+		\item des signatures ECDSA.\\
 		\end{itemize}
 
 		En 2009, un cas similaire a été trouvé dans un autre protocole (NTP) avec la même fonction \texttt{EVP\_VerifyFinal} \cite{cve-2009-0021}.
 
-		La conséquence est très grave, car cette faille permet une attaque en man in the middle, en faisant par exemple une attaque par phishing en HTTPS où la validation de la chaîne des certificats serait valide.
+		La conséquence est très grave, car cette faille permet une attaque en \textit{man in the middle}, en faisant par exemple une attaque par \textit{phishing} en HTTPS où la validation de la chaîne des certificats serait valide.
 
 		\subsubsection{Tests}
 
@@ -149,7 +149,7 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 			
 			\paragraph{Configuration visée.\\}
 			
-			La faille concerne toutes les versions antérieurs à OpenSSL 0.9.8j, lorsqu'un client SSL/TLS utilise des clés DSA/ECDSA pour s'authentifier sur un serveur. 
+			La faille concerne toutes les versions antérieures à OpenSSL 0.9.8j, lorsqu'un client SSL/TLS utilise des clefs DSA/ECDSA pour s'authentifier sur un serveur. 
 
 			\paragraph{Fonction.\\}
 			La fonction EVP\_VerifyFinal() (cf. \textit{Listing} \ref{evp}) est accessible sous le paquetage \texttt{openssl/crypto/evp/p\_verify.c}.
@@ -198,8 +198,6 @@ Ce qui est différent pour \texttt{RSASSA-PSS} des autres méthodes de signature
 	
 		\subsubsection{Conclusion}
 
-			Ici, la faille persistera tant que le serveur et le client resteront à une version antérieur à OpenSSL 0.9.8j, les clés quand à elles ne sont pas vulnérables, et peuvent être conservées. Malheureusement, le nombre de serveurs tournant sous OpenSSL 0.9.8 et versions antérieurs est très élevé.\\
+			Ici, la faille persistera tant que le serveur et le client resteront à une version antérieur à OpenSSL 0.9.8j, les clefs quant à elles ne sont pas vulnérables, et peuvent être conservées. Malheureusement, le nombre de serveurs tournant sous OpenSSL 0.9.8 et versions antérieures est très élevé.\\
 
-			Il est également recommandé aux développeurs utilisant OpenSSL de faire des audit régulier de la fonction EVP\_VerifyFinal() pour s'assurer que les vérifications sont bonnes. Les tests étants assez simple à effectuer.
-
-\section{Recommandations générales}
+			Il est également recommandé aux développeurs utilisant OpenSSL de faire des audits réguliers de la fonction EVP\_VerifyFinal() pour s'assurer que les vérifications sont bonnes. Les tests étants assez simples à effectuer.
