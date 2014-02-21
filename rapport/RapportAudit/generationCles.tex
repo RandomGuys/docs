@@ -230,5 +230,45 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		Il est tout d'abord recommandé de passer à la version OpenSSL supérieur, sinon de désactiver le mode FIPS, ou encore de configurer la ciphersuite afin de ne pas permettre au serveur d'utiliser DH comme algorithme d'échange de clés.
 
 
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node 	(titre) 		[] 		{\textbf{Structure d'un big number}};
+\node 	(dempty)		[below of=titre,yshift=1cm]  {d};
+\node 	(dempty2)	[processS,right of=dempty,xshift=-1cm]  {.};
+\node 	(d0)			[processS,right of=dempty2,xshift=1cm] {d[0]};
+\node 	(d1)			[processS,right of=d0,xshift=1cm] {d[1]};
+\node 	(dn)			[processS,right of=d1,xshift=3cm] {d[max]};
+\node 	(bel8)			[below of=d1,yshift=1cm] {8 octets};
+
+
+\node 	(neg)			[processS,below of=dempty,yshift=-1cm] {neg};
+\node 	(case1)			[right of=neg,xshift=2cm,yshift=0.7cm] {négatif, si vaut 1};
+\node 	(case2)			[right of=neg,xshift=2cm,yshift=-0.7cm] {positif, sinon};
+
+\node 	(top)			[processS,below of=neg,yshift=-0.5cm] {top};
+\node 	(top1)			[right of=top,xshift=2cm] {position courante+1};
+
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(titre)(dempty)(dempty2)(d0)(d1)(dn)(bel8)(neg)(case1)(case2)(top)(top1), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+
+\draw	[arrow]	(dempty2) -- (d0);
+\draw 	[arrow] (d0) -- (d1);
+\draw 	[arrow,dashed] (d1) -- (dn);
+\draw 	[arrow] (neg) -- (case1);
+\draw 	[arrow] (neg) -- (case2);
+\draw 	[arrow] (top) -- (top1);
+
+
+\end{tikzpicture}
+\end{center}
+\caption[Structure d'un Big Number]{Structure d'un Big Number}
+\label{merkle}
+\end{figure}
+
+
 
 \section{Recommandations générales}
