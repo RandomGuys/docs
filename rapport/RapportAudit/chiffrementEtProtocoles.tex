@@ -13,7 +13,7 @@ OAEP a deux buts :
 \item prévenir un déchiffrement partiel en s'assurant que l'attaquant ne peut retrouver une portion du text clair sans être capable d'inverser la fonction trapdoor (par exemple la factorisation de deux grands nombres premiers : il est facile de multiplier, mais quand on n'a que le produit il est très difficile de retrouver les facteurs).\\
 \end{itemize}
 Il n'est pas pouvé sûr pour une attaque IND-CCA (attaque à texte chiffré seulement). Victor Shoup a démontré qu'il n'existe pas de preuve générale.
-Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'êre cacpable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
+Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'être cacpable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
 
 \subsubsection*{Réseau de Feistel}
 Il est utilisé dans les systèmes de chiffrement par bloc. Un réseau de Feistel repose sur des principes simples dont des permutations, des substitutions, des échanges de blocs de données et une fonction prenant en entrée une clé intermédiaire à chaque étage.\\
@@ -98,7 +98,7 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 & 83f4a921 & d36ce9ce & 47d0d13c & 5d85f2b0 & ff8318d2 & 877eec2f\\
 & 63b931bd & 47417a81 & a538327a & f927da3e &	&\\
 \end{tabularx}
-\caption{représentations hexadécimales}
+\caption{Représentations hexadécimales}
 \label{repres_hexa}
 \end{table}
 
@@ -116,7 +116,7 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 \begin{figure}[H]
 \centering
 \includegraphics[width=10cm]{images/schema.png}
-\caption{opération de chiffrement EME-OAEP}
+\caption{Opération de chiffrement EME-OAEP}
 \label{fig21}
 \end{figure}
 
