@@ -215,7 +215,7 @@ RSA-OAEP peut être soumis à une attaque nommée "Mangers Attack" selon son imp
 
 Le padding OAEP devait pallier le problème d'insécurité que causait le padding PKCS\#1 v1.5 (attaque à chiffré choisi) \cite{bleichenbacherPCKS}. OpenSSL a tout de même pris en compte cette vulnérabilité et a placé des contres-mesures efficaces. La Technische Universität Darmstadt (Allemagne) explique en détail comment sont implémentées ces contres-mesures et montre que dans certains cas l'attaque reste possible. Enfin, elle apporte ses propres contre-mesures.\\
 
-On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à haché, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas.La raison est que le décodage OAEP est linéaire quelque soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
+On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à haché, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas. La raison est que le décodage OAEP est linéaire quelle que soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
 
 
 \subsubsection{Implémentation}
