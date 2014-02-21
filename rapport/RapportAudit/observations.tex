@@ -1,0 +1,93 @@
+\chapter{Observations et alternatives}
+\section{Code OpenSSL}
+
+%-----------------------------------------
+% DOCUMENTATION
+\subsection{Documentation}
+Nos observations sur la documentation d'OpenSSL va se développer sur trois axes : dans le code, le manuel et les commentaires git.
+
+La documentation d'OpenSSL est quasi inexistante dans le code lui-même. 
+Ce problème vient principalement du fait que le code était originellement développé par seulement Eric A. Young et Tim Hudson pendant environ 6 ans. Puis ceux deux développeurs ont rejoint RSA Security en 1998, léguant le code à la communauté pour devenir OpenSSL. Ce code était très peu commenté au vu des premiers commits d'OpenSSL. 
+
+Actuellement, OpenSSL est principalement en développement réactif, c'est-à-dire qu'il y a surtout des corrections ou des implémentations de nouveaux standards. En revanche, les corrections de failles sont souvent accompagnées de commentaires dans le code et cela est très appréciable.
+
+Au-delà de la documentation dans le code, le manuel d'utilisation n'est pas très bien fournie non plus, regroupement très souvent plusieurs fonctions dans une même entrée man et en oubliant certaines fonctions. Un exemple très intéressant est la vérification du pair connecté. En effet, lorsqu'on fait un \verb+SSL_accept+, il est important de vérifier l'identité du pair connecté avec la commande la fonction \verb+SSL_set_verify_result+, cela est assez connu lorsqu'on lit des recommandations en ligne. Or, le manuel de \verb+SSL_accept+ n'en fait pas mention et tout novice de la libssl peut donc se limiter à cette fonction croyant que la connexion est sûre.
+
+Une autre source de documentation est les commentaires des commits git. Ces derniers sont en général assez clairs et bien développés lorsque cela est nécessaire.
+
+%-----------------------------------------
+% LISIBILITÉ DU CODE
+\subsection{Lisibilité du code}
+Au niveau de la lisibilité du code, notre analyse va se porter sur : l'architecture du projet, les conventions de nommage, le \textit{coding style} et l'utilisation des constantes et des macros C.
+
+Pour ce qui est de l'architecture, bien que le code soit assez conséquent (plus de 450 000 lignes de code dont 66\% de C -- \url{http://www.ohloh.net/p/openssl}), il est relativement bien organisé, notamment les dossiers \verb+crypto/+ et \verb+ssl/+. On accède vite au fichier recherché grâce à des noms de dossiers assez explicite et une convention de nommage des fichiers.
+
+En effet, les noms de fichiers sont souvent précédés d'un indicateur de quelques caractères qui permettent d'identifier rapidement de quelle morceau un fichier fait partie. Par exemple les fichiers commençant par \verb+s3_+ sont des fichiers \verb+.c+ relatifs à SSL version 3. On retrouve un peu la même logique dans le nommage des fonctions. Ainsi pour la partie chiffrement, on aura un préfixe \verb+EVP_+, pour SSL version 3 \verb+SSL3_+ etc. Il arrive de trouver quelques incohérences comme dans le fichier \verb+s3_cbc.c+ qui gère donc le mode CBC de SSL version 3, on retrouve la fonction \verb+tls1_cbc_remove_padding+ ou \verb+tls1_md5_final_raw+ alors qu'il aurait fallu créer un nouveau fichier \verb+t1_cbc.c+ ou changer le nom du fichier pour regrouper plusieurs protocoles.
+
+Pour ce qui est du \textit{coding style}, il se rapproche beaucoup du Whitesmiths mais peut être que c'est une variante. Ce style est peut être moins clair que celui de GNU, du Kernel Linux ou même du K\&R mais ce choix reste à l'appréciation des mainteneurs du projet.
+
+Les constantes sont assez largement utilisées et déclarées massivement dans les \textit{headers} C en code hexadécimal. Cela dit, on retrouve beaucoup de tests comparant octet par octet avec des valeurs hexadécimales écrites en dur dans le code. Un bon exemple de ce mauvais code est dans le fichier \verb+s23_srvr.c+ qui gère la rétro-compatibilité des versions de SSL/TLS. On y retrouve la ligne 
+\begin{lstlisting}[style=customc,label=badcode, caption=Exemple de mauvais code d'OpenSSL]
+n=((p[0]&0x7f)<<8)|p[1];
+\end{lstlisting}
+
+où un commentaire, une constante avec un nom explicite pour \verb+0x7f+ et même des espaces auraient été largement appréciés. Dans ce même fichier, des comparaisons d'octets sont faites également sans constante avec un nom explicite comme ce test :
+
+\begin{lstlisting}[style=customc,label=badcodetest, caption=Exemple de mauvais test d'OpenSSL]
+/*
+ * SSLv2 header
+ */
+if ((p[3] == 0x00) && (p[4] == 0x02))
+\end{lstlisting}
+
+Ici un petit commentaire nous met sur la voie mais le code suivant aurait été plus clair :
+\begin{lstlisting}[style=customc,label=badcodetestfixed, caption=Exemple de mauvais test d'OpenSSL corrigé]
+/*
+ * SSLv2 header
+ */
+if ((p[3] == SSL2_VERSION_MAJOR) && (p[4] == SSL2_VERSION_MINOR))
+\end{lstlisting}
+
+Ces constantes existent dans le \textit{header} \verb+ssl2.h+ mais n'ont pourtant pas été utilisées.
+
+Du côté des macros C, on regrettera les nombreux morceaux de code mis en commentaire avec des  macros :
+
+\begin{lstlisting}[style=customc,label=badcodeif0, caption=Exemple de mauvais \#if 0 d'OpenSSL]
+#if 0
+				SSLerr(SSL_F_SSL23_GET_CLIENT_HELLO,SSL_R_RECORD_TOO_SMALL);
+				goto err;
+#else
+				v[1] = TLS1_VERSION_MINOR;
+#endif
+\end{lstlisting}
+
+Il y en a énormément et cela complique beaucoup la lecture du code car on croit parfois être dans du code alors que ce code est commenté. Certains morceaux de code sont enlevés à cause de failles mais ils restent présents pour une raison que nous ignorons.
+
+
+\section{Construction du projet}
+La construction d'OpenSSL se fait avec autotools qui permet de générer les makefile nécessaires à la compilation. Il existe une page wiki officielle à ce sujet mais elle n'est pas toujours très précise. Ils n'expliquent d'ailleurs pas très bien comment compiler les bibliothèques \verb+libssl.so+ et \verb+libcrypto.so+. Il faut en fait spécifier les options suivantes :
+\begin{verbatim}
+$ ./config shared zlib-dynamic
+$ make
+\end{verbatim}
+
+On regrettera ce type de construction qui vieillit. De nos jours, beaucoup de projets migrent vers cmake (comme MySQL par exemple) qui est plus simple à configurer et génèrent des sorties claires et colorées qui améliore le suivi de la compilation. De plus, il permet de compiler les binaires dans un dossier séparé, ce qui permet de ne pas perturber l'arborescence de travail qui ne contient que les sources.
+
+
+\section{Alternatives}
+Il serait intéressant de se pencher sur la sécurité des alternatives à OpenSSL. Voici une liste non exhaustive de projet open source :
+\begin{itemize}
+\item cryptlib (ne gère pas DTLS);
+\item CyaSSL;
+\item GnuTLS;
+\item MatrixSSL;
+\item Network Security Services	(utilisé dans Firefox, successeur du code développé par Netscape, ne gère pas DTLS);
+\item PolarSSL (ne gère pas DTLS);
+\item Java Secure Socket Extension (ne gère pas DTLS).
+\end{itemize}
+
+Chaque alternative a ses points forts et ses points faibles, il vaut mieux alors choisir le bon outils selon le travail à effectuer.
+
+Il semble que OpenSSL soit un peu au dessus du lot en terme de support d'algorithmes et de méthodes en tout genre mais cela s'explique par l'âge et la taille du code. 
+
+En revanche, les autres se démarquent en désactivant des méthodes dépréciées alors qu'OpenSSL souhaite sans doute garder une rétro-compatibilité.
