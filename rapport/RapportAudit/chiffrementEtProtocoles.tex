@@ -2,8 +2,15 @@
 
 \section{Définitions et contexte}
 
-Nous allons tout d'abord apporter quelques précisions au contexte dans lequel nous travaillons. Plusieurs failles ont été trouvées sur RSA-OAEP ainsi que sur le mode CBC. Nous allons donc décrire ces deux principes.
-\subsection{OAEP : \textit{Optimal Asymmetric Encryption Padding}}
+Nous allons tout d'abord apporter quelques précisions au contexte dans lequel nous travaillons. Plusieurs failles ont été trouvées sur RSA-OAEP ainsi que sur le mode CBC. Nous allons donc décrire ces deux principes et étudier leurs vulnérabilités.\\
+
+Nous allons voir qu'une combinaison entre un mode de chiffrement et un protocole de chiffrement peut générer des failles, souvent grave (i.e vols de mots de passes), que le padding est également une donnée sensible et qu'il faut donc le choisir intelligemment, et qu'une mauvaise documentation ou un mauvais paramètrage peuvent entraîner des failles au niveau protocolaire.
+
+\section{Audits}
+\subsection{Audit 3.1 : Les "Manger's attack" sur RSA-OAEP}
+\subsubsection{Normes visées}
+
+\paragraph{OAEP : \textit{Optimal Asymmetric Encryption Padding}}
 Dans les chiffrements par blocs, cela nécessite généralement que tous les blocs soient d'une taille précise. Or ce n'est pas toujours le cas. Pour cela, on rajoute des bits de bourrage (padding).\\
 OAEP est un schéma de remplissage, généralement utilisé avec RSA (en prétraitement). Il a été introduit en 1994 par Mihir Bellare et Phil Rogaway1. L'OAEP est une forme de réseau de Feistel qui nécessite une source d'aléa ainsi que deux fonctions de hachage.\\
 RSA-OEAP peut être prouvé sûr dans un modèle théorique idéalisé, celui de l'oracle aléatoire. Il est recommandé par les PKCS.\\
@@ -15,7 +22,7 @@ OAEP a deux buts :
 Il n'est pas pouvé sûr pour une attaque IND-CCA (attaque à texte chiffré seulement). Victor Shoup a démontré qu'il n'existe pas de preuve générale.
 Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'être cacpable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
 
-\subsubsection*{Réseau de Feistel}
+\paragraph{Réseau de Feistel}
 Il est utilisé dans les systèmes de chiffrement par bloc. Un réseau de Feistel repose sur des principes simples dont des permutations, des substitutions, des échanges de blocs de données et une fonction prenant en entrée une clé intermédiaire à chaque étage.\\
 \begin{figure}[H]
 \centering
@@ -27,11 +34,11 @@ Il est utilisé dans les systèmes de chiffrement par bloc. Un réseau de Feiste
 Le chiffrement DES par exemple repose sur ce réseau, et effectue 16 tours.\\
 Généralement les deux parties sont équilibrées même si par exemple des algorithme comme MacGuffin de Bruce Schneier utilise un réseau non équilibré.
 
-\subsection{RSA-OAEP}
+\paragraph{RSA-OAEP}
 Dans la PKCS\#1 est décrit le standard de RSA-OAEP. RSAES-OAEP est le terme plus facilement utilisé dans le document : RSA Encryption Scheme OAEP.\\
 Il regroupe les primitives RSAEP et RSADP : respectivement RSA Encryption Protocole et RSA Decryption Protocole.
 
-\subsubsection{RSAES-OAEP-ENCRYPT}
+\paragraph{RSAES-OAEP-ENCRYPT}
 Options :
 \begin{description}
 \item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de fonction de hachages);
@@ -96,7 +103,7 @@ SHA-384: & (0x)38b060a7 & 51ac9638 & 4cd9327e & b1b1e36a & 21fdb711 & 14be0743\\
 & 4c0cc7bf & 63f6e1da & 274edebf & e76f65fb & d51ad2f1 & 4898b95b\\
 SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 & 83f4a921 & d36ce9ce & 47d0d13c & 5d85f2b0 & ff8318d2 & 877eec2f\\
-& 63b931bd & 47417a81 & a538327a & f927da3e &	&\\
+& 63b931bd & 47417a81 & a538327a & f927da3e & &\\
 \end{tabularx}
 \caption{Représentations hexadécimales}
 \label{repres_hexa}
@@ -107,40 +114,40 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 \begin{center}
 \begin{tikzpicture}[node distance=2cm]
 
-\node 	(lHash) 		[processH,below of=titre] {lHash};
-\node 	(PS) 		[processH,right of=lHash] {PS};
-\node 	(M) 			[processH,right of=PS] {M};
-\node 	(DB) 		[left of=lHash] {DB =};
+\node   (lHash)     [processH,below of=titre] {lHash};
+\node   (PS)    [processH,right of=lHash] {PS};
+\node   (M)       [processH,right of=PS] {M};
+\node   (DB)    [left of=lHash] {DB =};
 
-\node 	(xor1) 		[below of=PS] {\texttt{xor}};
-\node 	(MGF1) 		[left of=xor1] {MGF};
-\node 	(seed) 		[processH,left of=MGF1] {seed};
-
-
-\node 	(xor2)		[below of=seed] {\texttt{xor}};
-\node 	(001)		[processH,left of=xor2] {00};
-\node 	(MGF2)		[right of=xor2] {MGF};
-\node	(empty)		[below of=xor1] {};
+\node   (xor1)    [below of=PS] {\texttt{xor}};
+\node   (MGF1)    [left of=xor1] {MGF};
+\node   (seed)    [processH,left of=MGF1] {seed};
 
 
-
-
-\node 	(002)		[processH,below of=001] {00};
-\node 	(EM) 		[left of=002] {EM=};
-\node 	(maskedSeed)		[processH,below of=xor2] {maskedSeed};
-\node 	(maskedDB)		[processH,below of=empty] {maskedDB};
+\node   (xor2)    [below of=seed] {\texttt{xor}};
+\node   (001)   [processH,left of=xor2] {00};
+\node   (MGF2)    [right of=xor2] {MGF};
+\node (empty)   [below of=xor1] {};
 
 
 
-\draw	[arrow] (PS) -- (xor1);
-\draw	[arrow] (seed) -- (MGF1);
-\draw	[arrow] (MGF1) -- (xor1);
-\draw	[arrow] (seed) -- (xor2);
-\draw	[arrow] (empty) -- (MGF2);
-\draw	[arrow] (MGF2) -- (xor2);
-\draw	[arrow] (xor1) -- (maskedDB);
-\draw	[arrow] (001) -- (002);
-\draw	[arrow] (xor2) -- (maskedSeed);
+
+\node   (002)   [processH,below of=001] {00};
+\node   (EM)    [left of=002] {EM=};
+\node   (maskedSeed)    [processH,below of=xor2] {maskedSeed};
+\node   (maskedDB)    [processH,below of=empty] {maskedDB};
+
+
+
+\draw [arrow] (PS) -- (xor1);
+\draw [arrow] (seed) -- (MGF1);
+\draw [arrow] (MGF1) -- (xor1);
+\draw [arrow] (seed) -- (xor2);
+\draw [arrow] (empty) -- (MGF2);
+\draw [arrow] (MGF2) -- (xor2);
+\draw [arrow] (xor1) -- (maskedDB);
+\draw [arrow] (001) -- (002);
+\draw [arrow] (xor2) -- (maskedSeed);
 
 
 \begin{pgfonlayer}{background}
@@ -160,7 +167,7 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 \texttt{lHash} est le hash de l'étiquette optionnelle \texttt{L}. L'opération de déchiffrement suivant inverse les étapes pour retrouver \texttt{M} et vérifier \texttt{lHash} et \texttt{PS}.
 
 
-\subsubsection{RSAES-OAEP-DECRYPT (K, C, L)}
+\paragraph{RSAES-OAEP-DECRYPT (K, C, L)}
 
 Options :
 \begin{description}
@@ -211,7 +218,7 @@ Erreur :
 \end{enumerate}
 \paragraph{Note} Il faut faire attention qu'un adversaire ne puisse distinguer les différentes erreurs dans les conditions de l'étape 3, que ce soit par un message d'erreur, ou un temps de réponse différent, ou, plus généralement, apprendre une information partielle à propos du message en clair \texttt{EM}. Sinon un adversaire peut être en mesure d'obtenir des informations utiles sur le déchiffrement du texte chiffré \texttt{C}, conduisant à une attaque à chiffré choisi telle que celle observée par Manger.
    
-\subsubsection{RSAES-PKCS1-v1\_ 5}
+\paragraph{RSAES-PKCS1-v1\_ 5}
 
    RSAES-PKCS1-v1\_5 combine les primitives RSAEP et RSADP avec la méthode de codage EME-PKCS1-v1\_ 5. Il est mathématiquement équivalent au schéma de chiffrement dans la PKCS \# 1 v1.5. RSAES-PKCS1-v1\_ 5 peut fonctionner sur des messages de longueur supérieure à \texttt{k - 11} octets (\texttt{k} est la longueur en octets du modulo RSA), bien qu'il faille faire attention aux attaques portant sur les faibles exposants RSA menée par Coppersmith, Franklin, Patarin, and Reiter quand les longs messages sont chiffrés (voir le troisième point dans les notes ci-dessous).\\
 En règle générale, l'utilisation de ce schéma pour chiffrer un message arbitraire, en opposition à une clef générée aléatoirement, n'est pas recommandé.\\
@@ -226,36 +233,6 @@ Des exemples typiques comprennent l'ajout de la structure des données à encode
 \item les octets pseudo aléatoires peuvent aussi aider à contrecarrer une attaque grâce à Coppersmith et al. quand la taille du message à chiffrer est gardé petit. L'attaque marche sur les petits exposants RSA quand des messages similaires sont chiffrés avec la même clef publique. Plus spécifiquement, une façon peut être, quand deux entrées RSAEP correspondent sur une large portion de bits (8/9) et qu'un petit exposant RSA est utilisé (e = 3) pour chiffrer les deux, il peut être possible de retrouver les entrées avec l'attaque. Une autre façon d'attaquer est couronnée de succès pour déchiffrer un seul texte chiffré, quand une large proportion (2/3) des entrées de RSAEP est déjà connue. Pour des applications typiques, le message à chiffrer est court (par exemple une clef symétrique de 128 bits) donc peu d'informations seront connues ou en commun entre deux messages pour permettre l'attaque. Cependant, si un long message est chiffré, ou si une partie du message est connu, alors l'attaque peut fonctionner. Dans tous les cas, le schéma RSAES-OAEP surmonte l'attaque.\\
 \end{itemize}
 
-\subsection{CBC : \textit{Cipher Block Chaining}}
-C'est un mode de chiffrement qui a été très utilisé : enchaînement des blocs.\\
-Sur chaque bloc, un OU exclusif avec le chiffrement du bloc précédent est appliqué. Un vecteur d'initialisation est lui aussi utilisé. Contrairement au mode ECB, les blocs identiques ne seront pas chiffrés de la même façon. On ne pourra donc pas repérer de chaîne de caractères récurrentes aussi facilement. Ce mode de chiffrement possède plusieurs inconvénients :
-\begin{itemize}
-\item un chiffrement de plusieurs blocs en parallèles est impossible (puisque chaque bloc dépend du chiffrement du précedent). Déchiffrer avec un IV incorrect entraînera une corruption dans le premier bloc en clair, mais les blocks suivants seront corects. C'est parce qu'un texte claire peut être récupéré grâce à deux blocs adjacents du texte chiffré. Le déchiffrement, contrairement au chiffrement, peut donc être parallélisé. À noter que si un seul bit change dans le texte chiffré, le bloc clair correspondant est complètement corrompu.
-\item Si une erreur se produit sur un bloc, elle sera répercutée sur tous les suivants. La propagation d'erreur n'est pas limitée.
-\end{itemize}
-\begin{figure}[H]
-\centering
-\includegraphics[width=13cm]{images/CBC_chiff.png}
-\caption{Chiffrement CBC}
-\label{CBC_chiff}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=13cm]{images/CBC_dechiff.png}
-\caption{Déchiffrement CBC}
-\label{CBC_dechiff}
-\end{figure}
-
-Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist.gov/fipspubs/fip81.htm}). Le standard a été publié en 1981.
-
-
-\section{Audits}
-\subsection{Audit 3.1 : Les "Manger's attack" sur RSA-OAEP}
-\subsubsection{Normes visées}
-
-A remplir.
-
 \subsubsection{Faille}
 
 RSA-OAEP peut être soumis à une attaque nommée "Mangers Attack" selon son implantation \cite{mangers2010falko}. OpenSSL semble être vulnérable à une attaque de ce type, à base de "prédictions" par injections de fautes. La vulnérabilité semble être très récente puisqu'elle fonctionne sous OpenSSL 1.0.0.\\
@@ -263,7 +240,7 @@ RSA-OAEP peut être soumis à une attaque nommée "Mangers Attack" selon son imp
 
 Le padding OAEP devait pallier le problème d'insécurité que causait le padding PKCS\#1 v1.5 (attaque à chiffré choisi) \cite{bleichenbacherPCKS}. OpenSSL a tout de même pris en compte cette vulnérabilité et a placé des contres-mesures efficaces. La Technische Universität Darmstadt (Allemagne) explique en détail comment sont implémentées ces contres-mesures et montre que dans certains cas l'attaque reste possible. Enfin, elle apporte ses propres contre-mesures.\\
 
-On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à haché, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas. La raison est que le décodage OAEP est linéaire quelle que soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
+On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à haché, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas.La raison est que le décodage OAEP est linéaire quelque soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
 
 
 \subsubsection{Implémentation}
@@ -304,6 +281,7 @@ Il n'y a pas vraiment de quoi s'alarmer, cette attaque est en pratique infaisabl
 \subsection{Audit 3.2 : Chiffrement SSLv3 ou TLS 1.0 en mode CBC}
 \subsubsection{Normes visées}
 
+\paragraph{SSL version 3} \\}
 Cette partie référence la RFC 6101 \cite{rfc6101} du protocol SSL version 3, concernant le chiffrement par bloc. \\
 Dans ce chiffrement, chaque blocs de texte clair est chiffrés dans un bloc de donnée chiffrée. Comme il est très peu probable que le texte clair (qu'importe la donnée à envoyer) ne se découpe exactement en taille de blocs nécessaire (qui est de 64 bits normalement), il est alors nécessaire de rajouter du bourrage à la fin de ces petit blocs avec des valeur régulière, normalement des 0. \\
 
@@ -328,6 +306,29 @@ block-ciphered struct {
 \\
 
 La taille des données chiffrée (\texttt{SSLCiphertext.length}) est égale à la somme de \texttt{SSLCompressed.length}, \texttt{CipherSpec.hash\_size} et \texttt{padding\_length} plus un.
+
+\paragraph{CBC : \textit{Cipher Block Chaining} \\}
+C'est un mode de chiffrement qui a été très utilisé : enchaînement des blocs.\\
+Sur chaque bloc, un OU exclusif avec le chiffrement du bloc précédent est appliqué. Un vecteur d'initialisation est lui aussi utilisé. Contrairement au mode ECB, les blocs identiques ne seront pas chiffrés de la même façon. On ne pourra donc pas repérer de chaîne de caractères récurrentes aussi facilement. Ce mode de chiffrement possède plusieurs inconvénients :
+\begin{itemize}
+\item un chiffrement de plusieurs blocs en parallèles est impossible (puisque chaque bloc dépend du chiffrement du précedent). Déchiffrer avec un IV incorrect entraînera une corruption dans le premier bloc en clair, mais les blocks suivants seront corects. C'est parce qu'un texte claire peut être récupéré grâce à deux blocs adjacents du texte chiffré. Le déchiffrement, contrairement au chiffrement, peut donc être parallélisé. À noter que si un seul bit change dans le texte chiffré, le bloc clair correspondant est complètement corrompu.
+\item Si une erreur se produit sur un bloc, elle sera répercutée sur tous les suivants. La propagation d'erreur n'est pas limitée.
+\end{itemize}
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{images/CBC_chiff.png}
+\caption{Chiffrement CBC}
+\label{CBC_chiff}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{images/CBC_dechiff.png}
+\caption{Déchiffrement CBC}
+\label{CBC_dechiff}
+\end{figure}
+
+Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist.gov/fipspubs/fip81.htm}). Le standard a été publié en 1981.
 
 \subsubsection{Description de la faille}
 
@@ -357,6 +358,7 @@ La faille existe tant que l'association de ces protocoles avec le mode de chiffr
 \subsection{Audit 3.3 : Non-validation des certificats SSL}
 \subsubsection{Normes visées}
 
+\paragraph{RFC 5246 \\}
 La RFC 5246 \cite{rfc5246} stipule que le serveur doit toujours envoyer un message certificat dès lors que la méthode d'échange des clefs a été acceptée. 
 Le certificat DOIT être approprié à la suite des chiffrements utilisés pour les échanges de clefs.
 La structure du message est : 
@@ -440,6 +442,3 @@ Les chercheurs nous donnent alors plusieurs leçons à retenir, dont voici quelq
 \end{itemize}
 
 Nous conseillons surtout une meilleure documentation d'OpenSSL, et des rapports d'erreurs d'interfaces plus simples et plus consistants afin d'éviter les erreurs d'interprétation. L'idée des chercheurs de proposer des abstractions de haut niveau pour les applications semblent être une très bonne idée.
-
-
-\section{Recommandations générales}
