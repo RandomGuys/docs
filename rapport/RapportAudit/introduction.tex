@@ -1,4 +1,11 @@
 \addcontentsline{toc}{section}{Introduction}
 \section*{Introduction}
 
-Ceci est l'introduction 
+Ce document rapporte plusieurs études que nous avons pu regrouper, analyser, et restituer à propos des différentes implémentations d'OpenSSL, en particulier des failles importantes survenues au cours de ces dernières années. \\
+
+
+En se basant sur les demandes du client, nous avons établi plusieurs points critiques dans l'implémentation et/ou l'utilisation d'OpenSSL. La méthodologie d'audit fut alors d'identifier les principales composantes sensibles par ordre d'importance, à savoir la gestion de l'entropie par le système, la génération des clés, le protocole usité pour le chiffrement, le protocole de signature, puis enfin les protocoles SSL/TLS implémentés par OpenSSL.\\
+
+
+Pour chacune de ces parties, nous développons tout d'abord une description générale du contexte, suivi  des standards et normes lui étant associées. Nous énumérons ensuite quelques failles répertoriées officiellement, ainsi que les correctifs leur ayant été respectivement proposés puis implémentés. Cela nous permet enfin d'auditer OpenSSL et de soumettre nos observations et recommandations.
+
