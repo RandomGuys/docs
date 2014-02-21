@@ -10,7 +10,7 @@ Nous allons voir qu'une combinaison entre un mode de chiffrement et un protocole
 \subsection{Audit 3.1 : Les "Manger's attack" sur RSA-OAEP}
 \subsubsection{Normes visées}
 
-\paragraph{OAEP : \textit{Optimal Asymmetric Encryption Padding}}
+\paragraph{OAEP : \textit{Optimal Asymmetric Encryption Padding}. \\}
 Dans les chiffrements par blocs, cela nécessite généralement que tous les blocs soient d'une taille précise. Or ce n'est pas toujours le cas. Pour cela, on rajoute des bits de bourrage (padding).\\
 OAEP est un schéma de remplissage, généralement utilisé avec RSA (en prétraitement). Il a été introduit en 1994 par Mihir Bellare et Phil Rogaway1. L'OAEP est une forme de réseau de Feistel qui nécessite une source d'aléa ainsi que deux fonctions de hachage.\\
 RSA-OEAP peut être prouvé sûr dans un modèle théorique idéalisé, celui de l'oracle aléatoire. Il est recommandé par les PKCS.\\
@@ -22,7 +22,7 @@ OAEP a deux buts :
 Il n'est pas prouvé sûr pour une attaque IND-CCA (attaque à texte chiffré seulement). Victor Shoup a démontré qu'il n'existe pas de preuve générale.
 Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'être capable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
 
-\paragraph{Réseau de Feistel}
+\paragraph{Réseau de Feistel. \\}
 Il est utilisé dans les systèmes de chiffrement par bloc. Un schéma de Feistel repose sur des principes simples dont des permutations, des substitutions, des échanges de blocs de données et une fonction prenant en entrée une clé intermédiaire à chaque étage.\\
 \begin{figure}[H]
 \centering
@@ -34,11 +34,11 @@ Il est utilisé dans les systèmes de chiffrement par bloc. Un schéma de Feiste
 Le chiffrement DES par exemple repose sur ce réseau, et effectue 16 tours.\\
 Généralement les deux parties sont équilibrées même si par exemple des algorithme comme MacGuffin de Bruce Schneier utilise un réseau non équilibré.
 
-\paragraph{RSA-OAEP}
+\paragraph{RSA-OAEP. \\}
 Dans la PKCS\#1 est décrit le standard de RSA-OAEP. RSAES-OAEP est le terme plus facilement utilisé dans le document : RSA Encryption Scheme OAEP.\\
 Il regroupe les primitives RSAEP et RSADP : respectivement RSA Encryption Protocole et RSA Decryption Protocole.
 
-\paragraph{RSAES-OAEP-ENCRYPT}
+\paragraph{RSAES-OAEP-ENCRYPT. \\}
 Options :
 \begin{description}
 \item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de fonction de hachages);
@@ -90,7 +90,8 @@ Précondition :
 \end{enumerate}
 \item envoyer en sortie le texte chiffré \texttt{C}.\\
 \end{enumerate}
-\paragraph{Note} Si \texttt{L} est une chaîne vide, la valeur du hash correspondante \texttt{lHash} a la représentation hexadécimale suivante pour différents choix de hash :
+\paragraph{Note.\\} 
+Si \texttt{L} est une chaîne vide, la valeur du hash correspondante \texttt{lHash} a la représentation hexadécimale suivante pour différents choix de hash :
 
 
 \begin{table}[H]
@@ -167,7 +168,7 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 \texttt{lHash} est le hash de l'étiquette optionnelle \texttt{L}. L'opération de déchiffrement suivant inverse les étapes pour retrouver \texttt{M} et vérifier \texttt{lHash} et \texttt{PS}.
 
 
-\paragraph{RSAES-OAEP-DECRYPT (K, C, L)}
+\paragraph{RSAES-OAEP-DECRYPT (K, C, L). \\}
 
 Options :
 \begin{description}
@@ -216,9 +217,10 @@ Erreur :
 \end{enumerate}
 \item Renvoyer le message M.\\
 \end{enumerate}
-\paragraph{Note} Il faut faire attention qu'un adversaire ne puisse distinguer les différentes erreurs dans les conditions de l'étape 3, que ce soit par un message d'erreur, ou un temps de réponse différent, ou, plus généralement, apprendre une information partielle à propos du message en clair \texttt{EM}. Sinon un adversaire peut être en mesure d'obtenir des informations utiles sur le déchiffrement du texte chiffré \texttt{C}, conduisant à une attaque à chiffré choisi telle que celle observée par Manger.
+\paragraph{Note. \\} 
+Il faut faire attention qu'un adversaire ne puisse distinguer les différentes erreurs dans les conditions de l'étape 3, que ce soit par un message d'erreur, ou un temps de réponse différent, ou, plus généralement, apprendre une information partielle à propos du message en clair \texttt{EM}. Sinon un adversaire peut être en mesure d'obtenir des informations utiles sur le déchiffrement du texte chiffré \texttt{C}, conduisant à une attaque à chiffré choisi telle que celle observée par Manger.
    
-\paragraph{RSAES-PKCS1-v1\_ 5}
+\paragraph{RSAES-PKCS1-v1\_ 5. \\}
 
    RSAES-PKCS1-v1\_5 combine les primitives RSAEP et RSADP avec la méthode de codage EME-PKCS1-v1\_ 5. Il est mathématiquement équivalent au schéma de chiffrement dans la PKCS \# 1 v1.5. RSAES-PKCS1-v1\_ 5 peut fonctionner sur des messages de longueur supérieure à \texttt{k - 11} octets (\texttt{k} est la longueur en octets du modulo RSA), bien qu'il faille faire attention aux attaques portant sur les faibles exposants RSA menée par Coppersmith, Franklin, Patarin, and Reiter quand les longs messages sont chiffrés (voir le troisième point dans les notes ci-dessous).\\
 En règle générale, l'utilisation de ce schéma pour chiffrer un message arbitraire, en opposition à une clef générée aléatoirement, n'est pas recommandée.\\
@@ -226,7 +228,8 @@ Il est possible de générer des textes chiffrés RSAES-PKCS1-v1\_5 valides sans
 Cette possibilité peut être exploitée dans une attaque à chiffré choisi. Par conséquent, si RSAES-PKCS1-v1\_5 doit être utilisé, certaines contre mesures faciles à implémenter devraient être mises en place afin de contrecarrer l'attaque trouvée.\\
 Des exemples typiques comprennent l'ajout de la structure des données à encoder, le contrôle rigoureux de la conformité des PKCS\# 1v1.5 (et d'autres redondance) dans les messages déchiffrés, et la consolidation des messages d'erreur dans un protocole client-serveur basé sur PKCS \# 1 v1.5. Ils peuvent tous être des contre-mesures efficaces et n'entraînent pas de changement à un protocole n\degres 1 sur la base de v1.5-PKCS. Il a été récemment montré que la sécurité du protocole SSL / TLS handshake, qui utilise RSAES-PKCS1-v1\_5 et certaines contre-mesures, peut être liée à une variante du problème RSA.\\
   
-\paragraph{Note} Les passages suivants décrivent des recommandations concernant l'utilisation de RSAES-PKCS1-v1\_5. Les recommandations de la version 1.5 de ce document sont incluses ainsi que de nouvelles recommandations motivées par les avancées de cryptanalyses durant les années suivantes.
+\paragraph{Note. \\} 
+Les passages suivants décrivent des recommandations concernant l'utilisation de RSAES-PKCS1-v1\_5. Les recommandations de la version 1.5 de ce document sont incluses ainsi que de nouvelles recommandations motivées par les avancées de cryptanalyses durant les années suivantes.
 \begin{itemize}
 \item il est recommandé que les octets pseudo-aléatoires soient générés indépendamment pour chaque processus de chiffrement, en particulier si la même donnée est en entrée pour plus d'un processus de chiffrement. Les résultats de Haastad sont une des motivations pour cette recommandation;
 \item La chaîne de padding \texttt{PS} est d'une longueur d'au moins 8 octets, ce qui est une condition de sécurité pour les opérations sur les clefs publiques, et qui rend difficile pour les attaquants de récupérer les données en essayant tous les blocs chiffrés possibles.
