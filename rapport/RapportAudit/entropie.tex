@@ -22,15 +22,15 @@ La source d'entropie doit donc être minutieusement choisie, sans qu'aucune inte
 \subsection{Concept d'entropie}
 \paragraph{Définition.\\}
 Soit $X$ est une V.A. discrète. On définit l'\textbf{entropie} de $X$ comme suit : 
-$$H(X) = - \sum_x P(X=x)*log(P(X=x))	 $$ 
+$$H(X) = - \sum_x P(X=x)*log_2(P(X=x))	 $$ 
 Le logarithme est dans notre cas de base 2. L'entropie se mesure en shannons ou en bits.\\
 
 \paragraph{Définition.\\}
 On définit le \textbf{désordre} (ou incertitude) étant liée à cette expérience aléatoire. Si l'on considère l'ensemble fini des issues possibles d'une expérience $\lbrace v_1,...,v_n \rbrace$, l'entropie de l'expérience vaudra :
-$$H(\epsilon) = - \sum_x P(\lbrace a_i \rbrace)*log(P(\lbrace a_i \rbrace))	 $$ 
+$$H(\epsilon) = - \sum_x P(\lbrace a_i \rbrace)*log_2(P(\lbrace a_i \rbrace))	 $$ 
 
 \paragraph{Propriété.\\} 
-On constate que l'entropie est maximale lorsque X est équi-répartie. En effet, si l'on considère n éléments de X étant équi-répartie, on retrouve notre entropie de $H(X) = log(n)$. \\
+On constate que l'entropie est maximale lorsque X est équi-répartie. En effet, si l'on considère n éléments de X étant équi-répartie, on retrouve notre entropie de $H(X) = log_2(n)$. \\
 
 
 Ainsi, on comprend qu'une variable aléatoire apporte en moyenne un maximum d'entropie lorsqu'elle peut prendre chaque valeur avec une équiprobabilité. D'un point de vue moins théorique, on considère que plus l'entropie sera grande, plus il sera difficile de prévoir la valeur que l'on observe.
@@ -46,7 +46,7 @@ La probabilité d'observer $x_i$ sera donc au minimum $\frac{1}{2^\text{Min-entr
 \paragraph{Approche théorique.\\}
 La source d'entropie est composée de 3 éléments principaux : 
 \begin{itemize}
-\item le \textbf{bruit source}, qui est la voûte de la sécurité du système. Ce bruit doit être non déterministe, il renvoie de façon aléatoire des bits grâce à des processus non déterministes. Le bruit ne vient pas nécessairement directement d'éléments binaires. Si ce bruit est externe, il est alors converti en données binaires. La taille des données binaires générées est fixée, de telle sorte que la sortie du bruit source soit déterminé dans un espace fixe.
+\item le \textbf{bruit source}, qui est la voûte de la sécurité du système. Ce bruit doit être non déterministe, il renvoie de façon aléatoire des bits grâce à des processus non déterministes. Le bruit ne vient pas nécessairement directement d'éléments binaires. Si ce bruit est externe, il est alors converti en données binaires. La taille des données binaires générées est fixée, de telle sorte que la sortie du bruit source soit déterminée dans un espace fixe.
 \item le \textbf{composant de conditionnement}, qui permet d'augmenter ou diminuer le taux d'entropie reçu. L'algorithme de conditionnement doit être un algorithme cryptographique approuvé.
 \item une \textbf{batterie de tests}, partie également intégrante du système. Des tests sont réalisés pour déterminer l'état de santé du générateur aléatoire, permettant de s'assurer que la source d'entropie fonctionne comme attendu. On considère 3 catégories de tests : 
 	\begin{itemize}
@@ -90,7 +90,7 @@ La source d'entropie est composée de 3 éléments principaux :
 \end{figure}
 
 \paragraph{Modèle conceptuel.\\}
-Suivant ces sections précédentes, on peut déterminer 3 interfaces conceptuelle :
+Suivant ces sections précédentes, on peut déterminer 3 interfaces conceptuelles :
 \begin{itemize}
 \item \texttt{getEntropy} qui retourne 
 	\begin{itemize}
@@ -104,7 +104,7 @@ Suivant ces sections précédentes, on peut déterminer 3 interfaces conceptuell
 	\end{itemize}
 et en sortie : 
 	\begin{itemize}
-	\item \texttt{noise\_source\_data}, la séquences d'éléments demandée, ayant la taille \texttt{number\_of\_sample\_requested}.
+	\item \texttt{noise\_source\_data}, la séquence d'éléments demandée, ayant la taille \texttt{number\_of\_sample\_requested}.
 	\item \texttt{status}, booléen renvoyant \texttt{true} si la requête est satisfaite, \texttt{false} sinon.\\
 	\end{itemize}
 \item \texttt{HealthTest}, élément test de la batterie de tests, qui prend en entrée :
@@ -145,35 +145,35 @@ et en sortie :
 						
 			Les sources d'entropie sont les suivantes :
 			\begin{itemize}
-			\item Interruption Clavier - heure et code d'interruption 
+			\item Interruption clavier - heure et code d'interruption 
 			\item Interruption des complétions du disque - heure de lecture ou écriture
-			\item Mouvements de la souris - heure et position\\
+			\item Mouvement de la souris - heure et position\\
 			\end{itemize}
 			
 			Quand des octets aléatoires sont demandés, la \textit{pool} est haché avec SHA-1 (20 octets). Si plus de 20 octets sont demandés, le haché est mélangé dans la \textit{pool} pour la rehacher ensuite, etc. À chaque fois que l'on prend des octets dans la \textit{pool}, l'entropie estimée est décrémentée. Pour assurer un niveau minimum d'entropie au démarrage, la \textit{pool} est écrite dans un fichier à l'extinction de la machine.\\
 			
 			\texttt{/dev/urandom} fonctionne selon le même principe sauf qu'il n'attend pas qu'il y ait assez d'entropie pour donner de l'aléatoire. Il convient donc pour une génération de clefs de session. Pour générer des clefs cryptographiques demandant une grande entropie, il est recommandé d'utiliser \texttt{/dev/random} pour assurer un niveau minimum d'entropie.\\
 			
-			\texttt{/dev/random} utilise une \textit{pool} d'entropie de 409 bits (512 octets) génère de l'aléa et s'arrête lorsqu'il n'y a plus assez d'entropie ; il attend que la \textit{pool} se remplisse à nouveau.\\
+			\texttt{/dev/random} utilise une \textit{pool} d'entropie de 4096 bits (512 octets) génère de l'aléatoire et s'arrête lorsqu'il n'y a plus assez d'entropie ; il attend que la \textit{pool} se remplisse à nouveau.\\
 			
 			En conclusion, \texttt{/dev/random} doit être utilisé pour une haute qualité d'entropie (i.e. haute sécurité de chiffrement, one-time pad), tandis que \texttt{/dev/urandom} doit être utilisé pour des applications non sensibles à des attaques cryptographiques (i.e. jeu en temps réel), car elle génère plus d'entropie que \texttt{/dev/random} sur un temps donné, mais s'arrêtera même s'il n'a pas récolté suffisamment d'entropie.\\
 
 			Par exemple, sur un serveur sans souris ni clavier, définir l'entropie avec	\texttt{/dev/urandom} est très risqué. On recommande donc l'utilisation de \texttt{/dev/random} lors de l'audit OpenSSL sur les versions Linux.\\
 	
-			Si vous souhaitez connaître l'entropie disponible, la commande est :
+			Pour connaître l'entropie disponible, il suffit d'entrer la commande suivante :
 			\begin{center}
 				\texttt{cat /proc/sys/kernel/random/entropy\_avail}
 			\end{center}	
 			
 			Désormais, la taille de la pool est hardcodée dans le noyau Linux (\texttt{/drivers/char/random.c:275})\\
 			
-			Linux offre également la possibilité de récupérer de l’aléa depuis un RNG matériel avec la fonction \texttt{get\_random\_bytes\_arch} \cite{archlinuxRNG}\\
+			Linux offre également la possibilité de récupérer de l'aléatoire depuis un RNG matériel avec la fonction \texttt{get\_random\_bytes\_arch}\\
 		
-			Un patch est également disponible afin de générer de l'aléa avec un débit de 100kB/s \cite{mueller2013rng}. L'entropie est récupérée par le \textit{CPU timing jitter}.\\
+			Un patch est également disponible afin de générer de l'aléatoire avec un débit de 100kB/s \cite{mueller2013rng}. L'entropie est récupérée par le \textit{CPU timing jitter}.\\
 			
 		\subsubsubsection{Sous Windows}
 		
-			Du coté de Microsoft, il est recommandé aux utilisateurs d'utiliser \texttt{CryptGenRandom}, \cite{wikicryptgenrandom} qui est un appel système de génération d'un nombre pseudo-aléatoire. La génération est réalisée par une librairie cryptographique (\textit{Cryptographic service provider library}). Celle-ci gère un pointeur vers un \textit{buffer} en lui fournissant de l'entropie afin de générer un nombre pseudo aléatoire en retour avec en plus, le nombre	d'octets d'aléatoires désirés.
+			Du coté de Microsoft, il est recommandé aux utilisateurs d'utiliser \texttt{CryptGenRandom}, \cite{wikicryptgenrandom} qui est un appel système de génération d'un nombre pseudo-aléatoire. La génération est réalisée par une bibliothèque cryptographique (\textit{Cryptographic service provider library}). Celle-ci gère un pointeur vers un \textit{buffer} en lui fournissant de l'entropie afin de générer un nombre pseudo-aléatoire en retour avec en plus, le nombre d'octets d'aléatoires désirés.
 			
 			\begin{verbatim}
 			BOOL WINAPI CryptGenRandom(
@@ -183,7 +183,7 @@ et en sortie :
 			);
 			\end{verbatim}
 			
-			Le service \textit{provider} sauvegarde une variable d'état d'un sel pour chaque utilisateur. Lorsque \texttt{CryptGenRandom} est appelé, celui-ci est combiné avec un nombre aléatoire généré par la librairie en plus de différentes données systèmes mais aussi de l'utilisateur telles que :\\
+			Le service \textit{provider} sauvegarde une variable d'état d'un sel pour chaque utilisateur. Lorsque \texttt{CryptGenRandom} est appelé, celui-ci est combiné avec un nombre aléatoire généré par la bibliothèque en plus de différentes données systèmes mais aussi de l'utilisateur telles que :\\
 			\begin{itemize}
 			\item l'ID du processus
 			\item l'ID du thread
@@ -191,7 +191,7 @@ et en sortie :
 			\item l'heure système
 			\item l'état de la mémoire
 			\item l'espace disque disponible du \textit{cluster}
-			\item le haché du block d'environnement mémoire de l'utilisateur\\
+			\item le haché du bloc d'environnement mémoire de l'utilisateur\\
 			\end{itemize} 
 			
 			Le tout est envoyé à la fonction de hachage SHA-1 et le nombre en sortie est utilisé comme sel de clef RC4. Cette clef est enfin utilisée pour produire des données pseudo-aléatoires et mettre à jour la variable d'état du sel de l'utilisateur. 
@@ -210,14 +210,14 @@ et en sortie :
 		
 			Nous avons également d'autres RNG comme \texttt{/dev/srandom}, \texttt{/dev/prandom} ou encore \texttt{/dev/wrandom} \cite{miros2013}. \texttt{/dev/srandom} est simple et lent, il n'est pas recommandé de l'utiliser.\\
 
-			Certains systèmes ne disposant pas de \texttt{/dev/*random}, peuvent utiliser l'EGD (Entropy Gathering Daemon) \cite{egdsf.net}. Il faut pour ce faire utiliser les fonctions OpenSSL \texttt{RAND\_egd}, \texttt{RAND\_egd\_bytes} et \texttt{RAND\_query\_egd\_bytes}. L'EGD est également utilisé par GPG, et peut être utilisé comme seed.
+			Certains systèmes ne disposant pas de \texttt{/dev/*random}, peuvent utiliser l'EGD (Entropy Gathering Daemon) \cite{egdsf.net}. Il faut alors utiliser les fonctions OpenSSL \texttt{RAND\_egd}, \texttt{RAND\_egd\_bytes} et \texttt{RAND\_query\_egd\_bytes}. L'EGD est également utilisé par GPG, et peut être utilisé comme seed.
 			
 	\subsubsection{FIPS 140}
 	
-		Le FIPS 140 (\textit{Ferderal Information Processing Standards}) est un standard du gouvernement américain spécifique aux modules cryptographiques déployés par des éléments du gouvernement. Il inclue notamment des standards de tests qui permettent de décrire la qualité et/ou valider des générateurs d'entropie ou générateurs pseudos aléatoires. La version la plus récente est le FIPS 140-2, qui décrit plusieurs niveaux de tests.\\
+		Le FIPS 140 (\textit{Ferderal Information Processing Standards}) est un standard du gouvernement américain spécifique aux modules cryptographiques déployés par des éléments du gouvernement. Il inclue notamment des standards de tests qui permettent de décrire la qualité et/ou valider des générateurs d'entropie ou générateurs pseudo-aléatoires. La version la plus récente est le FIPS 140-2, qui décrit plusieurs niveaux de tests.\\
 		
 		
-		Les test du FIPS 140-1 permettent de s'assurer que les sources d'entropies produisent suffisamment de "bonnes" données, pourvu que les sources d'entropies n'utilisent pas quelques opérations cryptographiques internes. Si une source d'entropie en en utilise, alors elle réussira les tests avec quasi- certitude, même si la source d'entropie est faible. De ce fait, ces jeux de tests ne sont pas bons pour tester des générateurs de nombres pseudo-aléatoires cryptographiques, car ceux-ci passeront facilement les tests même si les générateurs d'entropie sont faibles. Par exemple, si l'on hache une suite d'entiers (par pas de 1), les tests seront tous validés bien qu'ils n'auront pas été tirés aléatoirement, ceci en vertu de la fonction de hachage. Pourtant, la donnée est hautement prédictible.\\
+		Les test du FIPS 140-1 permettent de s'assurer que les sources d'entropies produisent suffisamment de "bonnes" données, pourvu que les sources d'entropies n'utilisent pas quelques opérations cryptographiques internes. Si une source d'entropie en utilise, alors elle réussira les tests avec quasi-certitude, même si la source d'entropie est faible. De ce fait, ces jeux de tests ne sont pas bons pour tester des générateurs de nombres pseudo-aléatoires cryptographiques, car ceux-ci passeront facilement les tests même si les générateurs d'entropie sont faibles. Par exemple, si l'on hache une suite d'entiers (par pas de 1), les tests seront tous validés bien qu'ils n'auront pas été tirés aléatoirement, ceci en vertu de la fonction de hachage. Pourtant, la donnée est hautement prédictible.\\
 		
 		
 		Les tests du FIPS 140-2 ne sont également pas très efficaces, et permettent seulement de détecter si un matériel commence à produire un motif répété. Ils consistent à comparer différentes sorties consécutives d'un générateur. Ainsi, si le "générateur aléatoire" consiste à produire une simple incrémentation de nombres, les tests passeront sans problème.\\
@@ -236,13 +236,13 @@ et en sortie :
 		\end{enumerate}
 		
 		
-		Le FIPS 140-2 définit enfin des tests continuels de sortie (\textit{continuous output tests}). Les données de sortie sont découpés en blocs de 16 octets (ou davantage). Le premier block est stocké et comparé au second. S'ils sont identiques, alors le test est échoué. On passe à la paire suivante, le 2e bloc est comparé avec le 3e, etc.
+		Le FIPS 140-2 définit enfin des tests continuels de sortie (\textit{continuous output tests}). Les données de sortie sont découpés en blocs de 16 octets (ou davantage). Le premier bloc est stocké et comparé au second. S'ils sont identiques, alors le test est échoué. On passe à la paire suivante, le 2e bloc est comparé avec le 3e, etc.
 
 \section{Une backdoor dans nos sytèmes cryptographiques?}
 
 	\subsection{L'affaire Snowden et les documents top secrets de la NSA}
 	
-	Coup d'éclat en 2012, Edward Snowden, ancien-membre de la NSA et de la CIA,	dévoile l'existence des backdoors ainsi qu'un lot d'informations conséquent sur la forte influence de la NSA sur le NIST et la RSA \cite{snowden2013reuters}.	Il préleva ainsi plus de 1.700.000 documents à la NSA (d'après un officier de la NSA - 15 décembre 2013), dont 31.000 ultra-confidentiels \cite{wikiSnowden}.	Il délivra quelques documents à plusieurs journaux populaires tels que \textit{"The Guardian"} et \textit{"The New York Times"}.\\
+	Coup d'éclat en 2012, Edward Snowden, ancien-membre de la NSA et de la CIA,	dévoile l'existence des backdoors ainsi qu'un lot d'informations conséquent sur la forte influence de la NSA sur le NIST et la RSA Security \cite{snowden2013reuters}.	Il préleva ainsi plus de 1 700 000 documents à la NSA (d'après un officier de la NSA - 15 décembre 2013), dont 31 000 ultra-confidentiels \cite{wikiSnowden}.	Il délivra quelques documents à plusieurs journaux populaires tels que \textit{"The Guardian"} et \textit{"The New York Times"}.\\
 	
 	
 	Parmi les documents top secrets rendus publiques, un en particulier nous intéresse \cite{topsecretNSA}. Il concerne le contrôle de la NSA sur les systèmes de chiffrement actuels, nom de code \texttt{BULLRUN}, dont voici quelques points importants :\\ 
@@ -259,21 +259,21 @@ et en sortie :
 	\item La communauté des cryptologues doit pouvoir offrir une version compatible et indépendante du système de chiffrement, en open-source ou en vente auprès des entreprises privées (pour financer les universités par exemple).
 	\item Il ne doit y avoir aucun secret. Tout doit être entièrement transparent auprès des clients. 
 	\item L'ensemble des PRNG doivent être rendus conformes avant publication et acceptation.
-	\item Aucune fuite d'informations n'est permise, surtout au niveau des protocoles de chiffrement. Ceci afin d'éviter la prédiction de clés privées.\\
+	\item Aucune fuite d'informations n'est permise, surtout au niveau des protocoles de chiffrement. Ceci afin d'éviter la prédiction de clefs privées.\\
 	\end{itemize}
 	
 	En Septembre 2013, Matthew Green publie un article \cite{green2013NSA} sur ce vaste problème entre la NSA et la sécurité cryptographique, qui a été salué par plusieurs cryptologues dont B. Schneier.\\
 	
-	Il précise cependant que ceci ne reste que des spéculations, mais qu'elles sont nécessaires afin de doubler d'effort dans la sécurité de nos communications.\\
+	Il précise cependant que ceci ne reste que des spéculations, mais qu'elles sont nécessaires afin de redoubler d'effort dans la sécurité de nos communications.\\
 
 
-	\subsection{Le NIST et l'algo Dual EC DRBG}
+	\subsection{Le NIST et l'algorithme Dual EC DRBG}
 	
-	Un rapport de Snowden, indique que la NSA a déversé plus de 10.000.000\$ à la compagnie RSA \cite{ravi2013NSA} pour qu'elle utilise ce dernier, et discutable, algorithme comme générateur. On comprend donc mieux les suspicions autour d'un accord entre le NIST et la NSA pour la publication d'une recommandation de cet algorithme.\\	
+	Un rapport de Snowden, indique que la NSA a versé plus de 10 000 000\$ à la compagnie RSA Security \cite{ravi2013NSA} pour qu'elle utilise ce dernier, et discutable, algorithme comme générateur. On comprend donc mieux les suspicions autour d'un accord entre le NIST et la NSA pour la publication d'une recommandation de cet algorithme.\\	
 	
 	Les recommandations du NIST en matière de PRNG (qu'ils appellent plutôt DRNG - Determinist Random Number Generation), débute en 2006, la publication du dernier document sur les DRNG date de Janvier 2012 avec la \texttt{SP800-90A} \cite{nist800-90A}.\\
 
-	Ce document présente quatres algorithmes de PRNG qui sont :
+	Ce document présente quatre algorithmes de PRNG qui sont :
 	\begin{itemize}
 		\item Le Hash\_DRBG basé sur des fonctions de hachage
 		\item Le HMAC\_DRBG basé également sur des fonctions de hachage
@@ -281,11 +281,11 @@ et en sortie :
 		\item Le Dual Elliptic Curve Deterministic RBG (ou Dual EC DRBG) basé sur une théorie mathématique\\
 	\end{itemize}
 
-	Les trois premiers sont conventionnels, acceptés par toute la communauté des cryptologues, et s'avère efficace car ils génèrent "suffisamment" d'entropie. 	Le dernier est très différent des trois autres, dans le sens où il utilise une fonction de chiffrement à sens unique. Certains cryptologues ont démontrés que cet algorithme possède des failles (d'autres indiquent clairement que c'est une back-door du NIST...). En effet, on peut accepter l'utilisation d'une fonction à sens unique, à condition que le secret utilisé ne soit pas conservé ailleurs (en d'autres termes qu'il soit détruit). 	Que faire si le NIST garde le secret des algorithmes permettant d'affaiblir considérablement le Dual EC DRGB, et rendre l'aléatoire prévisible pour qui s'en donne les moyens?\\
+	Les trois premiers sont conventionnels, acceptés par toute la communauté des cryptologues, et s'avèrent efficaces car ils génèrent "suffisamment" d'entropie. 	Le dernier est très différent des trois autres, dans le sens où il utilise une fonction de chiffrement à sens unique. Certains cryptologues ont démontré que cet algorithme possède des failles (d'autres indiquent clairement que c'est une backdoor du NIST...). En effet, on peut accepter l'utilisation d'une fonction à sens unique, à condition que le secret utilisé ne soit pas conservé ailleurs (en d'autres termes qu'il soit détruit). 	Que faire si le NIST garde le secret des algorithmes permettant d'affaiblir considérablement le Dual EC DRGB, et rendre l'aléatoire prévisible pour qui s'en donne les moyens?\\
 
 	En recoupant plusieurs sources, le doute augmente considérablement.	En 2006, Berry Schoenmakers et Andrey Sidorenko établissent une cryptanalyse du DUAL EC DRGB \cite{dualecrbg2006berry}.	 En 2007, Dan Shumow et Niels Ferguson furent les premiers à dénoncer le NIST d'avoir placé une backdoor délibérément dans cet algorithme \cite{shumow2007nist}.\\
 	
-	Avant Septembre 2013, tout cela n'était que suspicion, mais depuis le NIST à publié un bulletin de nouvelles recommandations pour les DRNG \cite{newRecomendingNist}, et indique (surtout grâce à un forcing de la communauté cryptologue) que le Dual EC DRBG ne doit plus être utilisé pour les raisons suivantes :
+	Avant septembre 2013, tout cela n'était que suspicion, mais depuis le NIST à publié un bulletin de nouvelles recommandations pour les DRNG \cite{newRecomendingNist}, et indique (surtout grâce à un forcing de la communauté cryptologue) que le Dual EC DRBG ne doit plus être utilisé pour les raisons suivantes :
 	\begin{itemize}
 		\item La provenance des points par défaut de la courbe elliptique utilisée n'est pas clairement détaillée
 		\item La génération de ces courbes n'est pas digne de confiance\\
@@ -294,7 +294,7 @@ et en sortie :
 
 	\subsection{... Et OpenSSL ?}
 	
-	A présent, il faut rechercher l'utilisation de cet algorithme dans les classes d'OpenSSL, la nouvelle recommandation du NIST faisant foi. Le directeur technique d'OpenSSL Steve Marques a rapporté le 19 décembre 2013 qu' "un bug inusuel [avait] été détecté sur une situation inusuelle". Paul Ducklin apporte une bonne synthèse sur le site NakedSecurity \cite{duckin2013openssl}, le titre est clair : "Le bug d'OpenSSL nous sauve de l'espionnage".\\
+	À présent, il faut rechercher l'utilisation de cet algorithme dans les classes d'OpenSSL, la nouvelle recommandation du NIST faisant foi. Le directeur technique d'OpenSSL Steve Marques a rapporté le 19 décembre 2013 qu' "un bug inusuel [avait] été détecté sur une situation inusuelle". Paul Ducklin apporte une bonne synthèse sur le site NakedSecurity \cite{duckin2013openssl}, le titre est clair : "Le bug d'OpenSSL nous sauve de l'espionnage".\\
 	
 	
 	L'implantation du DUAL\_EC\_DRGB dans OpenSSL contient une faille, celle- ci causant un arrêt brutal ou un blocage de programme. Le bug a toujours été là, et il vient seulement d'être détecté.	 Heureusement, personne n'a pu utiliser cet algorithme, celui-ci est resté dans les phases de tests, les passant tout de même avec succès.\\
@@ -305,16 +305,16 @@ et en sortie :
 			Les normes visées furent la RFC 4086 \cite{rfc4086} et le FIPS 140-2 \cite{fips140-2}. La première définit le bon fonctionnement d'un RNG, tandis que la deuxième apporte plutôt des algorithmes réputés sûrs pour la génération d'aléatoire.
 		
 		\subsubsection{Description de la faille}
-			Le 13 Mai 2008, Luciano Bello découvert une faille critique du paquet d'OpenSSL sur les systèmes Debian \cite{faille2008linux.org}. Un mainteneur Debian souhaitant corriger quelques bugs aurait malencontreusement supprimé une grosse source d'entropie lors de la génération des clés. Il ne restait plus que le PID comme source d'entropie. Comme celui-ci ne pouvait dépasser 32.768 (qui le PID maximal atteignable), l'espace des clés a été restreint à 264.148 clés distinctes.\\
+			Le 13 mai 2008, Luciano Bello a découvert une faille critique du paquet d'OpenSSL sur les systèmes Debian \cite{faille2008linux.org}. Un mainteneur Debian souhaitant corriger quelques bugs aurait malencontreusement supprimé une grosse source d'entropie lors de la génération des clefs. Il ne restait plus que le PID comme source d'entropie. Comme celui-ci ne pouvait dépasser 32 768 (qui le PID maximal par défaut atteignable), l'espace des clefs a été restreint à 264 148 clefs distinctes.\\
 		
-			Le 14 Mai 2008, Steinar H. Gunderson démontre qu'en connaissant le secret $k$ d'une signature, on peut retrouver la clé privée d'un certificat immédiatement \cite{gunderson2008}. Ce secret $k$ étant généré avec un PRNG prévisible, on peut stocker deux signatures utilisant le même $k$, où le prédire directement.\\
+			Le 14 mai 2008, Steinar H. Gunderson démontre qu'en connaissant le secret $k$ d'une signature, on peut retrouver la clef privée d'un certificat immédiatement \cite{gunderson2008}. Ce secret $k$ étant généré avec un PRNG prévisible, on peut stocker deux signatures utilisant le même $k$, où le prédire directement.\\
 		
 			Une signature DSA consiste en deux nombres $r$ et $s$ tels que :
 			
 			$$r = (g^k [p]) [q]$$
 			$$s = (k^{-1} * (H(m) + x * r)) [q]$$
 		
-			La clé publique = $(p, q, g)$, le message en clair = $m$, et $H(m)$ est le fingerprint de $m$ qui est également connu.
+			La clé publique = $(p, q, g)$, le message en clair = $m$, et $H(m)$ est le \textit{fingerprint} de $m$ qui est également connu.
 		
 			\begin{itemize}
 			\item Attaque \no 1 : En connaissant $k$
@@ -331,19 +331,19 @@ et en sortie :
 			$$\iff On\ connaît\ k \implies Attaque\ 1$$\\
 			\end{itemize}
 	
-			Pour savoir si une clé SSL, SSH, DNSSEC ou OpenVPN est affectée, plusieurs détecteur de données \cite{dowkd.pl} \cite{openssl-blacklist} de clés faibles sont fournies par l'équipe Security de Debian, en même temps que l'avertissement de sécurité \cite{debian2008bug}.\\ 
+			Pour savoir si une clef SSL, SSH, DNSSEC ou OpenVPN est affectée, plusieurs détecteurs de données \cite{dowkd.pl} \cite{openssl-blacklist} de clés faibles sont fournies par l'équipe Security de Debian, en même temps que l'avertissement de sécurité \cite{debian2008bug}.\\ 
 	
 		\subsubsection{Tests}
 	
-			Nous avons décidé de tester le nombre de certificats vulnérables causés 	par le bug OpenSSL de Debian (qui reste le plus populaire), et connaissant la blacklist des clés privés. Les résultats nous montrent que sur 500.000 certificats récupérés, au moins \footnote{Le logiciel ne prend pas en compte les clés $\leq$ à 512 bits et celles $\geq$ à 4096 bits, et ne prend en compte que les certificats RSA} 769 sont vulnérables.\\
+			Nous avons décidé de tester le nombre de certificats vulnérables causés 	par le bug OpenSSL de Debian (qui reste le plus populaire), et connaissant la \textit{blacklist} des clefs privés. Les résultats nous montrent que sur 500 000 certificats récupérés, au moins \footnote{Le logiciel ne prend pas en compte les clés $\leq$ à 512 bits et celles $\geq$ à 4096 bits, et ne prend en compte que les certificats RSA} 769 sont vulnérables.\\
 			
-			Vous pouvez trouver nos scripts parcourant un fichier contenant un certificat sur chaque ligne, ou un dossier contenant des certificats sous forme de fichiers PEM et nos résultats, dans le dossier consacré à l'audit des clés cryptographiques.\\
+			Vous pouvez trouver nos scripts parcourant un fichier contenant un certificat sur chaque ligne, ou un dossier contenant des certificats sous forme de fichiers PEM et nos résultats, dans le dossier consacré à l'audit des clefs cryptographiques.\\
 			
 			Le format de nos résultats est : \\
 			
 			\textbf{COMPROMISED:} \textit{<haché\_du\_certificat>} \textit{<nom \_fichier\_corrompu (sous forme d'adresse IP)>}\\
 			
-			Évidemment, nous ne mettons pas ces résultats sur le net puisqu'ils indiquent très clairement les adresses IP contenant le certificat friable, et sa clé privée (que l'on peut facilement retrouver parmi la courte blacklist). Pour information, parmi les entreprises vulnérables nous trouvons les géants IBM et CISCO.
+			Évidemment, nous ne mettons pas ces résultats sur le net puisqu'ils indiquent très clairement les adresses IP contenant le certificat friable, et sa clef privée (que l'on peut facilement retrouver parmi la courte blacklist). Pour information, parmi les entreprises vulnérables nous trouvons les géants IBM et CISCO.
 	
 		\subsubsection{Implémentation}
 						
@@ -372,7 +372,7 @@ et en sortie :
 
 		\subsubsection{Conclusion}
 		
-			Tout d'abord, il est fortement recommandé de mettre à jour sa version OpenSSL vers une version stable où le bug a été corrigé. Puis de re-générer toutes les clés de chiffrements, et de ne plus utiliser les certificats corrompus. Il reste malheureusement beaucoup de certificats (+ de 700) touchés par cette faille, n'ayant toujours pas révoqué leurs certificats (la plupart étant valide jusqu'en 2020-2030).
+			Tout d'abord, il est fortement recommandé de mettre à jour sa version OpenSSL vers une version stable où le bug a été corrigé. Puis de générer de nouvelles clefs de chiffrement, et de révoquer les certificats corrompus. Il reste malheureusement beaucoup de certificats (+ de 700) touchés par cette faille, la plupart étant valide jusqu'en 2020-2030.
 			
 	\subsection{Audit 1.2 : Le cas LinuxMintDebianEdition sous Android}
 		\subsubsection{Normes visées}
@@ -392,7 +392,7 @@ et en sortie :
 			
 			\paragraph{Configuration utilisée.\\}
 
-			Système Android utilisant la version 1.0.1e d'OpenSSL au niveau de la classe SecureRandom, avec la librairie Java Bridge (fichier JAR)accèdant au PRNG d'OpenSSL, la librairie core/java/com/android/internal/os/ZygoteInit.java pour la parallélisation des processus (fork).\\
+			Système Android utilisant la version 1.0.1e d'OpenSSL au niveau de la classe SecureRandom, avec la bibliothèque Java Bridge (fichier JAR) accèdant au PRNG d'OpenSSL, la bibliothèque core/java/com/android/internal/os/ZygoteInit.java pour la parallélisation des processus (fork).\\
 			
 			OS utilisés Linux Mint Debian Edition (LMDE) et Fedora. Le bug concerne l'OS LMDE avec la version OpenSSL 1.0.1e. 
 
@@ -420,23 +420,23 @@ et en sortie :
 
 		\subsubsection{Conclusion}		
 		
-			Il est alors recommandé à court terme d'ajouter plus d'entropie à notre PRNG sous Android, soit manuellement comme le script Ruby d'Eric Wong \cite{boblet2013android}, ou avec les outils cités plus haut dans ce document. Sinon, le patch d'OpenSSL \cite{alex2013android} répare également l'erreur en rajoutant plus d'aléa, bien qu'une recommandation officielle serait la bienvenue, ainsi qu'une meilleure documentation.\\
+			Il est alors recommandé à court terme d'ajouter plus d'entropie à notre PRNG sous Android, soit manuellement comme le script Ruby d'Eric Wong \cite{boblet2013android}, ou avec les outils cités plus haut dans ce document. Sinon, le patch d'OpenSSL \cite{alex2013android} répare également l'erreur en rajoutant plus d'aléatoire, bien qu'une recommandation officielle serait la bienvenue, ainsi qu'une meilleure documentation.\\
 
 			
 	\subsection{Audit 1.3 : NetBSD 6.0 et OpenSSH}
 		\subsubsection{Norme visée}
 		
-			Le noyau du système NetBSD s'appuie sur le RNG CTR du NIST, que l'on peut trouver dans le NIST-SP-800-90A \cite{nist800-90A} pour définir son pool d'entropie.	
+			Le noyau du système NetBSD s'appuie sur le RNG CTR du NIST, que l'on peut trouver dans le NIST-SP-800-90A \cite{nist800-90A} pour définir sa pool d'entropie.	
 		
 		\subsubsection{Description de la faille}
 		
-			Autre faille du même genre sur les systèmes NetBSD 6.0 concernant OpenSSH/OpenSSL et datant de Mars 2013 \cite{alerteBSD2013} \cite{failleNetBSDPatrick}. L'erreur provient d'une insuffisance d'entropie dans le PRNG, qui ne tient que sur 32 ou 64 bits (la taille d'un sizeof(int)). Un attaquant peut brute-forcer une clé générée par ce PRNG. Il est probable que les dégâts soient bien moins étendus que lors de l'affaire OpenSSL Debian car les systèmes NetBSD 6.0 sont moins fréquents.\\
+			Autre faille du même genre sur les systèmes NetBSD 6.0 concernant OpenSSH/OpenSSL et datant de mars 2013 \cite{alerteBSD2013} \cite{failleNetBSDPatrick}. L'erreur provient d'une insuffisance d'entropie dans le PRNG, qui ne tient que sur 32 ou 64 bits (la taille d'un \texttt{sizeof(int)}). Un attaquant peut brute-forcer une clef générée par ce PRNG. Il est probable que les dégâts soient bien moins étendus que lors de l'affaire OpenSSL Debian car les systèmes NetBSD 6.0 sont moins fréquents.\\
 			
 		\subsubsection{Implémentation}
 			
 			\paragraph{Configuration utilisée.\\} 
 			
-			La vulnérabilité concerne les versions NetBSD 6.0 et NetBSD 6.0.1. Elle est réparée sur la version NetBSD 6.0.2 et NetBSD 1.0 \cite{diffNetBSD}.	Une parenthèse mal placée dans le code du fichier /src/sys/kern/subr\_cprng.c du système rend prévisible l'entropie fourni pour la génération des clés.\\
+			La vulnérabilité concerne les versions NetBSD 6.0 et NetBSD 6.0.1. Elle est réparée sur la version NetBSD 6.0.2 et NetBSD 1.0 \cite{diffNetBSD}.	Une parenthèse mal placée dans le code du fichier \texttt{/src/sys/kern/subr\_cprng.c} du système rend prévisible l'entropie fournie pour la génération des clefs.\\
 			
 			\paragraph{Fonctions.\\} 
 			
@@ -456,7 +456,7 @@ et en sortie :
 			\end{lstlisting}
 			
 			Pour la partie concernant la ligne 183: \texttt{rnd\_extract\_data (key + r, sizeof(key - r), RND\_EXTRACT\_ANY);}\\ 
-			Le deuxième paramètre devrait être sizeof(key) - r.	Dans la version 1.15, cette appel a été corrigé, et on utilise une nouvelle fonction nomméee \texttt{cprng\_entropy\_try} (cf. \textit{Listing} \ref{subrcprng2}) \cite{diffNetBSD} à la place de \texttt{rnd\_extract\_data}.
+			Le deuxième paramètre devrait être \texttt{sizeof(key) - r}.	Dans la version 1.15, cette appel a été corrigé, et on utilise une nouvelle fonction nommée \texttt{cprng\_entropy\_try} (cf. \textit{Listing} \ref{subrcprng2}) \cite{diffNetBSD} à la place de \texttt{rnd\_extract\_data}.
 			
 			\begin{lstlisting}[style=customc,caption=subr\_cprng.c(2), label=subrcprng2]
 			static size_t
@@ -475,9 +475,9 @@ et en sortie :
 
 		\subsubsection{Conclusion}
 			
-			Il est recommandé de passer à une version NetBSD supérieurz à 5.1, et de de recréer toutes données de chiffrement comme les clés SSH ayant étés générées avec ce noyau. Il faut également faire attention au patch de sécurité de Janvier 2013 qui en tentant de régler le problème a généré une autre erreur produisant le même effet.	L'erreur ne provient pas directement du code d'OpenSSL. Mais ici, OpenSSL se contente de récupérer l'entropie fournie sans aucune vérification (fonction RAND\_bytes()).\\ 
+			Il est recommandé de passer à une version NetBSD supérieure à 5.1, et de générer de nouvelles données de chiffrement comme les clés SSH ayant étés générées avec ce noyau. Il faut également faire attention au patch de sécurité de janvier 2013 qui en tentant de régler le problème a généré une autre erreur produisant le même effet.	L'erreur ne provient pas directement du code d'OpenSSL. Mais ici, OpenSSL se contente de récupérer l'entropie fournie sans aucune vérification (fonction \texttt{RAND\_bytes()}).\\ 
 
-			Il est également recommandé d'utiliser \texttt{/dev/random} plutôt que \texttt{/dev/urandom} pour avoir une bonne entropie. On souligne quand même le fait que OpenSSL ne contrôle pas son entropie, si l'entropie du système est quasi-nulle les clés sont tout de même générées. Un avertissement auprès de l'utilisateur serait un minimum.
+			Il est également recommandé d'utiliser \texttt{/dev/random} plutôt que \texttt{/dev/urandom} pour avoir une bonne entropie. On souligne quand même le fait que OpenSSL ne contrôle pas son entropie, si l'entropie du système est quasi-nulle les clefs sont tout de même générées. Un avertissement auprès de l'utilisateur serait un minimum.
 			
 \section{Recommandations sur la conception}
 Le NIST propose des recommandations à plusieurs niveaux concernant la conception de la source d'entropie. Nous n'en reporterons ici que les recommandations génériques. Les éléments ci-dessous sont basés sur le rapport du NIST SP800-90B.
@@ -486,20 +486,20 @@ Le NIST propose des recommandations à plusieurs niveaux concernant la conceptio
 La source d'entropie doit suivre les exigences suivantes :
 \begin{enumerate}
 \item Le développeur doit documenter complètement la modélisation de la source d'entropie, incluant toutes les interactions entre les composants. De ce fait, la documentation doit pouvoir justifier en quoi la source d'entropie est de confiance. 
-\item Il doit définir de façon précise les limites conceptuelles de sécurité de la source d'entropie, qui doivent elles mêmes être équivalentes à un module cryptographique délimitant un périmètre de sécurité (cf. \textit{Cryptographic module boundary} du FIPS 140).
+\item Il doit définir de façon précise les limites conceptuelles de sécurité de la source d'entropie, qui doivent elles-mêmes être équivalentes à un module cryptographique délimitant un périmètre de sécurité (cf. \textit{Cryptographic module boundary} du FIPS 140).
 \item Le développeur doit définir le champ des conditions optimales de fonctionnement du générateur d'entropie.
 \item La source source d'entropie doit être possiblement validée suivant les recommandations du FIPS 140, ainsi que les tests s'y référant.
 \item Le comportement du bruit de la source doit être documenté, validant en quoi le taux d'entropie ne fluctue pas lors d'une utilisation normale.
 \item Dès lors qu'un test de validation n'est pas réussi, la source d'entropie doit immédiatement cesser d'envoyer des données de sortie, et doit notifier à l'application l'erreur rencontrée.\\
 
 Enfin, une recommandation optionnelle : 
-\item La source d'entropie doit contenir différent types de bruits pour améliorer le comportement global de la source, et prévenir des tentatives de contrôle externe. Chaque bruit doit vérifier les spécifications du 3.1. 
+\item La source d'entropie doit contenir différents types de bruit pour améliorer le comportement global de la source, et prévenir des tentatives de contrôle externe. Chaque bruit doit vérifier les spécifications du 3.1. 
 \end{enumerate}
 
 \subsection{Source d'entropie absolue}
-Certains générateurs de bits aléatoire demandent une source d'entropie absolue, à savoir qu'elle approxime une sortie qui est uniformément distribuée et indépendante des autres sorties. 
+Certains générateurs de bits aléatoires demandent une source d'entropie absolue, à savoir qu'elle approxime une sortie qui est uniformément distribuée et indépendante des autres sorties. 
 \begin{enumerate}
-\item La chaine de bit générée doit fournir au moins $(1-\epsilon)n$ bits d'entropie, où : 
+\item La chaine de bits générée doit fournir au moins $(1-\epsilon)n$ bits d'entropie, où : 
 	\begin{itemize}
 	\item $n$ est la taille de chaque sortie
 	\item $\epsilon$ tel que : $0\leqslant \epsilon \leqslant 2^{-64}$
@@ -511,7 +511,7 @@ Le bruit fourni par la source doit suivre les recommandations suivantes :
 \begin{enumerate}
 \item Le bruit doit avoir un comportement probabiliste et ne doit en aucun cas être définissable par quelconque algorithme ou règle.
 \item Le développeur doit pouvoir documenter l'opération sur le fonctionnement du bruit de la source, en montrant en quoi le choix de ce bruit fournit une sortie d'entropie acceptable. Ceci comprend le référencement d'articles de recherche et autre littérature pertinente.
-\item Le bruit de la source doit pouvoir être testable, de telle sorte que l'on puisse s'assurer qu'il effectue l'opération attendue. Il doit donc être possible de récupérer des données sur la source de bruit sur lesquels on puisse lancer la batterie de tests. La récupération des données sur la source de bruit ne doit en aucun cas altérer le comportement du bruit, ou de la sortie.
+\item Le bruit de la source doit pouvoir être testable, de telle sorte que l'on puisse s'assurer qu'il effectue l'opération attendue. Il doit donc être possible de récupérer des données sur la source de bruit sur lesquelles on puisse lancer la batterie de tests. La récupération des données sur la source de bruit ne doit en aucun cas altérer le comportement du bruit, ou de la sortie.
 \item Toute défaillance du bruit doit être rapidement détectable. Les méthodes de détection doivent être documentées.
 \item La documentation de la source du bruit doit également décrire sous quelles conditions le bruit est connu pour mal fonctionner. Ceci consiste ainsi à répertorier les environnements dans lesquels la source peut fonctionner correctement. 
 \item La source de bruit doit être protégée au maximum contre toute attaque/tentative de conditionnement ou simple connaissance de fonctionnement de la part d'un adversaire. 
@@ -521,8 +521,8 @@ Le bruit fourni par la source doit suivre les recommandations suivantes :
 Le composant de conditionnement doit suivre les recommandations suivantes :
 \begin{enumerate}
 \item Le développeur doit documenter si la source d'entropie nécessite ou non un conditionnement. 
-\item La méthode de conditionnement doit être décrite et argumentée. Elle doit en effet expliciter en quoi elle permet de diminuer l'alignement d'une source de bruit, ou en quoi la sortie créée correspond à l'entropie attendue
-\item La méthode de conditionnement doit pouvoir être validée par des tests
+\item La méthode de conditionnement doit être décrite et argumentée. Elle doit en effet expliciter en quoi elle permet de diminuer l'alignement d'une source de bruit, ou en quoi la sortie créée correspond à l'entropie attendue.
+\item La méthode de conditionnement doit pouvoir être validée par des tests.
 \item Le développeur doit pouvoir estimer l'alignement en sortie de conditionnement. 
 \item Le développeur doit prévoir une documentation expliquant le comportement de la méthode de conditionnement en cas de variation de comportement de la part de la source de bruit.
 \end{enumerate}
@@ -539,12 +539,12 @@ Les tests sur le bruit sont pour la plupart du temps dépendants de la technolog
 \begin{enumerate}
 \item Au minimum, des tests continus doivent être implémentés, et ceci de façon indépendante. Le développeur doit de plus documenter toutes les sources de défaillance.
 \item Les tests sont implémentés sur les données binaires récupérées via le bruit source.
-\item La source de bruit doit être testé dans son ensemble (suivant la variation du bruit).
+\item La source de bruit doit être testée dans son ensemble (suivant la variation du bruit).
 \item Le bruit généré durant la démarrage ayant passé avec succès les tests de démarrage peut être utilisé pour produire de l'entropie.
-\item Lorsqu'un test est échoué, le générateur doit en être notifié.\\
+\item Lorsqu'un test échoue, le générateur doit en être notifié.\\
 
 Optionnel : 
-\item Une étude peut être requise sur les bords du bruit bruit généré, dans les cas ou le comportement du générateur est altéré.
+\item Une étude peut être requise sur les bords du bruit généré, dans les cas ou le comportement du générateur est altéré.
 \end{enumerate}
 
 
@@ -562,7 +562,7 @@ Le rôle du conditionnement est de réduire l'alignement présent chez certaines
 \subsection{Déterminer si les données sont IID}
 
 \paragraph{Définition.\\}
-On dit que des variables sont \textbf{IID} (indépendantes et identiquement distribuées) si elle suivent toute la même loi de probabilité et si elles sont mutuellement indépendantes. \\
+On dit que des variables sont \textbf{IID} (indépendantes et identiquement distribuées) si elles suivent toutes la même loi de probabilité et si elles sont mutuellement indépendantes. \\
 
 Les tests suivants ont été conçus pour montrer si les données en sortie du bruit et/ou en sortie du conditionnement sont bien IID, ceci en effectuant des tests sur la distribution des données. Le but est de vérifier l'hypothèse $H_0$. Pour la vérifier, nous allons considérer ici deux types de tests : 
 \begin{itemize}
@@ -582,16 +582,16 @@ Nous travaillons sur le test statistique bilatéral suivant :
 \end{itemize}
 
 
-Suivant un jeu de données $(|donnees|=n)$, on divise celui-ci en 10 sous ensemble de tailles égales ($\frac{N}{10}$). On effectue enfin nos tests sur chacune de ces données. La stratégie de test est effectuée comme suit : 
+Suivant un jeu de données $(|donnees|=n)$, on divise celui-ci en 10 sous-ensembles de même taille ($\frac{N}{10}$). On effectue enfin nos tests sur chacune de ces données. La stratégie de test est effectuée comme suit : 
 \begin{enumerate}
 \item On calcule tout d'abord différents scores statistiques parmi les suivants :
 	\begin{itemize}
-	\item Score de compression, un score par sous ensemble de données
-	\item Score \textit{Over/Under Runs}, deux scores par sous ensemble
-	\item Score excursion, un score par sous ensemble
-	\item Score \textit{Runs} directionnel, trois scores par sous ensemble
-	\item Score de covariance, un score par sous ensemble 
-	\item Score de collision, trois scores par sous ensemble\\
+	\item Score de compression, un score par sous-ensemble de données
+	\item Score \textit{Over/Under Runs}, deux scores par sous-ensemble
+	\item Score excursion, un score par sous-ensemble
+	\item Score \textit{Runs} directionnel, trois scores par sous-ensemble
+	\item Score de covariance, un score par sous-ensemble 
+	\item Score de collision, trois scores par sous-ensemble\\
 	\end{itemize}
 	
 \item Pour chaque calcul de score : 
@@ -599,7 +599,7 @@ Suivant un jeu de données $(|donnees|=n)$, on divise celui-ci en 10 sous ensemb
 	\item On stocke pour chaque type de score les résultats dans un vecteur de $J$ scores
 	\item On répète les étapes suivantes 1000 fois :
 		\begin{enumerate}
-		\item On permute les sous ensembles précédents en utilisant un générateur pseudo aléatoire, suivant l'algorithme de permutation \textit{Fisher–Yates shuffle}. 
+		\item On permute les sous-ensembles précédents en utilisant un générateur pseudo-aléatoire, suivant l'algorithme de permutation \textit{Fisher–Yates shuffle}. 
 		\item On calcule les nouveaux scores suivant cette nouvelle organisation de sous-ensembles
 		\item On récupère ce vecteur de $J$ scores
 		\end{enumerate}
@@ -709,12 +709,12 @@ Plus généralement, étant donné :
 
 
 \subsubsubsection{Score de compression}
-Les algorithmes de compression sont habituellement bien adaptés pour supprimer les données redondantes des chaînes de caractère. Suivant un algorithme de compression choisi, le score de compression est la longueur de la donnée compressée obtenue. 
+Les algorithmes de compression sont habituellement bien adaptés pour supprimer les données redondantes des chaînes de caractères. Suivant un algorithme de compression choisi, le score de compression est la longueur de la donnée compressée obtenue. 
 
 \paragraph{Calcul du score.\\}
 Le score est calculé de la façon suivante :
 \begin{enumerate}
-\item Les sous ensembles de données sont encodés en chaîne de caractères séparés par une virgule
+\item Les sous-ensembles de données sont encodés en chaîne de caractères séparés par une virgule
 \item La chaîne de caractères est compressée suivant l'algorithme de compression de bzip2 \footnote{cf. \url{www.bzip.org}}
 \item Le score retourné correspond à la longueur de la chaîne de caractères compressée
 \end{enumerate}
@@ -769,9 +769,9 @@ Le \textit{run test} est défini tel que :
 
 
 \paragraph{Exemple de Run test.\\}
-Soit la suite binaire $X=(x_1,x_2,...,x_n)$ sortie d'un générateur aléatoire. Pour tous les $i$ allant de $1$ à $n-1$. On stocke dans un vecteur de taille $n-1$ le signe de $x_{i+1}-x_i$. Le nombre de run consiste au nombre de changements de signe.
+Soit la suite binaire $X=(x_1,x_2,...,x_n)$ sortie d'un générateur aléatoire. Pour tous les $i$ allant de $1$ à $n-1$. On stocke dans un vecteur de taille $n-1$ le signe de $x_{i+1}-x_i$. Le nombre de runs correspond au nombre de changements de signe.
 
-Si $X=111001111000110$, alors son vecteur associé sera $(++-+++++-++++-)$, soit 6 \textit{runs}. Dans le cas des suites binaires, il s'agit simplement de compter le nombre de changement d'éléments (ou classes), l'ensemble de données étant $\lbrace 0,1 \rbrace$. Si l'élément $i$ est équivalent au précédent, alors on passe au suivant, sinon on incrémente de un le nombre de \textit{runs}.\\
+Si $X=111001111000110$, alors son vecteur associé sera $(++-+++++-++++-)$, soit 6 \textit{runs}. Dans le cas des suites binaires, il s'agit simplement de compter le nombre de changements d'éléments (ou classes), l'ensemble de données étant $\lbrace 0,1 \rbrace$. Si l'élément $i$ est équivalent au précédent, alors on passe au suivant, sinon on incrémente de un le nombre de \textit{runs}.\\
 
 Ici on a donc : 
 \begin{itemize}
@@ -798,7 +798,7 @@ Les sous ensembles inférieurs et supérieurs à la médiane sont susceptible d'
  
 Les deux scores de \textit{over/under runs} sont calculés comme suit : 
 \begin{enumerate}
-\item On récupère la médiane de notre sous ensemble de données. Pour des données binaires, la médiane sera de 0.5
+\item On récupère la médiane de notre sous ensemble de données. Pour des données binaires, la médiane sera de 0,5
 \item Pour chaque sous ensemble original et chaque sous ensemble permuté, un sous ensemble temporaire est construit comme suit. Pour chaque élément : 
 	\begin{enumerate}
 	\item Si l'élément est plus grand que la médiane, on ajoute \texttt{+1} au vecteur temporaire
@@ -834,7 +834,7 @@ Le score est ainsi calculé comme suit. $\mu$ est défini comme la moyenne des v
 \end{enumerate}
 
 \paragraph{Exemple.\\}
-Étant donné le sous ensemble suivant : $ \lbrace 2, 15, 4, 10, 9 \rbrace$. 
+Étant donné le sous-ensemble suivant : $ \lbrace 2, 15, 4, 10, 9 \rbrace$. 
 \begin{enumerate}
 \item On calcule $\mu$, ici $\mu=8$
 \item Calcul des $d_j$ :\\
@@ -842,8 +842,8 @@ $d_1=|2-8|=6$, $d_2=|2+15-2*8|$, $d_3=3$, $d_4=1$, $d_5=0$
 \item Le score est donc de $6$\\
 \end{enumerate}
 
-\subsubsubsection{Scores Runs directionnel (3)}
-Le principe du run test reste le même que celui évoqué précédement à l'exception suivante près: lorsqu'il y a égalité entre deux éléments consécutifs, on le référence comme étant 0 dans le vecteur temporaire plutôt que de passer directement à l'élément suivant. 
+\subsubsubsection{Scores Runs directionnels (3)}
+Le principe du run test reste le même que celui évoqué précédemment à l'exception suivante près: lorsqu'il y a égalité entre deux éléments consécutifs, on le référence comme étant 0 dans le vecteur temporaire plutôt que de passer directement à l'élément suivant. 
 
 \paragraph{Calcul des scores pour des données quelconques.\\}
 Le score est calculé de la façon suivante : 
@@ -880,7 +880,7 @@ Le \textbf{poids de hamming} d'un sous ensemble $(s_i,...,s_{i+n})$ , donné par
 
 
 \subsubsubsection{Score de covariance}
-Le score de covariance permet de détecter la relation entre les valeurs numériques successives. En effet, toute relation linéaire entre des paires successives va affecter directement ce score. On pourra alors constater une différence entre la covariance calculée sur le sous ensemble de données originales et la covariances calculée sur le sous ensemble de données permutées. La covariance est calculée entre chaque paire consécutive du sous ensemble S tel que $s_i$ est apparié avec $s_{i+1}$.\\
+Le score de covariance permet de détecter la relation entre les valeurs numériques successives. En effet, toute relation linéaire entre des paires successives va affecter directement ce score. On pourra alors constater une différence entre la covariance calculée sur le sous-ensemble de données originales et la covariance calculée sur le sous-ensemble de données permutées. La covariance est calculée entre chaque paire consécutive du sous-ensemble S tel que $s_i$ est apparié avec $s_{i+1}$.\\
 
 \paragraph{Calcul du score.\\}
 Le score est calculé comme suit : 
@@ -909,7 +909,7 @@ $$count = count + (s_i - \mu)(s_{i-1} - \mu)$$
 Une façon naturelle de tester l'entropie d'un générateur est de mesurer le nombre d'essais nécessaires pour obtenir une valeur identique à la première, en d'autres termes, le nombre d'essais nécessaires pour obtenir une collision. Ainsi, notre score de collision va mesurer le nombre d'essais successifs jusqu'à ce qu'un élément identique soit trouvé.\\
 
 
-Dans le cas des données binaires, un sous ensemble de données binaires est converti en séquence de 8bits avant d'être testé. \\
+Dans le cas des données binaires, un sous-ensemble de données binaires est converti en séquence de 8 bits avant d'être testé. \\
 
 \paragraph{Calcul des scores.\\}
 Les 3 scores de collisions sont calculés comme suit : 
@@ -953,7 +953,7 @@ Considérant les données : $ \lbrace 2, 1, 1, 2, 0, 1, 0, 1, 1, 2 \rbrace$ de t
 \end{enumerate}
 
 \subsubsection{Test statistique spécifique : \chidpdf}
-Dès lors que source d'entropie est considérée comme IID, alors la distribution de ces valeurs peut être considérée comme une distribution indépendante, une distribution multinomiale.
+Dès lors que la source d'entropie est considérée comme IID, alors la distribution de ces valeurs peut être considérée comme une distribution indépendante, une distribution multinomiale.
 
 \paragraph{Définition.\\}
 La \textbf{loi multinomiale} est une généralisation de la loi binomiale. On considère $m$ résultats possibles (2 pour la loi binomiale). Soit $N_i$ pour $i \in \lbrace1,...,m\rbrace$ la variable aléatoire multinomiale ayant une probabilité $p_i$, telle que :
@@ -974,7 +974,7 @@ Si les variables sont indépendantes, $\sum \limits_{i=1}^m \frac{(N_i - np_i)^2
 Plus généralement, le test peut être utilisé pour vérifier si des données suivent une distribution particulière, pourvu que celles-ci ne soient pas de trop grande taille. Deux types de tests sont proposés sur la source d'entropie : 
 \begin{itemize}
 \item Le test d'indépendance entre des données successives obtenues (tests différents pour des données binaires et non binaires)
-\item Le test d'ajustement sur les 10 sous-ensembles de données, qui permet de vérifier si le modèle adopté pour les données est satisfaisant, ie. dans quelle mesure les résidus sont dus au hasard (tests différents pour des données binaires et non binaires). 
+\item Le test d'ajustement sur les 10 sous-ensembles de données, qui permet de vérifier si le modèle adopté pour les données est satisfaisant, i.e. dans quelle mesure les résidus sont dus au hasard (tests différents pour des données binaires et non binaires). 
 
 Nous ne détaillerons pas dans ce rapport ces tests respectifs. Ils sont toutefois décrits dans le document du NIST SP800-90b.
 
