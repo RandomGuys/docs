@@ -48,8 +48,8 @@
 \newcommand{\hmwkSubject}{Conduite de projet} % Subject
 \newcommand{\hmwkDocName}{Plan de développement} % Document name
 
-\newcommand{\version}{1.0} % Document version
-\newcommand{\docDate}{13/12/2013} % Document date
+\newcommand{\version}{2.1} % Document version
+\newcommand{\docDate}{21/02/2013} % Document date
 \newcommand{\checked}{Julien Legras \& William Boisseleau} % Checker name
 \newcommand{\approved}{Ayoub Otmani} % Approver name
 
@@ -103,6 +103,8 @@
 	1.1 & 22/1/2014 & Modification du plan de développement \\
 	\hline
 	2.0 & 19/2/2014 & Mise à jour de développement \\
+	\hline
+	2.1 & 21/2/2014 & Rajout des tâches post-livraison \\
 	\hline
 	\end{tabularx}
 \end{center}
@@ -233,26 +235,28 @@ Le code source ainsi que les différents documents produits sont stockés sur le
 && 11 &  Tests										\\
 && 12 &  Débogage									\\
 && 13 &  Première livraison cliente					\\
+&& 14 &  Corrections post-livraison								\\
 \cline{1-4}
 \multirow{8}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}&\multirow{8}{*}{\textbf{OpenSSL}}
-&  14 &  Lister les fonctions d'OpenSSL à auditer\\
-&& 15 &  Lister les standards utilisés par chaque fonction à auditer\\
-&& 16 &  Mettre en place la page web\\
-&& 17 &	 Auditer les fonctions d'OpenSSL listées\\
-&& 18 &  Lister les tests et failles existantes\\
-&& 19 &  Présenter les clefs communs sur le site\\
-&& 20 &  Présenter le résultat de l'audit sur le site\\
-&& 21 &  Deuxième livraison cliente\\
+&  15 &  Lister les fonctions d'OpenSSL à auditer\\
+&& 16 &  Lister les standards utilisés par chaque fonction à auditer\\
+&& 17 &  Mettre en place la page web\\
+&& 18 &	 Auditer les fonctions d'OpenSSL listées\\
+&& 19 &  Lister les tests et failles existantes\\
+&& 20 &  Présenter les clefs communs sur le site\\
+&& 21 &  Présenter le résultat de l'audit sur le site\\
+&& 22 &  Deuxième livraison cliente\\
+&& 23 &  Corrections post-livraison\\
 \hline
 
 \multirow{7}{*}{\begin{sideways}\textbf{Sprint 3}\end{sideways}}&\multirow{7}{*}{\textbf{App. Eva}}
-&  22 & Lister les critères à vérifier sur une machine cliente\\
-&& 23 & Développer la page de connexion client\\
-&& 24 & Récupération des données du navigateur\\
-&& 25 & Évaluer chaque critère de la machine cliente\\
-&& 26 & Présenter les résultats de l'évaluation sur la page web\\
-&& 27 & Tests et débeugage\\
-&& 28 & Troisième livraison cliente\\\hline
+&  24 & Lister les critères à vérifier sur une machine cliente\\
+&& 25 & Développer la page de connexion client\\
+&& 26 & Récupération des données du navigateur\\
+&& 27 & Évaluer chaque critère de la machine cliente\\
+&& 28 & Présenter les résultats de l'évaluation sur la page web\\
+&& 29 & Tests et débeugage\\
+&& 30 & Troisième livraison cliente\\\hline
 
 \end{tabular}
 
@@ -287,26 +291,32 @@ Le code source ainsi que les différents documents produits sont stockés sur le
 &12  		& 30/1/2014 	& 4/2/2014 			& 3 	& 2 		& 8			& Julien, Claire\\
 \cline{2-8}
 &13  		& 5/2/2014 		& 5/2/2014 			& 1 	& 5 		& --		& Tous\\
+\cline{2-8}
+&14  		& 6/2/2014 		& 6/2/2014 			& 1 	& 2 		& 2
+		& Julien, William\\
 
 \hline
 &&&&&&&\\
 \hline
 \multirow{8}{*}{\begin{sideways}\textbf{Sprint 2}\end{sideways}}
-&14 		& 6/2/2014 		& 10/2/2014 		& 3		& 3 		& 9			& William, Julien, Mathieu\\
+&15 		& 6/2/2014 		& 10/2/2014 		& 3		& 3 		& 9			& William, Julien, Mathieu\\
 \cline{2-8}
-&15 		& 6/2/2014 		& 7/2/2014 			& 2 	& 2 		& 4			& Pascal, Claire\\
+&16 		& 6/2/2014 		& 7/2/2014 			& 2 	& 2 		& 4			& Pascal, Claire\\
 \cline{2-8}
-&16 		& 10/2/2014 	& 10/2/2014 		& 1 	& 2 		& 2			& Pascal, Claire\\
+&17 		& 10/2/2014 	& 10/2/2014 		& 1 	& 2 		& 2			& Pascal, Claire\\
 \cline{2-8}
-&17 		& 11/2/2014 	& 17/2/2014 		& 5 	& 2 		& 10		& Claire, Julien\\
+&18 		& 11/2/2014 	& 17/2/2014 		& 5 	& 2 		& 10		& Claire, Julien\\
 \cline{2-8}
-&18 		& 11/2/2014 	& 17/2/2014 		& 5 	& 3 		& 15		& Pascal, William, Mathieu\\
+&19 		& 11/2/2014 	& 17/2/2014 		& 5 	& 3 		& 15		& Pascal, William, Mathieu\\
 \cline{2-8}
-&19 		& 18/2/2014 	& 20/2/2014 		& 3 	& 3 		& 9			& Claire, Pascal, Mathieu\\
+&20 		& 18/2/2014 	& 20/2/2014 		& 3 	& 3 		& 9			& Claire, Pascal, Mathieu\\
 \cline{2-8}
-&20 		& 18/2/2014 	& 19/2/2014 		& 2 	& 2 		& 4			& Julien, William\\
+&21 		& 18/2/2014 	& 19/2/2014 		& 2 	& 2 		& 4			& Julien, William\\
 \cline{2-8}
-&21 		& 20/2/2014 	& 20/2/2014 		& 1 	& 5 		& --		& Tous\\
+&22 		& 21/2/2014 	& 21/2/2014 		& 1 	& 5 		& --		& Tous\\
+\cline{2-8}
+&23 		& 24/2/2014 	& 25/2/2014 		& 2 	& 2 		& 4
+		& Pascal, Mathieu\\
 \hline
 \end{tabular}
 \\ \\
