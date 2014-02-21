@@ -1,5 +1,108 @@
 \chapter{Génération des clés}
+
 \section{Définitions et contexte}
+\subsection{Clés cryptographiques}
+
+La génération de clé est une notion fondamentale de cryptographie. En effet, les données sont protégées grâce à des algorithmes (ou des méthodes cryptographiques) et des clés cryptographiques. Les clés cryptographiques sont notamment utilisées pour le chiffrement et le déchiffrement de données. 
+Relativement aux deux types de cryptographies, on compte deux types de clés : 
+\begin{itemize}
+\item les clés symétriques pour les chiffrements symétriques;
+\item les clés les clés publiques/privées pour le chiffrement asymétriques.\\
+\end{itemize}
+
+On se considérera dans ce chapitre dans un milieu optimal : 
+\begin{enumerate}
+\item L'algorithme cryptographique considéré est optimal
+\item La génération de bits aléatoire est optimale
+\end{enumerate}
+
+
+\subsubsection{Clés d'algorithmes symétriques}
+Les algorithmes symétriques utilisent pour leur chiffrement une clé symétrique qui est partagée par chacun des correspondant. 
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node 	(titre) 		[] 		{\textbf{Echange de message par chiffrement symétrique}};
+\node 	(k1) 	[below of=titre,xshift=-3cm,yshift=1cm] {k};
+\node 	(k2) 	[right of=k1,xshift=5cm] {k};
+\node 	(E) 		[processS,below of=k1] {E (Alice)};
+\node 	(D) 		[processS,below of=k2] {D (Bob)};
+\node 	(m1)		[left of=E] {m};
+\node 	(m2)		[right of=D] {m};
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(titre)(E)(D)(k1)(k2)(m1)(m2), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+
+\draw	[arrow]	(k1) -- (E);
+\draw	[arrow]	(k2) -- (D);
+\draw	[arrow]	(D) -- (m2);
+\draw	[arrow]	(m1) -- (E);
+\draw	[arrow]	(E) -- node[anchor=north] {$E_k(m)=c$} (D);
+\end{tikzpicture}
+\end{center}
+\caption{Chiffrement symétrique - Alice envoie un message $c$ chiffré à Bob qui le déchiffre}
+\label{sym}
+\end{figure}
+
+
+
+
+
+
+\subsubsection{Clés d'algorithmes asymétriques}
+
+Les clés d'algorithmes symétriques sont de deux catégories, les clés privées et les clés publiques. Les clés publiques sont disponibles pour tous, par demande à l'utilisateur, ou bien souvent par certificat. 
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node 	(titre) 		[] 		{\textbf{Echange de message par chiffrement asymétrique}};
+\node 	(k1) 	[below of=titre,xshift=-3cm,yshift=1cm] {};
+\node 	(k2) 	[right of=k1,xshift=5cm] {$k_B'$};
+\node 	(E) 		[processS,below of=k1] {E (Alice)};
+\node 	(D) 		[processS,below of=k2] {D (Bob)};
+\node 	(m1)		[left of=E] {m};
+\node 	(m2)		[right of=D] {m};
+\node 	(key1) 	[below of=E] {$k_A$ (publique), $k_A'$ (privée)};
+\node 	(key2) 	[below of=D] {$k_B$ (publique), $k_B'$ (privée)};
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(titre)(E)(D)(k1)(k2)(m1)(m2)(key1)(key2), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+
+\draw	[arrow]	(k2) -- (D);
+\draw	[arrow]	(D) -- (m2);
+\draw	[arrow]	(m1) -- (E);
+\draw	[arrow]	(E) --  node[anchor=north] {$E_{k_B}(m)=c$} (D);
+
+\end{tikzpicture}
+\end{center}
+\caption{Chiffrement asymétrique - Alice envoie un message $c$ chiffré à Bob avec sa clé publique qui le déchiffre}
+\label{asym}
+\end{figure}
+
+Comme montré en figure \ref{asym}, Alice chiffre avec la clé publique de Bob un message, qui lui-même déchiffre le message avec la clé privée.
+
+\subsection{Méthode de génération et sécurité}
+
+
+Les systèmes utilisent des entiers comme clé. Les clés sont générées en utilisant des générateurs de nombres aléatoires (RNG) ou des générateurs de nombres pseudo aléatoires (PRNG). 
+
+\subsubsection{Génération de clés quelconques}
+Un générateur de bits aléatoires (RGB) approuvé est utilisé pour générer la clé cryptographique. Le RGB doit fournir une entropie complète ou suffisante aux exigences de sécurité du système. Les RGB peuvent  permettre de générer complètement et "directement" la clé. C'est le cas pour les  les clés privées des algorithmes AES ou DSA.
+Les RGB peuvent aussi être utilisés comme \textit{seed} pour générer des clés, suivants des critères spécifiques. C'est le cas pour RSA, où habituellement le \textit{seed} est utilisé comme point de départ pour trouver un nombre premier suivant les critères du FIPS 186-3 \cite{fips186-3}.
+
+\subsubsection{Génération de paires de clés asymétriques}
+Les algorithmes asymétriques demandent la création de paires de clés asymétriques (privée/publique), dont chaque clé est est associée avec une seule entité, le possesseur de la clé. Les clés sont généralement générées par le possesseur direct de la clé, ou par une autorité de confiance qui fournit la clé au possesseur de façon sûre.
+Il convient au moment de la génération de bien considérer les paramètres deux paramètres principaux : 
+\begin{enumerate}
+\item l'espace de clés, qui doit être suffisamment grand pour éviter les doublons et les cycles.
+\item Générer les premiers de façon la plus aléatoire possible. Ceci nécessite un bon choix de stratégie d'identification de premiers. On peut par exemple utiliser des algorithmes permettant de détecter le prochain premier suivant un entier tiré aléatoirement. 
+\end{enumerate}
+
 
 \section{Audits}
 	\subsection{Audit 1 : Le générateur de Diffie-Hellman}
