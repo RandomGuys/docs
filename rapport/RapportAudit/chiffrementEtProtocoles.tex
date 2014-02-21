@@ -102,11 +102,59 @@ SHA-512: & (0x)cf83e135 & 7eefb8bd & f1542850 & d66d8007 & d620e405 & 0b5715dc\\
 \label{repres_hexa}
 \end{table}
 
+
 \begin{figure}[H]
-\centering
-\includegraphics[width=10cm]{images/schema.png}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+
+\node 	(lHash) 		[processH,below of=titre] {lHash};
+\node 	(PS) 		[processH,right of=lHash] {PS};
+\node 	(M) 			[processH,right of=PS] {M};
+\node 	(DB) 		[left of=lHash] {DB =};
+
+\node 	(xor1) 		[below of=PS] {\texttt{xor}};
+\node 	(MGF1) 		[left of=xor1] {MGF};
+\node 	(seed) 		[processH,left of=MGF1] {seed};
+
+
+\node 	(xor2)		[below of=seed] {\texttt{xor}};
+\node 	(001)		[processH,left of=xor2] {00};
+\node 	(MGF2)		[right of=xor2] {MGF};
+\node	(empty)		[below of=xor1] {};
+
+
+
+
+\node 	(002)		[processH,below of=001] {00};
+\node 	(EM) 		[left of=002] {EM=};
+\node 	(maskedSeed)		[processH,below of=xor2] {maskedSeed};
+\node 	(maskedDB)		[processH,below of=empty] {maskedDB};
+
+
+
+\draw	[arrow] (PS) -- (xor1);
+\draw	[arrow] (seed) -- (MGF1);
+\draw	[arrow] (MGF1) -- (xor1);
+\draw	[arrow] (seed) -- (xor2);
+\draw	[arrow] (empty) -- (MGF2);
+\draw	[arrow] (MGF2) -- (xor2);
+\draw	[arrow] (xor1) -- (maskedDB);
+\draw	[arrow] (001) -- (002);
+\draw	[arrow] (xor2) -- (maskedSeed);
+
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(lHash)(PS)(M), fill=yellow!5] (groupDB) {};
+\end{pgfonlayer}
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(002)(maskedSeed)(maskedDB), fill=yellow!5] (groupDB) {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
 \caption{Opération de chiffrement EME-OAEP}
-\label{fig21}
+\label{operationChiffrement}
 \end{figure}
 
 \texttt{lHash} est le hash de l'étiquette optionnelle \texttt{L}. L'opération de déchiffrement suivant inverse les étapes pour retrouver \texttt{M} et vérifier \texttt{lHash} et \texttt{PS}.
@@ -256,7 +304,30 @@ Il n'y a pas vraiment de quoi s'alarmer, cette attaque est en pratique infaisabl
 \subsection{Audit 3.2 : Chiffrement SSLv3 ou TLS 1.0 en mode CBC}
 \subsubsection{Normes visées}
 
-A remplir.
+Cette partie référence la RFC 6101 \cite{rfc6101} du protocol SSL version 3, concernant le chiffrement par bloc. \\
+Dans ce chiffrement, chaque blocs de texte clair est chiffrés dans un bloc de donnée chiffrée. Comme il est très peu probable que le texte clair (qu'importe la donnée à envoyer) ne se découpe exactement en taille de blocs nécessaire (qui est de 64 bits normalement), il est alors nécessaire de rajouter du bourrage à la fin de ces petit blocs avec des valeur régulière, normalement des 0. \\
+
+Lorsqu'un chiffrement CBC est utilisé, un vecteur d'initialisation (IV) est maintenu pour chaque clef. Cette valeur est initialisé pour la première fois par le poigné de main du protocol SSL. Par la suite, le dernier bloc du texte chiffré de chaque tour est préservé comme IV pour le tour suivant.\\
+\newpage
+\begin{verbatim} 
+block-ciphered struct {
+    opaque content[SSLCompressed.length];
+    opaque MAC[CipherSpec.hash_size];
+    uint8 padding[GenericBlockCipher.padding_length];
+    uint8 padding_length;
+} GenericBlockCipher;
+\end{verbatim}
+
+\begin{tabular}{llm{10cm}}
+- \texttt{content}          & : & le contenu du bloc de message. \\
+- \texttt{MAC}              & : & valeur du hacher MAC.\\
+- \texttt{padding}          & : & Le bourage qui est utilisé pour forcer la taille du bloc.\\
+- \texttt{padding\_length}  & : & la taille du bourage utilisé qui doit être plus petit que la \\
+                            &   & taille du bloc chiffré et il peut être a 0.\\
+\end{tabular}
+\\
+
+La taille des données chiffrée (\texttt{SSLCiphertext.length}) est égale à la somme de \texttt{SSLCompressed.length}, \texttt{CipherSpec.hash\_size} et \texttt{padding\_length} plus un.
 
 \subsubsection{Description de la faille}
 
@@ -286,7 +357,21 @@ La faille existe tant que l'association de ces protocoles avec le mode de chiffr
 \subsection{Audit 3.3 : Non-validation des certificats SSL}
 \subsubsection{Normes visées}
 
-A remplir.
+La RFC 5246 \cite{rfc5246} stipule que le serveur doit toujours envoyer un message certificat dès lors que la méthode d'échange des clefs a été acceptée. 
+Le certificat DOIT être approprié à la suite des chiffrements utilisés pour les échanges de clefs.
+La structure du message est : 
+
+\begin{verbatim} 
+opaque ASN.1Cert<1..2^24-1>;
+struct {
+    ASN.1Cert certificate_list<0..2^24-1>;
+} Certificate;
+\end{verbatim}
+
+la liste de certificats (\texttt{certificate\_list}) est une séquence de certificats. Le certificats de l'envoyeur DOIT venir en premier. Les suivants sont ceux qui forment la chaîne de certification. Les certificats auto-signés qui spécifient un certificat racine peuvent être omis de la chaîne, sous condition que le certificat à l'extrémité de la chaîne soit dans tous les cas validé.\\
+
+Le même message type et la même structure seront utilisés pour la réponse au client du message de requête de certificat.
+
 
 \subsubsection{Description de la faille}
 
