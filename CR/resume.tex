@@ -1,0 +1,104 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+%\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{gensymb}
+%\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Résumé  -  Projet Audit des implantations SSL/TLS} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{} % Insert date here if you want it to appear below your name
+
+\usepackage{array}
+\usepackage{tabularx}
+
+\begin{document}
+\pagestyle{fancy}
+
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+	
+
+
+\section{Objet}
+Vous souhaitez savoir comment retrouver les clés privées des certificats de serveurs web sécurisés mis en ligne par des grandes entreprises ? Notre projet consistait à "évaluer" le niveau de sécurité du web.\\
+
+
+En effet, le monde de la cryptographie est en proie à de grandes incertitudes suite à des révélations et il remet en question tous les systèmes jusqu'alors développés. Ce ne sont pas les algorithmes des systèmes cryptographiques qui sont remis en cause, mais leur développement machine qui n'est pas (ou plus) considéré comme nécessairement sûr.\\
+
+
+
+
+Pour répondre à cette problématique, le projet s'est déroulé en trois parties, que nous présenterons vendredi 28 à 14h :
+\begin{enumerate}
+\item Après avoir scanné les ports de serveurs web sécurisés d'internet, nous avons récupéré leurs certificats afin d'en extraire les clefs publiques associées. Nous ensuite tenté de les factoriser et avons pu récupérer certains nombres premiers ayant permis leur génération. 
+
+\item Au vu de ces résultats, nous avons essayé de trouver l'origine du problème, en auditant notamment le code d'OpenSSL. Nous avons pu répertorier des failles existantes au niveau de la gestion d'entropie, la génération des clefs, le chiffrement, les signatures et les protocoles SSL/TLS.
+
+\item Enfin, en analysant les protocoles SSL/TLS d'OpenSSL, nous avons mis en place un serveur web sécurisé qui permet de tester le certificat d'un navigateur client.
+\end{enumerate}
+
+
+
+
+\section{Membres du projet - RandomGuys}
+\begin{itemize}
+\item Pascal Edouard, \textit{grand manitou, highcharts master}.
+\item Claire Smets, \textit{CVE buster}.
+\item Julien Legras, \textit{SSL master, bad C code eater}.
+\item Mathieu Latimer, \textit{détracteur de la NSA qui souhaite quand même travailler pour eux, pourvu qu'ils payent bien}.
+\item William Boisseleau, \textit{l'insaien, au bord du suicide après avoir lu le code d'OpenSSL.}
+\end{itemize}
+
+ 
+
+
+
+
+
+
+
+\end{document}
