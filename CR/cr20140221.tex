@@ -1,0 +1,87 @@
+\documentclass[a4paper,11pt,french]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{lmodern}
+\usepackage{pict2e}
+\usepackage{tikz}	
+\usepackage{tikz-uml}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{gensymb}
+\usepackage{cmbright}
+\usepgflibrary{arrows} % for pgf-umlsd
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{X} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Compte-rendu N\degree X} % Document name
+
+\newcommand{\version}{X} % Document version
+\newcommand{\docDate}{X} % Document date
+\newcommand{\checked}{X} % Checker name
+\newcommand{\approved}{X} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+\author{\hmwkAuthorName}
+\date{21/02/2013} % Insert date here if you want it to appear below your name
+
+
+\begin{document}
+\pagestyle{fancy}
+
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+	
+\section{Présents}
+\begin{itemize}
+	\item Pascal ÉDOUARD
+	\item Williem BOISSELEAU
+	\item Mathieu LATIMIER
+	\item Julien LEGRAS
+	\item Claire SMETS
+\end{itemize}
+
+\section{Objet}
+Audit de fin de projet. Vérifier que les conseils qui nous ont été donnés, ont été respectés et faire le bilan.
+
+\section{Résumé}
+
+Le compte rendu du 23/01/2014 a été repris et les points ont été vérifiés. Chaque point du tableau a bien été effectué. Cf cr20140123.\\
+Derniers conseils pour la suite : 
+\begin{description}
+	\item [Analyse des risques : ] il aurait pu être intéressant d'insérer une colonne "commentaires" dans le tableau des risques, afin d'expliquer l'évolution;
+	\item [Ganter : ] super Gant! La dernière étape aurait été de visualiser la charge et les disponibilités restantes. C'est aussi un outils de communication au sein du groupe, en plus d'être utilie au chef de projet. La présentation du projet en fait partie intégrante. Il faut donc qu'il apparaisse dans le planning;
+	\item [Liste des TO DO : ] elle n'a pas été faite mais ça peut être très utile, surtout si ce sont des prérequis pour d'autres parties du projet. Et ne pas enlever de la liste les tâches exécutées : cela fait partie de la vie du projet;
+	\item [Fin de réunion : ] elle a porté sur les impressions et les ressentis de chacun sur le déroulement du projet et ses enseignements. Faire une dernière réunion pour faire le bilan et échanger sur les connaissances acquises?\\
+\end{description}
+
+\section{Actions à entreprendre}
+Intégrer la présentation du projet dans le planning.
+\end{document}
