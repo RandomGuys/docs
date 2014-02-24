@@ -1,24 +1,120 @@
 \chapter{Analyse dynamique}
 
-\section{Ex section}
-\subsection{Ex subsection}
-\subsubsection{Ex subsubsection}
-\subsubsubsection{Ex subsubsubsection}
+\section{Objectifs}
+L'objectif de ce projet consiste à étudier le comportement d'une machine cliente lorsqu'elle se connecte en SSL/TLS sur un serveur. Bien qu'à la base considéré comme optionnel, nous avons décidé de développer ce projet car nous avions de l'avance sur les parties précédentes. \\
+
+Nous avons codé un serveur permettant d'analyser les différentes \textit{ciphersuite} utilisées à l'établissement de connexion d'un client à un serveur, et d'établir un diagnostique sur la qualité des suites utilisées par le client. Pour rappel, une \textit{ciphersuite} est une combinaison de noms pour l'authentification, le chiffrement, et les algorithmes MAC utilisés pour négocier les paramètres de sécurité pour une connexion réseau par TLS (\textit{Transport Layer Security})/ SSL (\textit{Secure Sockets Layer}). La structure de ces suites est définie dans la RFC 5246 \cite{rfc5246} et fut également décrite dans le rapport d'audit d'OpenSSL (Chapitre 5, Protocoles SSL/TLS).\\
 
 
-Exemple item  :
+
+La figure \ref{systServer} illustre le système à mettre en place.
+\begin{figure}[H]
+	\begin{center}
+	\includegraphics[scale=0.2]{images/logo_univ.png}
+	\end{center}
+\caption{Système Client/Serveur d'analyse SSL/TLS}
+\label{systServer}
+\end{figure}
+
+
+
+\section{Mise en place du serveur}
+\subsection{Exigences}
+Il convient de pouvoir identifier les caractéristiques de la connexion entre le client et le serveur à savoir :
 \begin{itemize}
-\item item1;
-\item item2;
-\item itemFin.\\
+\item la version du protocole mise en œuvre ;
+\item les \textit{ciphersuites} proposées par le client ;
+\item les courbes elliptiques supportées ;
+\item les algorithmes de signature ;
+\item la compression TLS, qui permet de compresser les données chiffrées afin d'accélérer le transfert de celles-ci ;
+\item l'activation ou non du ticket de session.\\
 \end{itemize}
 
-Exemple enum : 
+Suivant ces caractéristiques, nous pouvons émettre un jugement sur la qualité du client SSL/TLS utilisé. Si un client possède des attributs étant considérés comme vulnérables, alors il faut pouvoir les identifier rapidement sur le site, et expliciter les raisons de l'affaiblissement du système.  
+
+
+\subsection{Faiblesses à identifier}
+\subsubsection{Version du protocole}
+Si le client utilise une version \texttt{TLS 1.0} ou \texttt{SSLv3}, alors celui-ci sera considéré comme non sécurisé.\\
+
 \begin{enumerate}
-\item enum1;
-\item enum2;
-\item enumFin.\\
+\item La version \texttt{SSLv3} précède la version \texttt{TLS 1.0} ; elle est considérée comme non sûre de nos jours. 
+
+ 
+\item La version \texttt{TLS 1.0} est la toute première version de TLS, et demande une pré-configuration client et serveur importante pour être utilisé de façon sécurisée. De plus, cette version ne permet pas d'utiliser les dernières \textit{ciphersuites} récentes offrant une meilleure sécurité. De plus, cette version est vulnérable à l'attaque BEAST	(\textit{Browser Exploit Against SSL/TLS}).
+
+\item Enfin, la version \texttt{TLS 1.1}  n'étant pas la dernière version TLS, nous considérons qu'elle est moyennement sûre.\\
 \end{enumerate}
+
+
+
+\subsubsection{Ciphersuites}
+Nous avons pu identifier toutes les \textit{ciphersuites} étant considérées comme peu sûres, à savoir :
+\begin{itemize}
+\item les \textit{ciphersuites} utilisant des clés de taille inférieure à 128 bits pour le chiffrement ;
+\item les \textit{ciphersuites} ne spécifiant aucun chiffrement pour la connexion ; 
+\item les \textit{ciphersuites} sans authentification serveur, rendant l'attaque d'homme par le milieu possible ;
+\item autres \textit{ciphersuites} étant supposées arrêtées après SSL 3.0, ou dont les caractéristiques de sûreté ne sont pas connues.
+\end{itemize}
+
+
+\subsubsection{Courbes elliptiques}
+La RFC 5430 \ref{rfc5430} décrit deux niveaux de sécurité pour les courbes elliptiques, les clés de 128 bits et le cles de 192 bits, référencés sur le tableau \ref{ciphsuiteSec}. 
+
+\begin{table}[H]
+\centering
+
+\begin{tabularx}{13cm}{|l|X|}
+\hline
+\textbf{\textit{Ciphersuite}} & \textbf{Niveau de sécurité} \\
+\hline
+\verb+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256+ & 128\\
+\verb+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256+ & 128\\            
+\verb+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA+    & 128\\            
+\verb+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384+ & 192\\            
+\verb+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384+ & 192\\            
+\verb+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA+    & 192\\
+\hline
+\end{tabularx}
+
+\caption{Niveaux de sécurité pour les \textit{ciphersuites}}
+\label{ciphsuiteSec}
+\end{table}
+
+
+La RFC recommande l'utilisation de deux courbes :
+\begin{itemize}
+\item pour un niveau de sécurité à 128 bits, la courbe \texttt{secp256r1};
+\item pour un niveau de sécurité à 192 bits, la courbe \texttt{secp384r1}.
+\end{itemize}
+
+
+
+\subsubsection{Compression des données chiffrées}
+La compression des données chiffrées permet d'accélérer le transfert des données. Toutefois, cette technique permet à un attaquant d'effectuer une attaque de type CRIME (\textit{Compression Ratio Info-leak Made Easy}), qui permet de récupérer des données de session. %
+
+
+\subsubsection{Ticket de session}
+Les tickets de session permettent d'accélérer la reprise de communication chiffrée avec le serveur. Le temps de la poignée de main peut prendre du temps et ce ticket permet d'établir une session entre le client et le serveur. Lorsqu'un client se déconnecte puis se reconnecte avec un ticket de session, les échanges du \textit{handshake} sont passés, gagnant un temps considérable. 
+
+
+
+\section{Implémentation}
+Le serveur fut développé en C et il implémente les méthodes suivantes :
+\begin{itemize}
+\item \verb+sigaction+
+\item \verb+get_version (SSL *ssl)+, qui retourne la version de connexion utilisée ; 
+\item \verb+get_ecc_list (SSL *ssl)+, qui retourne la liste des courbes elliptiques ; 
+\item \verb+get_cipher_suite_string(SSL_CIPHER *c)+, qui retourne un \textit{ciphersuite} à un état donné ; 
+\item \verb+get_cipher_suite_list(SSL *ssl)+, qui permet l'affichage de tous les \textit{ciphersuites} ; 
+\item \verb+get_sig_algs(SSL *ssl)+, qui renvoie les algorithmes de signature ; 
+\item \verb+get_analyze_page(SSL *ssl)+ qui permet l'affichage global de la page ;
+\item \verb+handle_connection(void * param)+  qui gère globalement la connexion entre le serveur et le client ;
+\item \verb+new_thread(SocketTCP *socket)+ .
+\end{itemize}
+
+
+
 
 
 \begin{figure}[H]
@@ -30,7 +126,7 @@ Exemple enum :
 \end{figure}
 
 
-\begin{table}
+\begin{table}[H]
 \centering
 \begin{tabularx}{17cm}{|l|l|l|X|l|}
 \hline
