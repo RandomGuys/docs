@@ -88,7 +88,7 @@ Nous avons donc dans un premier temps récupéré une liste d'adresses IP dont l
 
 Ensuite, nous avons tenté de récupérer les certificats de toutes les adresses listées. Cette récupération s'occupait également d'extraire les moduli et les clefs publiques des certificats, mais aussi de stocker une liste de certificats doublons.
 
-Enfin, avec tous les moduli que nous avions extraits, nous avons pu construire deux arbres permettant de définir si des moduli contiennent des facteur premiers communs.
+Enfin, avec tous les moduli que nous avons extraits, nous avons pu construire deux arbres permettant de définir si des moduli contiennent des facteurs premiers communs.
 
 \section{ZMAP}
 
@@ -128,7 +128,7 @@ Il y a plusieurs options disponibles, nous avons utilisé la commande suivante p
 
 Une fois que l'on avait la liste fournie par ZMAP, il nous restait à récupérer les certificats sur les serveurs dont le port SSL était ouvert, en établissant une connexion sur chacun d'eux.
 
-Pour cela nous avons codé deux scripts perl, l'un pour la récupération de certificat SSH (que nous n'avons pas testé à cause de l'avertissement reçu), et un autre pour la récupération de certificat SSL (ssl\_collector.pl).
+Pour cela nous avons codé deux scripts perl, l'un pour la récupération de certificat SSH (que nous n'avons pas testé à cause de l'avertissement reçu), et un autre pour la récupération de certificats SSL (ssl\_collector.pl).
 
 Commandes OpenSSL utilisées :
 \begin{itemize}
@@ -219,12 +219,12 @@ Voici les algorithmes de ces deux arbres :
 \end{algorithm}
 
 
-Lors de nos tâches d'optimisations, nous avons réalisé qu'il était possible de construire l'arbre entier (product tree + remainder tree), en mémoire vive (nous avons donc créé une option fullRAM à notre algo).
+Lors de nos tâches d'optimisation, nous avons réalisé qu'il était possible de construire l'arbre entier (product tree + remainder tree), en mémoire vive (nous avons donc créé une option fullRAM à notre algo).
 
-L'algorithme est le même, seule le choix de la structure change.
+L'algorithme est le même, seul le choix de la structure change.
 Dans la première méthode, nous utilisions des fichiers binaires GMP à chaque étape de construction, dans la  seconde nous stockons l'intégralité de l'arbre des produits en mémoire.
 
-Pour accélérer la construction de l'arbre, nous utilisons des threads, qui parallélisent le traitement de chaque niveau d'arbre (sur la largeur de l'arbre).
+Pour accélérer la construction de l'arbre, nous utilisons des \textit{threads}, qui parallélisent le traitement de chaque niveau d'arbre (sur la largeur de l'arbre).
 Nous avons tenté d'améliorer encore le procédé, en parallélisant le calcul sur la hauteur de l'arbre. Il s'est avéré que ce n'était pas aussi efficace, nous avons donc abandonné cette partie.
 
 Pour compiler le programme :
@@ -239,7 +239,7 @@ Pour compiler le programme :
 ~/fact/build $ sudo make install
 \end{verbatim}
 
-Il y a également un man qui s'installe, vous pouvez donc consutler l'aide avec la commande \verb+man fact+.
+Il y a également un \textit{man} qui s'installe, vous pouvez donc consutler l'aide avec la commande \verb+man fact+.
 
 Pour utiliser ce programme, la ligne de commande est la suivante :
 \begin{verbatim}
@@ -280,7 +280,7 @@ En comparant avec les résultats du projet factorable de l'Université de Califo
 Pour la suite de l'analyse des résultats, nous nous sommes focalisés sur le scan Sonar.
 
 \subsection{Entropie}
-Le graphe suivant représente le pourcentage d'entropie des 757 facteurs premiers trouvés. Ce niveau d'entropie a été calculée selon l'entropie de Shannon (représentation binaire des clefs). Nous nous sommes basés sur la bibliothèque \verb+libdisorder+ (\url{http://libdisorder.freshdefense.net/}) qui fournit un programme de test. Ce dernier a été modifié pour nos besoins et pour pouvoir injecter les résultats dans gnuplot pour obtenir le graphe suivant :
+Le graphe suivant représente le pourcentage d'entropie des 757 facteurs premiers trouvés. Ce niveau d'entropie a été calculé selon l'entropie de Shannon (représentation binaire des clefs). Nous nous sommes basés sur la bibliothèque \verb+libdisorder+ (\url{http://libdisorder.freshdefense.net/}) qui fournit un programme de tests. Ce dernier a été modifié pour nos besoins et pour pouvoir injecter les résultats dans gnuplot pour obtenir le graphe suivant :
 
 \includegraphics[width=16cm]{entropyprimes.eps}
 \\
