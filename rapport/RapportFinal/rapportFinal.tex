@@ -1,0 +1,189 @@
+\documentclass[a4paper,11pt,french]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[top=1.5cm, bottom=2cm, left=1.5cm, right=1.5cm, includeheadfoot]{geometry} %pour les marges
+\usepackage{float}
+\usepackage{lmodern}
+\usepackage{pgfplots}
+\usepackage{tikz}   
+\usepackage{tikz-uml}   
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage{graphicx} % Required to insert images
+\usepackage{tabularx, longtable}
+\usepackage{color, colortbl}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage[toc,page]{appendix} 
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+%\usepackage{cmbright}
+\usepackage[hidelinks]{hyperref}
+\usepgflibrary{arrows} % for pgf-umlsd
+\usepackage{url}
+
+\linespread{1.1} % Line spacing
+
+
+
+%listing
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\include{listing}
+
+
+% FIGURES :
+\usepgflibrary{arrows} % for pgf-umlsd
+\linespread{1.1} % Line spacing
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains,patterns	}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{processH} = [rectangle, minimum width=1cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{processS} = [rectangle, minimum width=1.3cm, minimum height=1.3cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{punkt} = [rectangle, dashed, rounded corners, draw=black, very thin,minimum height=2em,minimum width = 2cm, text centered]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+
+% PACKAGE MATHS : 
+\usepackage{mathtools}
+\DeclareMathOperator*{\Max}{Max}
+\newcommand{\chidpdf}{\texorpdfstring{$\chi^2$\xspace}{X\texttwosuperior\xspace}}
+
+
+
+% SUBSUBSUBSECTION : 
+\usepackage{titlesec}
+
+\titleclass{\subsubsubsection}{straight}[\subsection]
+
+\newcounter{subsubsubsection}
+\renewcommand\thesubsubsubsection{\thesubsubsection.\arabic{subsubsubsection}}
+\renewcommand\theparagraph{\thesubsubsubsection.\arabic{paragraph}} % optional; useful if paragraphs are to be numbered
+
+\titleformat{\subsubsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
+\titlespacing*{\subsubsubsection}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{5}{\z@}%
+  {3.25ex \@plus1ex \@minus.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries}}
+\renewcommand\subparagraph{\@startsection{subparagraph}{6}{\parindent}%
+  {3.25ex \@plus1ex \@minus .2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries}}
+\def\toclevel@subsubsubsection{4}
+\def\toclevel@paragraph{5}
+\def\toclevel@paragraph{6}
+\def\l@subsubsubsection{\@dottedtocline{4}{10em}{5em}}
+\def\l@paragraph{\@dottedtocline{5}{10em}{5em}}
+\def\l@subparagraph{\@dottedtocline{6}{14em}{6em}}
+\@addtoreset{subsubsubsection}{section}
+\@addtoreset{subsubsubsection}{subsection}
+\@addtoreset{subsubsubsection}{subsubsection}
+
+\makeatother
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+
+
+
+
+
+\setlength{\headheight}{40pt}
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\textbf{\hmwkClass -- \hmwkSubject \\ \hmwkTitle \\ \hmwkDocName}} % Top left header
+\rhead{\includegraphics[width=10em]{images/logo_univ.png}}
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ / \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength{\headheight}{40pt}
+
+\newcommand{\hmwkTitle}{Audit des implantations SSL/TLS} % Assignment title
+\newcommand{\hmwkClass}{Master 2 SSI } % Course/class
+\newcommand{\hmwkAuthorName}{Claire Smets, William Boisseleau,\\ &&Julien Legras, Mathieu Latimier,\\ &&Pascal Edouard} % Your name
+\newcommand{\hmwkSubject}{Conduite de projet} % Subject
+\newcommand{\hmwkDocName}{Rapport Final\\ Audit des implantations SSL/TLS} % Document name
+
+\newcommand{\version}{1.2} % Document version
+\newcommand{\docDate}{5 février 2014} % Document date
+\newcommand{\checked}{} % Checker name
+\newcommand{\approved}{Ayoub Otmani} % Approver name
+
+\definecolor{gris}{rgb}{0.95, 0.95, 0.95}
+
+
+
+
+\begin{document}
+\pagestyle{fancy}
+
+\vspace*{5cm}
+\begin{center}\textbf{\Huge{\hmwkDocName}}\end{center}
+\vspace*{7cm}
+	
+\begin{center}
+\fcolorbox{black}{gris}{
+\begin{minipage}{10cm}
+\begin{tabularx}{10cm}{lXl}
+	\bfseries{Date} & & \docDate\\
+	& & \\
+	\bfseries{Rédigé par} & & \hmwkAuthorName \\
+	& & \\
+	\bfseries{À l'attention de} & & \approved \\
+	& & \\
+\end{tabularx}
+\end{minipage}
+}
+\end{center}
+
+\pagebreak
+
+\tableofcontents
+
+\listoffigures
+\listoftables
+
+\lstlistoflistings
+
+
+
+\pagebreak
+
+\include{introduction}
+\include{partie1}
+\include{partie2}
+\include{partie3}
+\include{vieDeProjet}
+\include{conclusion}
+
+
+
+
+{\small
+\bibliographystyle{acm}
+\bibliography{references}
+}
+
+\end{document}
