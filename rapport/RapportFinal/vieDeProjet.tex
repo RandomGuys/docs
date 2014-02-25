@@ -10,15 +10,15 @@ Bien que chacun ait un rôle attitré, tous contribuent à différentes tâches 
 
 \section{Le client}
 
-Notre client pour ce projet est : \textbf{M. Ayoub Otmani}. \\
-Le cahier des charges se divise en trois grandes parties, pour la première, le client attend de nous un audit de clés cryptographique solide, présentable, et intuitif. Pour cela, il nous a conseillé d'étudier un article \cite{mining2012nadia} publié par des universitaires de Californie et du Michigan, ainsi que le site factorable.net \cite{factorable}.
+Notre client pour ce projet est : \textbf{M. Ayoub Otmani}.\\
+Le cahier des charges se divise en trois grandes parties, pour la première, le client attend de nous un audit de clés cryptographique solide, présentable, et intuitif. Pour cela, il nous a conseillé d'étudier un article \cite{mining2012nadia} publié par des universitaires de Californie et du Michigan, ainsi que le site factorable.net \cite{factorable}.\\
 
 Pour la seconde partie, nous devions faire un audit du code source d'OpenSSL par rapport aux normes prescrites (ex: RFC, PKCS, NIST, ...)
-Le client souhaite notamment que l'on étudie la génération d'aléa, la génération des clefs, le chiffrement et les protocoles.
+Le client souhaite notamment que l'on étudie la génération d'aléa, la génération des clefs, le chiffrement et les protocoles.\\
 
-Enfin, dans la dernière partie, le client nous propose d'établir un diagnostic de connexion entre un client et un serveur sur plusieurs critères comme la génération des nonces, la génération de la clé primaire, le contrôle des certificats, le respect du protocole, le choix de l'algorithme etc...
+Enfin, dans la dernière partie, le client nous propose d'établir un diagnostic de connexion entre un client et un serveur sur plusieurs critères comme la génération des nonces, la génération de la clé primaire, le contrôle des certificats, le respect du protocole, le choix de l'algorithme etc...\\
 
-Cette dernière partie a longtemps été optionnelle, elle a cependant pu être effectuée car le temps nous le permettait sur plusieurs thèmes (que nous avons développé plus haut dans ce rapport).
+Cette dernière partie a longtemps été optionnelle, elle a cependant pu être effectuée car le temps nous le permettait sur plusieurs thèmes (que nous avons développé plus haut dans ce rapport).\\
 
 Le projet c'est déroulé sur six semaines, le temps de travail était de 8h/jour (pour pouvoir pallier le temps perdu par chacun pour la recherche de stage, les charges administratives, etc...)
 
@@ -46,6 +46,7 @@ Cette valeur a été primordiale pour nous, la force de notre projet réside dan
 \paragraph{La collaboration avec les clients plus que la négociation contractuelle} : Une approche directe avec le client qui se sent beaucoup plus impliqué dans le projet afin qu'il puisse apporter ses avis et remarques.\\
 
 Nous sommes parti du principe que le client faisait partie intégrante de l'équipe. Lors de nos réunions, nous lui montrons un aperçu de nos travaux afin qu'il puisse s'assurer du bon avancement du projet, et qu'il puisse par la même occasion nous aiguiller pour la suite.\\
+
 De plus, nous avons évité au maximum de faire des livraisons ou des demandes au client par messagerie électronique, préférant des rencontres interpersonnelles.
 
 
@@ -69,7 +70,6 @@ Nous nous réunissions deux fois par semaine, le jeudi.
 La première en début d'après-midi ou en fin de matinée, nous passions dans une salle au calme, pour parler des difficultés techniques rencontrées, des axes d'améliorations, de la réorganisation ou du découpage des tâches.\\
 Nous évoquions également les points importants à apporter au client pour la réunion suivante.\\
 Ces réunions s'apparentent aux "Planification du Sprint" et à la "Rétrospective de Sprint" du SCRUM.
-
 La deuxième avait lieu dans l'après-midi, selon la disponibilité du client. Nous nous réunissions avec lui pour parler de notre avancée, relever ses remarques et ses nouvelles recommandations, présenter nos résultats ou livrer une partie du projet.\\
 Ces réunions s'apparentent aux "Revue de Sprint" du SCRUM.
 
@@ -90,12 +90,13 @@ Durant ces six semaines de travail, nous avons eu l'occasion de tester plusieurs
 Git est un logiciel libre de gestion de versions décentralisé, créé par Linus Torvalds en 2005, accessible sur les systèmes Linux et Windows.\\
 Un logiciel de gestion de versions est un logiciel qui permet de stocker un ensemble de fichiers en conservant la chronologie de toutes les modifications qui ont été effectuées dessus. Il permet notamment de retrouver les différentes versions d’un lot de fichiers connexes \cite{wikigit}.\\
 Notre répertoire se nomme RandomGuys \cite{notregit}
-Lorsqu'un membre a terminé sa tâche, il ajoute les fichiers modifiés sur la branche concernée, accompagné d'un commentaire pour expliquer les modifications apportées.\\
-Il est ensuite plus simple de voir les différences entre chaque version, et de retrouver une ancienne version si besoin.\\
+Lorsqu'un membre a terminé sa tâche, il ajoute les fichiers modifiés sur la branche concernée, accompagné d'un commentaire pour expliquer les modifications apportées. Il est ensuite plus simple de voir les différences entre chaque version, et de retrouver une ancienne version si besoin.\\
 
 \subsection{Redbooth}
 
-Redbooth (anciennement Teambox) \cite{teambox} est un outil de gestion de projet en ligne pour des équipes de quelques membres. Il nous permet de suivre l'évolution des tâches en cours de réalisation, et celles à venir. Ces tâches peuvent être de différentes sortes :
+Redbooth (anciennement Teambox) \cite{teambox} est un outil de gestion de projet en ligne pour des équipes de quelques membres. Il nous permet de suivre l'évolution des tâches en cours de réalisation, et celles à venir. 
+
+Ces tâches peuvent être de différentes sortes :
 \begin{itemize}
 \item Tâches concernant directement le contenu du projet
 \item Tâches de gestion de projet (outils, documents livrables)
@@ -107,8 +108,7 @@ Redbooth (anciennement Teambox) \cite{teambox} est un outil de gestion de projet
 
 Google Drive est un service cloud proposé par google en 2012 pour le stockage et le partage de fichier.\\
 C'est une bonne alternative au Git, qui nous permettait de partager des ressources sous toutes formes (articles, logiciels, scripts), et nos résultats en vrac afin de pouvoir les tester sur nos machines (listes d'adresses IP, certificats, fichiers d'insertions en base de données, etc...).\\
-Une fois les fichiers validés ils peuvent être déplacés vers le Git s'ils ont une importance pour le produit final.\\
-Il nous permettait également de synchroniser nos résultats notamment lors de notre état de l'art pour la partie 2 du projet.
+Une fois les fichiers validés ils peuvent être déplacés vers le Git s'ils ont une importance pour le produit final. Il nous permettait également de synchroniser nos résultats notamment lors de notre état de l'art pour la partie 2 du projet.
 
 \subsection{Google Hangouts}
 
@@ -131,9 +131,7 @@ De plus, le diagramme du GantterProject est plus esthétique que notre précéde
 Latex est un langage de structuration de documents créé en 1983 par Leslie Lamport. Il utilise des macro-commandes qui seront interprétés par le processeur de texte TeX.\\
 BibTeX est un logiciel de gestion de références bibliographiques qui va nous servir à gérer et traiter notre base bibliographique à travers nos documents Latex.\\
 
-Nous avons choisi de réalisé l'ensemble de nos documents (comptes-rendus, rapports, livrables) sous LaTeX pour qu'ils soient homogènes (nous partions sur la même base), réutilisables et modulaires (découpage sous forme de briques).
-
-Les éditeurs/compilateurs de LaTeX sont nombreux, nous avons optés pour deux d'entres eux : Gummi et TexMaker.
+Nous avons choisi de réalisé l'ensemble de nos documents (comptes-rendus, rapports, livrables) sous LaTeX pour qu'ils soient homogènes (nous partions sur la même base), réutilisables et modulaires (découpage sous forme de briques). Les éditeurs/compilateurs de LaTeX sont nombreux, nous avons optés pour deux d'entres eux : Gummi et TexMaker.
 
 \section{Ressources de tests}
 
@@ -169,12 +167,12 @@ Les codes sont basés sur l'utilisation combinée de structures et d'algorithmes
 
 Plusieurs langages ont étés testés parmis lesquels :
 \begin{itemize}
-\item C
-\item C++
-\item Java
-\item Perl
-\item Python
-\item Ruby
+\item C;
+\item C++;
+\item Java;
+\item Perl;
+\item Python;
+\item Ruby;\\
 \end{itemize}
 
 Nous avons au final décidé d'utiliser le langage C avec la librairie GnuMP \cite{gmplib} pour la gestion des grands entiers, et le compilateur CMAKE.
@@ -189,9 +187,7 @@ L'avantage des scripts est qu'ils sont facilement modifiables. On pouvait donc l
 \subsection{IDE : Eclipse pour C}
 
 Eclipse est un environnement de développement et gestionnaire de projets pouvant supporter plusieurs langages de développement comme le Java, l'Android, le C, le C++, etc...\\
-Nous avons utilisé cet éditeur afin de mieux lire le code d'OpenSSL et d'identifier les failles à l'aide des différents commits de l'équipe OpenSSL.\\
-
-Nous l'avons également utilisé pour la troisième partie du projet.
+Nous avons utilisé cet éditeur afin de mieux lire le code d'OpenSSL et d'identifier les failles à l'aide des différents commits de l'équipe OpenSSL. Nous l'avons également utilisé pour la troisième partie du projet.
 
 \section{IHM}
 
@@ -199,9 +195,12 @@ Nous l'avons également utilisé pour la troisième partie du projet.
 
 Nous avons établit un site web local afin de regrouper tout nos résultats sur une interface que nous pourrons offrir au client. Les trois parties sont certes indépendantes, mais elles se complètent parfaitement afin de mieux comprendre la sécurité actuelle de l'Internet, des protocoles SSL/TLS et du logiciel de génération de clés cryptographiques le plus répandu : OpenSSL.\\
 L'ensemble du site web repose sur le framework \textbf{BootStrap}.\\
+
 Sur le premier onglet nous avons réaliser des études statistiques sur les certificats SSL récupérés (certificats contenant des facteurs communs à d'autres certificats, regroupement par \textit{issuer}, recherche utilisateur, tri par taille de clés, etc...).\\
 Les certificats sont stockés en base \textbf{MySQL}, et les graphiques sont générés via le framework \textbf{HighCharts}.\\
+
 Sur le second onglet nous listons quelques primitives cryptographiques d'OpenSSL à auditer. Nous avons intégré deux modes un en écriture et un en lecture seule, et chaque élément de cette page est enregistré dans notre base de données.\\
+
 Enfin, sur le dernier onglet, nous étudions la sécurité du navigateur client en affichant les algorithmes de chiffrement, les algorithmes de signatures, les méthodes de compressions, les versions de protocoles, les courbes elliptiques et les tickets de sessions. Un code couleur est également défini afin d'identifier les \textit{ciphersuites} faibles (Jaune), critiques (Rouge) et fortes (Verte).
 
 \subsection{Doxygen}
@@ -218,4 +217,5 @@ Durant ces six semaines, nous avons été confrontés à deux risques que nous a
 \end{itemize}
 
 Pour le premier point, nous avons bien suivi le plan d'action, en partant sur une base de travail de 8h par jour, et en rattrapant le retard accumulé si possible en semaine ou le samedi. Notre bonne organisation nous a permis de ne pas accumuler de retard, et de pouvoir prendre rapidement la tâche d'un autre en cas d'absence prolongée.\\
+
 Aucun autre risque identifié n'est survenu durant le projet.
