@@ -22,15 +22,15 @@ La source d'entropie doit donc être minutieusement choisie, sans qu'aucune inte
 \subsection{Concept d'entropie}
 \paragraph{Définition.\\}
 Soit $X$ est une V.A. discrète. On définit l'\textbf{entropie} de $X$ comme suit : 
-$$H(X) = - \sum_x P(X=x)*log_2(P(X=x))	 $$ 
+$$H(X) = - \sum_x P(X=x)*\log_2(P(X=x))	 $$ 
 Le logarithme est dans notre cas de base 2. L'entropie se mesure en \textit{shannons} ou en \textit{bits}.\\
 
 \paragraph{Définition.\\}
 On définit le \textbf{désordre} (ou incertitude) étant liée à cette expérience aléatoire. Si l'on considère l'ensemble fini des issues possibles d'une expérience $\lbrace v_1,...,v_n \rbrace$, l'entropie de l'expérience vaudra :
-$$H(\epsilon) = - \sum_x P(\lbrace a_i \rbrace)*log_2(P(\lbrace a_i \rbrace))	 $$ 
+$$H(\epsilon) = - \sum_i P(\lbrace v_i \rbrace)*\log_2(P(\lbrace v_i \rbrace))	 $$ 
 
 \paragraph{Propriété.\\} 
-On constate que l'entropie est maximale lorsque X est équi-répartie. En effet, si l'on considère n éléments de X étant équi-répartie, on retrouve notre entropie de $H(X) = log_2(n)$. \\
+On constate que l'entropie est maximale lorsque X est équi-répartie. En effet, si l'on considère n éléments de X étant équi-répartie, on retrouve notre entropie de $H(X) = \log_2(n)$. \\
 
 
 Ainsi, on comprend qu'une variable aléatoire apporte en moyenne un maximum d'entropie lorsqu'elle peut prendre chaque valeur avec une équiprobabilité. D'un point de vue moins théorique, on considère que plus l'entropie sera grande, plus il sera difficile de prévoir la valeur que l'on observe.
@@ -39,7 +39,7 @@ Ainsi, on comprend qu'une variable aléatoire apporte en moyenne un maximum d'en
 La recommandation du NIST propose le calcul de \textit{Min-entropy} pour mesurer au pire des cas l'entropie d'une observation. \\
 
 Soit $x_i$ un bruit de la source d'entropie. Soit $p(x_i)$ la probabilité d'obtenir $x_i$. On définit l'entropie au pire des cas telle que : 
-$$\text{Min-entropy}=-log_2(max(p(x_i))$$
+$$\text{Min-entropy}=-\log_2(max(p(x_i))$$
 La probabilité d'observer $x_i$ sera donc au minimum $\frac{1}{2^\text{Min-entropy}}$.
 
 \subsection{Source d'entropie}
@@ -989,7 +989,7 @@ Ce test est basé sur le nombre d'observations d'un échantillon le plus courant
 \item compter le nombre d’occurrences de cette valeur, stocké dans $C_{MAX}$;
 \item calculer $pmax= \frac{C_{MAX}}{N}$;
 \item calculer $C_{BOUND} = C_{MAX} + 2.3 \sqrt{N*pmax(1-pmax)} $;
-\item calculer $ H = -log_2(\frac{C_{BOUND}}{N})$;
+\item calculer $ H = -\log_2(\frac{C_{BOUND}}{N})$;
 \item calculer le nombre d'éléments dans l'échantillon, que l'on stocke dans W;
 \item $min(W,H)$ est l'entropie minimale.\\
 \end{enumerate}
@@ -1002,7 +1002,7 @@ Considérant le jeu de données $\lbrace 0,1,1,2,0,1,2,2,0,1,0,1,1,0,2,2,1,0,2,1
 \item $C_{MAX} = 8$;
 \item $pmax = \frac{8}{20} = 0.4$;
 \item $ C_{BOUND} = 8 + 2.3 \sqrt{20*0.4*0.6} = 13.04$;
-\item $ H = -log_2(\frac{13.04}{20}) = 0.186$;
+\item $ H = -\log_2(\frac{13.04}{20}) = 0.186$;
 \item $ W = 3$;
 \item entropie minimale calculée : $ min(3,0.186) = 0.186$.\\
 \end{itemize}
