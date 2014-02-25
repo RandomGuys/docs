@@ -1,29 +1,29 @@
-\chapter{Génération des clés}
+\chapter{Génération des clefs}
 \section{Définitions et contexte}
 
-\subsection{Clés cryptographiques}
+\subsection{Clefs cryptographiques}
 
-La génération de clé est une notion fondamentale de cryptographie. En effet, les données sont protégées grâce à des algorithmes (ou des méthodes cryptographiques) et des clés cryptographiques. Les clés cryptographiques sont notamment utilisées pour le chiffrement et le déchiffrement de données. 
-Relativement aux deux types de cryptographies, on compte deux types de clés : 
+La génération de clef est une notion fondamentale de cryptographie. En effet, les données sont protégées grâce à des algorithmes (ou des méthodes cryptographiques) et des clefs cryptographiques. Les clefs cryptographiques sont notamment utilisées pour le chiffrement et le déchiffrement de données. \\
+Relativement aux deux types de cryptographie, on compte deux types de clefs : 
 \begin{itemize}
-\item les clés symétriques pour le chiffrement symétrique;
-\item les clés publiques/privées pour le chiffrement asymétriques.\\
+\item les clefs symétriques pour le chiffrement symétrique;
+\item les clefs publiques/privées pour le chiffrement asymétriques.\\
 \end{itemize}
 
 On se considérera dans ce chapitre dans un milieu optimal : 
 \begin{enumerate}
-\item L'algorithme cryptographique considéré est optimal;
-\item La génération de bits aléatoire est optimale.
+\item l'algorithme cryptographique considéré est optimal;
+\item la génération de bits aléatoire est optimale.
 \end{enumerate}
 
 
-\subsubsection{Clés d'algorithmes symétriques}
-Les algorithmes symétriques utilisent pour leur chiffrement une clé symétrique qui est partagée par chacun des correspondant. 
+\subsubsection{Clefs d'algorithmes symétriques}
+Les algorithmes symétriques utilisent pour leur chiffrement une clef symétrique qui est partagée par chacun des correspondants. 
 
 \begin{figure}[H]
 \begin{center}
 \begin{tikzpicture}[node distance=2cm]
-\node 	(titre) 		[] 		{\textbf{Echange de message par chiffrement symétrique}};
+\node 	(titre) 		[] 		{\textbf{Échange de messages par chiffrement symétrique}};
 \node 	(k1) 	[below of=titre,xshift=-3cm,yshift=1cm] {k};
 \node 	(k2) 	[right of=k1,xshift=5cm] {k};
 \node 	(E) 		[processS,below of=k1] {E (Alice)};
@@ -47,14 +47,14 @@ Les algorithmes symétriques utilisent pour leur chiffrement une clé symétriqu
 \end{figure}
 
 
-\subsubsection{Clés d'algorithmes asymétriques}
+\subsubsection{Clefs d'algorithmes asymétriques}
 
-Les clés d'algorithmes symétriques sont de deux catégories, les clés privées et les clés publiques. Les clés publiques sont disponibles pour tous, par demande à l'utilisateur, ou bien souvent par certificat. 
+Les clefs d'algorithmes symétriques sont de deux catégories, les clefs privées et les clef publiques. Les clefs publiques sont disponibles pour tous, par demande à l'utilisateur, ou bien souvent par certificat. 
 
 \begin{figure}[H]
 \begin{center}
 \begin{tikzpicture}[node distance=2cm]
-\node 	(titre) 		[] 		{\textbf{Echange de message par chiffrement asymétrique}};
+\node 	(titre) 		[] 		{\textbf{Échange de messages par chiffrement asymétrique}};
 \node 	(k1) 	[below of=titre,xshift=-3cm,yshift=1cm] {};
 \node 	(k2) 	[right of=k1,xshift=5cm] {$k_B'$};
 \node 	(E) 		[processS,below of=k1] {E (Alice)};
@@ -76,27 +76,27 @@ Les clés d'algorithmes symétriques sont de deux catégories, les clés privée
 
 \end{tikzpicture}
 \end{center}
-\caption[Chiffrement asymétrique]{Chiffrement asymétrique - Alice envoie un message $c$ chiffré à Bob avec sa clé publique qui le déchiffre}
+\caption[Chiffrement asymétrique]{Chiffrement asymétrique - Alice envoie un message $c$ chiffré à Bob avec sa clef publique qui le déchiffre}
 \label{asym}
 \end{figure}
 
-Comme montré en figure \ref{asym}, Alice chiffre avec la clé publique de Bob un message, qui lui-même déchiffre le message avec la clé privée.
+Comme montré en figure \ref{asym}, Alice chiffre avec la clef publique de Bob un message, qui lui-même déchiffre le message avec la clef privée.
 
 \subsection{Méthode de génération et sécurité}
 
 
-Les systèmes utilisent des entiers comme clé. Les clés sont générées en utilisant des générateurs de nombres aléatoires (RNG) ou des générateurs de nombres pseudo aléatoires (PRNG). 
+Les systèmes utilisent des entiers comme clef. Celles-ci sont générées en utilisant des générateurs de nombres aléatoires (RNG) ou des générateurs de nombres pseudo aléatoires (PRNG). 
 
-\subsubsection{Génération de clés quelconques}
-Un générateur de bits aléatoires (RGB) approuvé est utilisé pour générer la clé cryptographique. Le RGB doit fournir une entropie complète ou suffisante aux exigences de sécurité du système. Les RGB peuvent  permettre de générer complètement et "directement" la clé. C'est le cas pour les clés privées des algorithmes AES ou DSA.
-Les RGB peuvent aussi être utilisés comme \textit{seed} pour générer des clés, suivants des critères spécifiques. C'est le cas pour RSA, où habituellement le \textit{seed} est utilisé comme point de départ pour trouver un nombre premier suivant les critères du FIPS 186-3 \cite{fips186-3}.
+\subsubsection{Génération de clefs quelconques}
+Un générateur de bits aléatoires (RGB) approuvé est utilisé pour générer la clef cryptographique. Le RGB doit fournir une entropie complète ou suffisante aux exigences de sécurité du système. Les RGB peuvent permettre de générer complètement et "directement" la clef. C'est le cas pour les clefs privées des algorithmes AES ou DSA.
+Les RGB peuvent aussi être utilisés comme \textit{seed} pour générer des clefs, suivants des critères spécifiques. C'est le cas pour RSA, où habituellement le \textit{seed} est utilisé comme point de départ pour trouver un nombre premier suivant les critères du FIPS 186-3 \cite{fips186-3}.
 
-\subsubsection{Génération de paires de clés asymétriques}
-Les algorithmes asymétriques demandent la création de paires de clés asymétriques (privée/publique), dont chaque clé est associée avec une seule entité, le possesseur de la clé. Les clés sont généralement générées par le possesseur direct de la clé, ou par une autorité de confiance qui fournit la clé au possesseur de façon sûre.
-Il convient au moment de la génération de bien considérer les paramètres deux paramètres principaux : 
+\subsubsection{Génération de paires de clefs asymétriques}
+Les algorithmes asymétriques demandent la création de paires de clefs asymétriques (privée/publique), dont chaque clef est associée à une seule entité, le possesseur de la clef. Les clefs sont généralement générées par son possesseur direct, ou par une autorité de confiance qui fournit la clef au possesseur de façon sûre.\\
+Il convient au moment de la génération de bien considérer deux paramètres principaux : 
 \begin{enumerate}
-\item l'espace de clés, qui doit être suffisamment grand pour éviter les doublons et les cycles.
-\item Générer les premiers de façon la plus aléatoire possible. Ceci nécessite un bon choix de stratégie d'identification de premiers. On peut par exemple utiliser des algorithmes permettant de détecter le prochain premier suivant un entier tiré aléatoirement. 
+\item l'espace de clefs, qui doit être suffisamment grand pour éviter les doublons et les cycles;
+\item Générer les premiers de façon la plus aléatoire possible. Ceci nécessite un bon choix de stratégie d'identification de premiers. On peut par exemple utiliser des algorithmes permettant de détecter le prochain premier, suivant un entier tiré aléatoirement. 
 \end{enumerate}
 
 
@@ -106,13 +106,13 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 		\subsubsection{Description de la librairie BIGNUMBER}
 
-			OpenSSL gère l'arithmétique multi-précison (gestion des grands entier) avec sa librairie BIGNUMBER. La taille de ces entiers est arbitraire, il n'y a théoriquement pas de limitation de taille. Elle a été spécialement créée afin d'utiliser des systèmes cryptographiques à clés publiques tels que RSA ou Diffie-Hellman.\\
+			OpenSSL gère l'arithmétique multi-précison (gestion des grands entier) avec sa librairie BIGNUMBER. La taille de ces entiers est arbitraire, il n'y a théoriquement pas de limitation de taille. Elle a été spécialement créée afin d'utiliser des systèmes cryptographiques à clefs publiques tels que RSA ou Diffie-Hellman.\\
 
 			Pour le stockage de grands entiers, elle utilise directement et dynamiquement la mémoire comme structure de données. Le code de retour est un entier permettant de vérifier l'état de la mémoire après chaque opération.\\
 
-			Le type de données pour ces grands entiers est une structure ayant pour nom BIGNUM. Cette structure peut être directement utilisé en incluant la bibliothèque \texttt{openssl/crypto/bn/bn.h}.\\
+			Le type de données pour ces grands entiers est une structure ayant pour nom BIGNUM. Cette structure peut être directement utilisée en incluant la bibliothèque \texttt{openssl/crypto/bn/bn.h}.\\
 
-			La structure générale d'un BIGNUM est défini dans le fichier \texttt{openssl/crypto/ossl\_typ.h}, (cf. \textit{Listing} \ref{ossltyp}) et elle est implantée dans le fichier \texttt{openssl/crypto/bn/bn.h} (cf. \textit{Listing} \ref{bn}). Un schéma explicatif est défini sur \textit{Listing} \ref{bignum}.
+			La structure générale d'un BIGNUM est définie dans le fichier \texttt{openssl/crypto/ossl\_typ.h}, (cf. \textit{Listing} \ref{ossltyp}), et elle est implantée dans le fichier \texttt{openssl/crypto/bn/bn.h} (cf. \textit{Listing} \ref{bn}). Un schéma explicatif est défini sur \textit{Listing} \ref{bignum}.
 
 			\begin{lstlisting}[style=customc,caption=ossl\_typ.h, label=ossltyp]
 			typedef struct bignum_st BIGNUM;
@@ -215,19 +215,19 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 			Un groupe MODP (Modular exponentiation group) est un groupe d'exponentiation modulaire. \\
 			
-			Pour le groupe MODP sur 768bits (groupe par défaut qui DOIT être le minimum requis)le groupe utilise comme nombre premier : 
+			Pour le groupe MODP sur 768bits (groupe par défaut qui DOIT être le minimum requis) le groupe utilise comme nombre premier : 
 			$$ 2^{768} - 2^{704} - 1 + 2^{64} * \{[2^{638}\ pi] + 149686\}$$
-			Et comme générateur : 2.
+			Et comme générateur : 2.\\
 
 			Pour le groupe MODP sur 1024bits (groupe alternatif qui DEVRAIT être le groupe utilisé) le groupe utilise comme nombre premier :
 			$$ 2^{1024} - 2^{960} - 1 + 2^{64} * \{[2^{894}\ pi] + 129093\}$$
-			Et comme générateur : 2. 
+			Et comme générateur : 2. \\
 
 			La RFC 2412 : OAKLEY Key Determination Protocol datant de 1998 également \cite{rfc2412} préconise plutôt d'utiliser 22 comme générateur.
 
 			\paragraph{RFC 3526 : More Modular Exponential (MODP) Diffie-Hellman groups for Internet Key Exchange (IKE)\\}
 
-			La RFC 3526 \cite{rfc3526} complète la RFC 2409. Elle défini les groupes MODP sur 1536, 2048, 3072, 4096, 6144 et 8192 bits.\\
+			La RFC 3526 \cite{rfc3526} complète la RFC 2409. Elle définit les groupes MODP sur 1536, 2048, 3072, 4096, 6144 et 8192 bits.\\
 
 			\textit{Exemple avec 2048 bits :}\\
 			Le nombre premier vaut :
@@ -244,7 +244,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 			\paragraph{Exemples de fonctions. \\}
 
-			Les fichiers \texttt{bn\_add.c}, \texttt{bn\_exp.c}, \texttt{bn\_div.c}, \texttt{bn\_mul.c}, etc... présents dans le paquetage \texttt{openssl/crypto/bn} contiennent des fonctions arithmétiques simples (addition, multiplication, soustraction, exponentiaition, etc...) utilisant la structure BIGNUM.
+			Les fichiers \texttt{bn\_add.c}, \texttt{bn\_exp.c}, \texttt{bn\_div.c}, \texttt{bn\_mul.c}, etc, présents dans le paquetage \texttt{openssl/crypto/bn} contiennent des fonctions arithmétiques simples (addition, multiplication, soustraction, exponentiaition, etc) utilisant la structure BIGNUM.
 
 			\paragraph{Analyse de la génération d'entiers premiers.\\}
 
@@ -257,33 +257,33 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 			\textit{int BN\_generate\_prime\_ex(BIGNUM *ret, int bits, int safe, const BIGNUM *add, const BIGNUM *rem, BN\_GENCB *cb);}  
 			\begin{itemize}
-			\item Génère un nombre premier aléatoire de \textit{bits} bits. 
-			\item Si \textit{ret} vaut $NULL$ alors l'entier n'est pas stocké, sinon il est stocké sur le descripteur de la structure BIGNUM.
-			\item Si \textit{cb} n'est pas $NULL$ il servira à générer un callback lors de la génération du i-ème nombre premier potentiel, lors du test de primalité et lorsqu'un entier premier à été trouvé.
-			\item D'après la RFC 2631 \cite{rfc2631} et en particulier les parties concernant le FIPS 186-1 \cite{fips186-1}, le paramètre textit{add} permet de vérifier la condition : $p mod add == rem || p mod add == 1 \ Si\ rem == NULL)$ et le paramètre \textit{safe} vaut true pour la définition d'un nombre premier sûr, e.g qu'il résiste à certaines attaques cryptanalytiques (i.e un entier premier p dont $(p - 1)/2$ est également premier est sûr)
-			\item Attention avant d'utiliser la fonction ci-dessus à bien passer une graine au PRNG.
-			\item La génération d'un nombre premier a une probabilité d'échec négligeable (0.25\% d'échecs possibles puissance le nombre de tentatives).
-			\item La fonction retourne 1 si la génération est un succès, 0 sinon.\\
+			\item génère un nombre premier aléatoire de \textit{bits} bits; 
+			\item si \textit{ret} vaut $NULL$ alors l'entier n'est pas stocké, sinon il est stocké sur le descripteur de la structure BIGNUM;
+			\item si \textit{cb} n'est pas $NULL$ il servira à générer un \textit{callback} lors de la génération du i-ème nombre premier potentiel, lors du test de primalité et lorsqu'un entier premier à été trouvé;
+			\item d'après la RFC 2631 \cite{rfc2631} et en particulier les parties concernant le FIPS 186-1 \cite{fips186-1}, le paramètre \textit{add} permet de vérifier la condition : $p mod add == rem || p mod add == 1 \ Si\ rem == NULL)$ et le paramètre \textit{safe} vaut \textit{true} pour la définition d'un nombre premier sûr, e.g qu'il résiste à certaines attaques cryptanalytiques (i.e un entier premier p dont $(p - 1)/2$ est également premier est sûr);
+			\item attention avant d'utiliser la fonction ci-dessus à bien passer une graine au PRNG;
+			\item la génération d'un nombre premier a une probabilité d'échec négligeable (0.25\% d'échecs possibles puissance le nombre de tentatives);
+			\item la fonction retourne '1' si la génération est un succès, '0' sinon.\\
 			\end{itemize}
 
 			\textit{int BN\_prime\_ex(const BIGNUM *p,int nchecks, BN\_CTX *ctx, BN\_GENCB *cb);} 
 			\begin{itemize}
-			\item Fonction de test de primalité sur l'entier \textit{p}
-			\item nbchecks est le nombre de tests à effectué
-			\item \textit{cb} s'il n'est pas $NULL$ génère un callback à chaque j-ème itération dans le code
-			\item \textit{ctx} s'il n'est pas $NULL$ est utilisé pour sauvegarder l'allocation du dessus et libérer la structure.
-			\item La fonction retourne 0 si le nombre est premier avec une probabilité de 100\%, 1 si la probabilité est plus faible que $0.25^nchecks$, et -1 sinon\\
+			\item fonction de test de primalité sur l'entier \textit{p};
+			\item nbchecks est le nombre de tests à effectuer;
+			\item \textit{cb} s'il n'est pas $NULL$ génère un callback à chaque j-ème itération dans le code;
+			\item \textit{ctx} s'il n'est pas $NULL$ est utilisé pour sauvegarder l'allocation du dessus et libérer la structure;
+			\item la fonction retourne 0 si le nombre est premier avec une probabilité de 100\%, 1 si la probabilité est plus faible que $0.25^nchecks$, et -1 sinon.\\
 			\end{itemize}
 
 			\textit{int BN\_is\_prime\_fasttest\_ex(const BIGNUM *p,int nchecks, BN\_CTX *ctx, int do\_trial\_division, BN\_GENCB *cb);} 
 			\begin{itemize}
-			\item Cette fonction fait exactement la même chose que la fonction précédente.
-			\item Mais si \textit{do\_trial\_division} vaut 1 il testera avant s'il n'est pas divisible par des petits nombres entiers, si il vaut 0 cela revient à appeler la fonction \textit{BN\_prime\_ex}
+			\item cette fonction fait exactement la même chose que la fonction précédente;
+			\item mais si \textit{do\_trial\_division} vaut '1' il testera avant s'il n'est pas divisible par des petits nombres entiers, s'il vaut '0' cela revient à appeler la fonction \textit{BN\_prime\_ex}
 			\end{itemize}
 
 		\subsubsection{Conclusion}
 
-			Sur la présentation des différentes structures et des différentes opérations arithmétiques revisitées, la documentation est plus complète et plus claire que les autres fonctions auditées en général, même s'il reste à notre avis des efforts sur la mise en forme. Le découpage des fonctions est bien fait au sein du dossier \texttt{openssl/crypto/bn} avec des noms de fichiers cohérent, et au sein des fichiers avec des explications sur les différentes structures et des noms de fonctions cohérentes également même si on aurait préféré une ligne d'explications en en-tête de chaque fonction. Lors de l'audit, on retrouvait rapidement le code concernant une fonction.\\
+			Sur la présentation des différentes structures et des différentes opérations arithmétiques revisitées, la documentation est plus complète et plus claire que les autres fonctions auditées en général, même s'il reste à notre avis des efforts sur la mise en forme. Le découpage des fonctions est bien fait au sein du dossier \texttt{openssl/crypto/bn} avec des noms de fichiers cohérents, et au sein des fichiers avec des explications sur les différentes structures et des noms de fonctions cohérentes également même si on aurait préféré une ligne d'explications en en-tête de chaque fonction. Lors de l'audit, on retrouvait rapidement le code concernant une fonction.\\
 			
 
 			Sur le contenu, les normes sont bien respectées, notamment pour la génération des nombres premiers qui utilise les tests de primalité de Miller-Rabin, réputés sûrs.
@@ -300,7 +300,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		\item 4- Si $g = 1$ recommencer l'étape 2\\
 		\end{itemize}
 	
-		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (pour une utilisation SSH) : "It is recommended to use 2 as generator, because it improves	efficiency in multiplication performance.  It is usable even when itis not a primitive root, as it still covers half of the space of possible residues."\\
+		Mais depuis 2006, on peut lire comme recommandation dans la RFC 4419 (pour une utilisation SSH) : "\textit{It is recommended to use 2 as generator, because it improves	efficiency in multiplication performance.  It is usable even when itis not a primitive root, as it still covers half of the space of possible residues.}"\\
 	
 		\subsubsection{Description de la faille}
 	
@@ -308,10 +308,9 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 	
 		Le générateur de Diffie-Hellman n'étant pas une racine primitive dans $\mathbb{Z}/\mathbb{Z}_p$, les conséquences sont :
 		\begin{itemize}
-		\item L'espace des clés possibles est fortement réduit (Si $g=2 \implies$ espace divisé par deux)
-		\item Deux clés privées distinctes pourront avoir une clé publique commune
-		\item La méthode de cryptanalyse Baby-step Giant-step peut s'en trouver 
-		facilité.\\
+		\item l'espace des clefs possibles est fortement réduit (Si $g=2 \implies$ espace divisé par deux);
+		\item deux clefs privées distinctes pourront avoir une clef publique commune;
+		\item la méthode de cryptanalyse Baby-step Giant-step peut s'en trouver facilité.\\
 		\end{itemize}
 	
 		Évidemment, ce choix n'est pas une faille en soit, il n'est juste pas optimal et résulte d'un bon compromis entre vitesse et sécurité. Pour une sécurité optimale, il est conseillé de choisir un générateur qui soit une racine primitive, pour être certain que personne ne puisse signer, déchiffrer des messages à votre place!\\
@@ -324,7 +323,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		La version actuelle d'OpenSSL : 1.1.0
 		
 		\paragraph{Fonction.\\}
-		La fonction liée à cette norme est accessible sous le paquetage \texttt{openssl/crypto/dh/dh\_gen.c} (cf. \textit{Listing} \ref{dhgen}). Les commentaires sont très intéressant pour comprendre le choix du générateur par l'équipe de développement.
+		La fonction liée à cette norme est accessible sous le paquetage \texttt{openssl/crypto/dh/dh\_gen.c} (cf. \textit{Listing} \ref{dhgen}). Les commentaires sont très intéressants pour comprendre le choix du générateur par l'équipe de développement.
 		
 		
 		\begin{lstlisting}[style=customc,caption=dh\_gen.c, label=dhgen]
@@ -369,7 +368,7 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		
 		\subsubsection{Conclusion}
 
-		Ainsi selon la norme RFC-4419, le choix du générateur peut se résumer à un petit générateur qui ne serait pas une racine primitive. La criticité du risque est très grande, car si deux personnes possèdent la même clé publique pour deux clés privées distinctes, ils pourront alors déchiffrer les messages, et signer à la place de l'autre. Mais, la probabilité d'une telle collision est quasiment nulle, il est simplement deux fois plus efficace de générer deux clés privées possédant la même clé publique, que de retrouver la clé privée en brute force.
+		Ainsi selon la norme RFC-4419, le choix du générateur peut se résumer à un petit générateur qui ne serait pas une racine primitive. La criticité du risque est très grande, car si deux personnes possèdent la même clef publique pour deux clefs privées distinctes, ils pourront alors déchiffrer les messages, et signer à la place l'un de l'autre. Mais la probabilité d'une telle collision est quasiment nulle, il est simplement deux fois plus efficace de générer deux clefs privées possédant la même clef publique, que de retrouver la clef privée en brute force.
 		OpenSSL laisse en plus le choix au développeur de choisir une racine primitive comme générateur, pour des cas d'extrême sécurité.
 		
 	\subsection{Audit 2.3 : Diffie-Hellman Ephémère en mode FIPS}
@@ -380,11 +379,11 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 
 		\subsubsection{Description de la faille}
 	
-		Une faille plus grave concerne le mode FIPS (Federal Information Processing Standard) d'OpenSSL, qui peut être compilé avec la commande \texttt{./config fipscanisterbuild}". En effet, un attaquant situé entre le client et le serveur connaissant la clé secrète du serveur peut déchiffrer une session SSL/TLS. \\
+		Une faille plus grave concerne le mode FIPS (Federal Information Processing Standard) d'OpenSSL, qui peut être compilé avec la commande \texttt{./config fipscanisterbuild}". En effet, un attaquant situé entre le client et le serveur connaissant la clef secrète du serveur peut déchiffrer une session SSL/TLS. \\
 	
-		L'algorithme EDH/DHE (Diffie-Hellman Éphémère) permet de calculer une nouvelle clé connue uniquement du client et du serveur, donc l'attaquant intermédiaire ne peut plus déchiffrer la session. Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q faibles pour EDH/DHE. Lorsque OpenSSL est compilé en mode FIPS, un attaquant en Man-in-the-middle peut donc forcer la génération d'un secret Diffie Hellman prédictible, en modifiant par exemple le traffic réseau. \cite{vigilance-vul-10585} \cite{CVE-2011-5095}.
+		L'algorithme EDH/DHE (Diffie-Hellman Éphémère) permet de calculer une nouvelle clef connue uniquement du client et du serveur, donc l'attaquant intermédiaire ne peut plus déchiffrer la session. Cependant, en mode FIPS, OpenSSL ne rejette pas les paramètres P/Q faibles pour EDH/DHE. Lorsque OpenSSL est compilé en mode FIPS, un attaquant en \textit{Man in the Middle} peut donc forcer la génération d'un secret Diffie Hellman prédictible, en modifiant par exemple le traffic réseau. \cite{vigilance-vul-10585} \cite{CVE-2011-5095}.
 
-		La faille en elle même n'est pas suffisante pour faire l'attaque, elle requiert également une implémentation SSL faible. 
+		La faille en elle même n'est pas suffisante pour réaliser l'attaque, elle requiert également une implémentation SSL faible. 
 	
 		\subsubsection{Implémentation}
 		
@@ -413,4 +412,4 @@ Il convient au moment de la génération de bien considérer les paramètres deu
 		
 	\subsubsection{Conclusion}
 
-		Il est tout d'abord recommandé de passer à la version OpenSSL supérieur, sinon de désactiver le mode FIPS, ou encore de configurer la \textit{ciphersuite} afin de ne pas permettre au serveur d'utiliser DH comme algorithme d'échange de clés.
+		Il est tout d'abord recommandé de passer à la version OpenSSL supérieure, sinon de désactiver le mode FIPS, ou encore de configurer la \textit{ciphersuite} afin de ne pas permettre au serveur d'utiliser Diffie Hellman comme algorithme d'échange de clefs.
