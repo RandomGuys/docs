@@ -28,10 +28,10 @@ Au niveau de la lisibilité du code, notre analyse va se porter sur : l'architec
 Pour ce qui est de l'architecture, bien que le code soit assez conséquent (plus de 450 000 lignes de code dont 66\% de C -- \url{http://www.ohloh.net/p/openssl}), il est relativement bien organisé, notamment les dossiers \verb+crypto/+ et \verb+ssl/+. On accède vite au fichier recherché grâce à des noms de dossiers assez explicites et une convention de nommage des fichiers.\\
 
 
-En effet, les noms de fichiers sont souvent précédés d'un indicateur de quelques caractères qui permettent d'identifier rapidement de quelle morceau un fichier fait partie. Par exemple, les fichiers commençant par \verb+s3_+ sont des fichiers \verb+.c+ relatifs à SSL version 3. On retrouve un peu la même logique dans le nommage des fonctions. Ainsi pour la partie chiffrement, on aura un préfixe \verb+EVP_+, pour SSL version 3 \verb+SSL3_+ etc. Il arrive de trouver quelques incohérences comme dans le fichier \verb+s3_cbc.c+ qui gère donc le mode CBC de SSL version 3, on retrouve la fonction \verb+tls1_cbc_remove_padding+ ou \verb+tls1_md5_final_raw+ alors qu'il aurait fallu créer un nouveau fichier \verb+t1_cbc.c+ ou changer le nom du fichier pour regrouper plusieurs protocoles.\\
+En effet, les noms de fichiers sont souvent précédés d'un indicateur de quelques caractères qui permettent d'identifier rapidement de quel morceau un fichier fait partie. Par exemple, les fichiers commençant par \verb+s3_+ sont des fichiers \verb+.c+ relatifs à SSL version 3. On retrouve un peu la même logique dans le nommage des fonctions. Ainsi pour la partie chiffrement, on aura un préfixe \verb+EVP_+, pour SSL version 3 \verb+SSL3_+ etc. Il arrive de trouver quelques incohérences comme dans le fichier \verb+s3_cbc.c+ qui gère donc le mode CBC de SSL version 3, on retrouve la fonction \verb+tls1_cbc_remove_padding+ ou \verb+tls1_md5_final_raw+ alors qu'il aurait fallu créer un nouveau fichier \verb+t1_cbc.c+ ou changer le nom du fichier pour regrouper plusieurs protocoles.\\
 
 
-Pour ce qui est du \textit{coding style}, il se rapproche beaucoup du Whitesmiths mais peut être s'agit-il d'une variante. Ce style est peut être moins clair que celui de GNU, du Kernel Linux ou même du K\&R mais ce choix reste à l'appréciation des mainteneurs du projet.\\
+Pour ce qui est du \textit{coding style}, il se rapproche beaucoup du \textit{Whitesmiths} mais peut être s'agit-il d'une variante. Ce style est peut être moins clair que celui de GNU, du Kernel Linux ou même du K\&R mais ce choix reste à l'appréciation des mainteneurs du projet.\\
 
 
 Les constantes sont assez largement utilisées et déclarées massivement dans les \textit{headers} C en code hexadécimal. Cela dit, on retrouve beaucoup de tests comparant octet par octet, avec des valeurs hexadécimales écrites en dur dans le code. Un bon exemple de ce mauvais code est dans le fichier \verb+s23_srvr.c+ qui gère la rétro-compatibilité des versions de SSL/TLS. On y retrouve la ligne 
@@ -73,7 +73,7 @@ Il y en a énormément et cela complique beaucoup la lecture du code car on croi
 
 
 \section{Construction du projet}
-La construction d'OpenSSL se fait avec autotools qui permet de générer les makefile nécessaires à la compilation. Il existe une page wiki officielle à ce sujet mais elle n'est pas toujours très précise. Ils n'expliquent d'ailleurs pas très bien comment compiler les bibliothèques \verb+libssl.so+ et \verb+libcrypto.so+. Il faut en fait spécifier les options suivantes :
+La construction d'OpenSSL se fait avec \textit{autotools} qui permet de générer les makefile nécessaires à la compilation. Il existe une page wiki officielle à ce sujet mais elle n'est pas toujours très précise. Ils n'expliquent d'ailleurs pas très bien comment compiler les bibliothèques \verb+libssl.so+ et \verb+libcrypto.so+. Il faut en fait spécifier les options suivantes :
 \begin{verbatim}
 $ ./config shared zlib-dynamic
 $ make
@@ -91,7 +91,7 @@ Il serait intéressant de se pencher sur la sécurité des alternatives à OpenS
 \item MatrixSSL;
 \item Network Security Services	(utilisé dans Firefox, successeur du code développé par Netscape, ne gère pas DTLS);
 \item PolarSSL (ne gère pas DTLS);
-\item Java Secure Socket Extension (ne gère pas DTLS).
+\item Java Secure Socket Extension (ne gère pas DTLS).\\
 \end{itemize}
 
 Chaque alternative a ses points forts et ses points faibles, il vaut mieux alors choisir le bon outil selon le travail à effectuer.
