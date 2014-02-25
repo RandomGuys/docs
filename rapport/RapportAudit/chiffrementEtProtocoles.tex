@@ -4,7 +4,7 @@
 
 Nous allons tout d'abord apporter quelques précisions au contexte dans lequel nous travaillons. Plusieurs failles ont été trouvées sur RSA-OAEP ainsi que sur le mode CBC. Nous allons donc décrire ces deux principes et étudier leurs vulnérabilités.\\
 
-Nous allons voir qu'une combinaison entre un mode de chiffrement et un protocole de chiffrement peut générer des failles, souvent grave (i.e vols de mots de passes), que le padding est également une donnée sensible et qu'il faut donc le choisir intelligemment, et qu'une mauvaise documentation ou un mauvais paramétrage peuvent entraîner des failles au niveau protocolaire.
+Nous allons voir qu'une combinaison entre un mode de chiffrement et un protocole de chiffrement peut générer des failles, souvent graves (i.e vols de mots de passe), que le padding est également une donnée sensible et qu'il faut donc le choisir intelligemment, et qu'une mauvaise documentation ou un mauvais paramétrage peuvent entraîner des failles au niveau protocolaire.
 
 \section{Audits}
 \subsection{Audit 3.1 : Les "Manger's attack" sur RSA-OAEP}
@@ -20,7 +20,7 @@ OAEP a deux buts :
 \item prévenir un déchiffrement partiel en s'assurant que l'attaquant ne peut retrouver une portion du text clair sans être capable d'inverser la fonction trapdoor (par exemple la factorisation de deux grands nombres premiers : il est facile de multiplier, mais quand on n'a que le produit il est très difficile de retrouver les facteurs).\\
 \end{itemize}
 Il n'est pas prouvé sûr pour une attaque IND-CCA (attaque à texte chiffré seulement). Victor Shoup a démontré qu'il n'existe pas de preuve générale.
-Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP. Un tel attaquant n'a pas besoin d'être capable d'inverser entièrement RSAEP (RSA Encryption Protocole), parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
+Il a montré que dans un cas IND-CCA, quelqu'un qui sait comme inverser partiellement une primitive d'insertion mais ne sait pas comment l'inverser complètement, pourrait bien être en mesure de casser le système. Par exemple, on peut imaginer quelqu'un qui peut attaquer RSAES-OAEP si on sait comment retrouver tous les octets exceptés les 20 premiers d'un entier généré aléatoirement chiffré avec RSAEP (RSA Encryption Protocole). Un tel attaquant n'a pas besoin d'être capable d'inverser entièrement RSAEP, parce qu'il n'utilise pas les 20 premiers octets dans son attaque.
 
 \paragraph{Réseau de Feistel. \\}
 Il est utilisé dans les systèmes de chiffrement par bloc. Un schéma de Feistel repose sur des principes simples dont des permutations, des substitutions, des échanges de blocs de données et une fonction prenant en entrée une clé intermédiaire à chaque étage.\\
@@ -32,7 +32,7 @@ Il est utilisé dans les systèmes de chiffrement par bloc. Un schéma de Feiste
 \end{figure}
 
 Le chiffrement DES par exemple repose sur ce réseau, et effectue 16 tours.\\
-Généralement les deux parties sont équilibrées même si par exemple des algorithme comme MacGuffin de Bruce Schneier utilise un réseau non équilibré.
+Généralement les deux parties sont équilibrées même si par exemple des algorithmes comme MacGuffin de Bruce Schneier utilisent un réseau non équilibré.
 
 \paragraph{RSA-OAEP. \\}
 Dans la PKCS\#1 est décrit le standard de RSA-OAEP. RSAES-OAEP est le terme plus facilement utilisé dans le document : RSA Encryption Scheme OAEP.\\
@@ -41,13 +41,13 @@ Il regroupe les primitives RSAEP et RSADP : respectivement RSA Encryption Protoc
 \paragraph{RSAES-OAEP-ENCRYPT. \\}
 Options :
 \begin{description}
-\item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de fonction de hachages);
+\item [Hash :] fonction de hachage (\texttt{hLen} contient la longueur en octets de la sortie de fonction de hachage);
 \item [MGF :] fonction de génération de masque.\\
 \end{description}
 Entrée :
 \begin{description}
 \item [(n, e) : ] destinataire de la clef publique RSA (\texttt{k} contient la longueur en octets du modulo RSA \texttt{n});
-\item [M : ] message à chiffrer, un chaîne d'octets de longueur \texttt{mLen}, quand \texttt{mLen <= k - 2hLen - 2};
+\item [M : ] message à chiffrer, une chaîne d'octets de longueur \texttt{mLen}, quand \texttt{mLen <= k - 2hLen - 2};
 \item [L : ] champ optionnel à associer au message, la valeur par défaut pour \texttt{L}, si \texttt{L} n'a aucune condition, est la chaîne vide.\\
 \end{description}
 Sortie :
@@ -70,9 +70,9 @@ Précondition :
 \item si la longueur de \texttt{L} est plus grande que la longueur limite en entrée de la fonction de hachage ($2^{61} - 1$ octets pour SHA-1), renvoyer "\textit{label too long}" et arrêter;
 \item si \texttt{mLen > k - 2hLen - 2}, le message "\textit{message too long}" est renvoyé et la fonction est stoppée.\\
 \end{enumerate}
-\item coder EME-OAEP (voir Figure 1 ci-dessous):
+\item coder EME-OAEP :
 \begin{enumerate}
-\item si l'étiquette \texttt{L} n'est pas spécifiée, laisser \texttt{L} à une chaîne vide. Laisser \texttt{lHash = Hash(L)}, une chaîne d'octets de taille \texttt{hLen} (voir note plus bas);
+\item si l'étiquette \texttt{L} n'est pas spécifiée, laisser \texttt{L} à une chaîne vide. Laisser \texttt{lHash = Hash(L)}, une chaîne d'octets de taille \texttt{hLen};
 \item générer une chaîne d'octets PS consistant en \texttt{k - mLen - 2hLen - 2} d'octets zéro. La taille de \texttt{PS} peut être zéro;
 \item concaténer \texttt{lHash}, \texttt{PS}, un unique octet avec la valeur hexadécimale \textit{0x01}, et le message \texttt{M} pour former un bloc de données DB de longueur \texttt{k - hLen - 1} octets, tel que : \texttt{DB} = \texttt{lHash} \textbar\textbar \texttt{PS} \textbar\textbar \textit{0x01} \textbar\textbar \texttt{M};
 \item générer un une chaîne d'octets aléatoires de longueur \texttt{hLen};
@@ -84,9 +84,9 @@ Précondition :
 \end{enumerate}
 \item chiffrement RSA :
 \begin{enumerate}
-\item convertir le message codé \texttt{EM} en un entier représentatif du message \texttt{m} (voir section 4.2) : \texttt{m = OS2IP (EM)};
-\item appliquer la primitive de chiffrement \texttt{RSAEP}(Section 5.1.1) avec la clef RSA publique (n, e) pour produire un entier c représentatif du message chiffré : \texttt{c = RSAEP ((n, e), m)};
-\item convertir le texte chiffré représentatif \texttt{c} en un texte chiffré \texttt{C} de taille \texttt{k} octets (voir Section 4.1) : \texttt{C = I2OSP (c, k)}.\\
+\item convertir le message codé \texttt{EM} en un entier représentatif du message \texttt{m} : \texttt{m = OS2IP (EM)};
+\item appliquer la primitive de chiffrement \texttt{RSAEP} avec la clef RSA publique (n, e) pour produire un entier c représentatif du message chiffré : \texttt{c = RSAEP ((n, e), m)};
+\item convertir le texte chiffré représentatif \texttt{c} en un texte chiffré \texttt{C} de taille \texttt{k} octets : \texttt{C = I2OSP (c, k)}.\\
 \end{enumerate}
 \item envoyer en sortie le texte chiffré \texttt{C}.\\
 \end{enumerate}
@@ -199,10 +199,10 @@ Erreur :
 \end{enumerate}
 \item déchiffrement RSA :
 \begin{enumerate}
-      \item Convertir le texte chiffré \texttt{C} en un entier \texttt{c} représentatif du message chiffré (voir Section 4.2) : \texttt{c = OS2IP (C)};
+      \item Convertir le texte chiffré \texttt{C} en un entier \texttt{c} représentatif du message chiffré : \texttt{c = OS2IP (C)};
       \item Appliquer la primitive de déchiffrement \texttt{RSADP} à la clef privée RSA \texttt{K} et au message chiffré représentatif \texttt{c} pour produire un entier \texttt{m} représentatif du message clair : \texttt{m = RSADP (K, c)};\\
        si RSADP renvoie "ciphertext representative out of range" (signifie que \texttt{c >= n}), renvoie "decryption error" et s'arrête;
-       \item convertir le message représentatif \texttt{m} en un un message déchiffré \texttt{EM} de longueur \texttt{k} octets (voir Section 4.1) : \texttt{EM = I2OSP (m, k)}.\\
+       \item convertir le message représentatif \texttt{m} en un message déchiffré \texttt{EM} de longueur \texttt{k} octets : \texttt{EM = I2OSP (m, k)}.\\
 \end{enumerate}
 \item déchiffrement EME-OAEP :
 \begin{enumerate}
@@ -215,24 +215,24 @@ Erreur :
        \item séparer \texttt{DB} en une chaîne d'octet \texttt{lHash} de longueur \texttt{hLen}, une chaîne de padding (possiblement vide) \texttt{PS} consistant en des octets hexadécimaux de valeur \textit{0x00}, et un message \texttt{M} tel que \texttt{DB = lHash \textbar\textbar PS \textbar\textbar 0x01 \textbar\textbar M};
 \\ s'il n'y a pas d'octet avec la valeur hexadécimale \textit{0x01} pour séparer \texttt{PS} de \texttt{M}, si \texttt{lHash} n'est pas égal à \texttt{lHash}, ou si \texttt{Y} n'est pas une sortie non nulle, renvoyer "decryption error" et s'arrêter.\\
 \end{enumerate}
-\item Renvoyer le message M.\\
+\item renvoyer le message M.\\
 \end{enumerate}
 \paragraph{Note. \\} 
 Il faut faire attention qu'un adversaire ne puisse distinguer les différentes erreurs dans les conditions de l'étape 3, que ce soit par un message d'erreur, ou un temps de réponse différent, ou, plus généralement, apprendre une information partielle à propos du message en clair \texttt{EM}. Sinon un adversaire peut être en mesure d'obtenir des informations utiles sur le déchiffrement du texte chiffré \texttt{C}, conduisant à une attaque à chiffré choisi telle que celle observée par Manger.
    
 \paragraph{RSAES-PKCS1-v1\_ 5. \\}
 
-   RSAES-PKCS1-v1\_5 combine les primitives RSAEP et RSADP avec la méthode de codage EME-PKCS1-v1\_ 5. Il est mathématiquement équivalent au schéma de chiffrement dans la PKCS \# 1 v1.5. RSAES-PKCS1-v1\_ 5 peut fonctionner sur des messages de longueur supérieure à \texttt{k - 11} octets (\texttt{k} est la longueur en octets du modulo RSA), bien qu'il faille faire attention aux attaques portant sur les faibles exposants RSA menée par Coppersmith, Franklin, Patarin, and Reiter quand les longs messages sont chiffrés (voir le troisième point dans les notes ci-dessous).\\
+   RSAES-PKCS1-v1\_5 combine les primitives RSAEP et RSADP avec la méthode de codage EME-PKCS1-v1\_ 5. Il est mathématiquement équivalent au schéma de chiffrement dans la PKCS \# 1 v1.5. RSAES-PKCS1-v1\_ 5 peut fonctionner sur des messages de longueur supérieure à \texttt{k - 11} octets (\texttt{k} est la longueur en octets du modulo RSA), bien qu'il faille faire attention aux attaques portant sur les faibles exposants RSA menée par Coppersmith, Franklin, Patarin, and Reiter quand les longs messages sont chiffrés.\\
 En règle générale, l'utilisation de ce schéma pour chiffrer un message arbitraire, en opposition à une clef générée aléatoirement, n'est pas recommandée.\\
 Il est possible de générer des textes chiffrés RSAES-PKCS1-v1\_5 valides sans connaître les messages clairs correspondants, avec une probabilité raisonnable de réussite.\\
 Cette possibilité peut être exploitée dans une attaque à chiffré choisi. Par conséquent, si RSAES-PKCS1-v1\_5 doit être utilisé, certaines contre mesures faciles à implémenter devraient être mises en place afin de contrecarrer l'attaque trouvée.\\
-Des exemples typiques comprennent l'ajout de la structure des données à encoder, le contrôle rigoureux de la conformité des PKCS\# 1v1.5 (et d'autres redondance) dans les messages déchiffrés, et la consolidation des messages d'erreur dans un protocole client-serveur basé sur PKCS \# 1 v1.5. Ils peuvent tous être des contre-mesures efficaces et n'entraînent pas de changement à un protocole n\degres 1 sur la base de v1.5-PKCS. Il a été récemment montré que la sécurité du protocole SSL / TLS handshake, qui utilise RSAES-PKCS1-v1\_5 et certaines contre-mesures, peut être liée à une variante du problème RSA.\\
+Des exemples typiques comprennent l'ajout de la structure des données à encoder, le contrôle rigoureux de la conformité des PKCS\# 1v1.5 (et d'autres redondances) dans les messages déchiffrés, et la consolidation des messages d'erreur dans un protocole client-serveur basé sur PKCS \# 1 v1.5. Ils peuvent tous être des contre-mesures efficaces et n'entraînent pas de changement à un protocole n\degres 1 sur la base de v1.5-PKCS. Il a été récemment montré que la sécurité du protocole SSL / TLS handshake, qui utilise RSAES-PKCS1-v1\_5 et certaines contre-mesures, peut être liée à une variante du problème RSA.\\
   
 \paragraph{Note. \\} 
 Les passages suivants décrivent des recommandations concernant l'utilisation de RSAES-PKCS1-v1\_5. Les recommandations de la version 1.5 de ce document sont incluses ainsi que de nouvelles recommandations motivées par les avancées de cryptanalyses durant les années suivantes.
 \begin{itemize}
 \item il est recommandé que les octets pseudo-aléatoires soient générés indépendamment pour chaque processus de chiffrement, en particulier si la même donnée est en entrée pour plus d'un processus de chiffrement. Les résultats de Haastad sont une des motivations pour cette recommandation;
-\item La chaîne de padding \texttt{PS} est d'une longueur d'au moins 8 octets, ce qui est une condition de sécurité pour les opérations sur les clefs publiques, et qui rend difficile pour les attaquants de récupérer les données en essayant tous les blocs chiffrés possibles.
+\item la chaîne de padding \texttt{PS} est d'une longueur d'au moins 8 octets, ce qui est une condition de sécurité pour les opérations sur les clefs publiques, et qui rend difficile pour les attaquants de récupérer les données en essayant tous les blocs chiffrés possibles.
 \item les octets pseudo aléatoires peuvent aussi aider à contrecarrer une attaque grâce à Coppersmith et al. quand la taille du message à chiffrer est gardé petit. L'attaque marche sur les petits exposants RSA quand des messages similaires sont chiffrés avec la même clef publique. Plus spécifiquement, une façon peut être, quand deux entrées RSAEP correspondent sur une large portion de bits (8/9) et qu'un petit exposant RSA est utilisé (e = 3) pour chiffrer les deux, il peut être possible de retrouver les entrées avec l'attaque. Une autre façon d'attaquer est couronnée de succès pour déchiffrer un seul texte chiffré, quand une large proportion (2/3) des entrées de RSAEP est déjà connue. Pour des applications typiques, le message à chiffrer est court (par exemple une clef symétrique de 128 bits) donc peu d'informations seront connues ou en commun entre deux messages pour permettre l'attaque. Cependant, si un long message est chiffré, ou si une partie du message est connu, alors l'attaque peut fonctionner. Dans tous les cas, le schéma RSAES-OAEP surmonte l'attaque.\\
 \end{itemize}
 
@@ -241,9 +241,9 @@ Les passages suivants décrivent des recommandations concernant l'utilisation de
 RSA-OAEP peut être soumis à une attaque nommée "Mangers Attack" selon son implantation \cite{mangers2010falko}. OpenSSL semble être vulnérable à une attaque de ce type, à base de "prédictions" par injections de fautes. La vulnérabilité semble être très récente puisqu'elle fonctionne sous OpenSSL 1.0.0.\\
 
 
-Le padding OAEP devait palier le problème d'insécurité que causait le padding PKCS\#1 v1.5 (attaque à chiffré choisi) \cite{bleichenbacherPCKS}. OpenSSL a tout de même pris en compte cette vulnérabilité et a placé des contres-mesures efficaces. La Technische Universität Darmstadt (Allemagne) explique en détails comment sont implémentées ces contres-mesures et montre que dans certains cas l'attaque reste possible. Enfin, elle apporte ses propres contre-mesures.\\
+Le padding OAEP devait palier le problème d'insécurité que causait le padding PKCS\#1 v1.5 (attaque à chiffré choisi) \cite{bleichenbacherPCKS}. OpenSSL a tout de même pris en compte cette vulnérabilité et a placé des contres-mesures efficaces. La Technische Universität Darmstadt (Allemagne) explique en détails comment sont implémentées ces contre-mesures et montre que dans certains cas l'attaque reste possible. Enfin, elle apporte ses propres contre-mesures.\\
 
-On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à hacher, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas. La raison est que le décodage OAEP est linéaire quelque soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
+On peut noter que plusieurs librairies sont vulnérables à une attaque de Manger qui consiste à contrôler la taille des paramètres à hacher, mais que l'implantation de RSA-OAEP d'OpenSSL ne le permet pas. La raison est que le décodage OAEP est linéaire quelle que soit la taille des paramètres et les erreurs survenues. Il semble également y avoir un problème avec l'OAEP\_padding sur le chiffrement RSA. Bill Nickless recommande l'utilisation de PKCS\_padding. \cite{sourceforgeRSAbroken}	\\
 
 
 \subsubsection{Implémentation}
@@ -286,7 +286,7 @@ Il n'y a pas vraiment de quoi s'alarmer, cette attaque est en pratique infaisabl
 
 \paragraph{SSL version 3 \\}
 Cette partie référence la RFC 6101 \cite{rfc6101} du protocole SSL version 3, concernant le chiffrement par bloc. \\
-Dans ce chiffrement, chaque blocs de texte clair est chiffrés dans un bloc de donnée chiffrée. Comme il est très peu probable que le texte clair (qu'importe la donnée à envoyer) ne se découpe exactement en taille de blocs nécessaire (qui est de 64 bits normalement), il est alors nécessaire de rajouter du bourrage à la fin de ces petit blocs avec des valeur régulière, normalement des 0. \\
+Dans ce chiffrement, chaque bloc de texte clair est chiffré dans un bloc de donnée chiffrée. Comme il est très peu probable que le texte clair (qu'importe la donnée à envoyer) ne se découpe exactement en taille de blocs nécessaire (qui est de 64 bits normalement), on doit alors rajouter du bourrage à la fin de ces petit blocs avec des valeurs régulières, normalement des '0'. \\
 
 Lorsqu'un chiffrement CBC est utilisé, un vecteur d'initialisation (IV) est maintenu pour chaque clef. Cette valeur est initialisée pour la première fois par la poignée de main du protocole SSL. Par la suite, le dernier bloc du texte chiffré de chaque tour est préservé comme IV pour le tour suivant.\\
 \newpage
@@ -301,20 +301,20 @@ block-ciphered struct {
 
 \begin{tabular}{llm{10cm}}
 - \texttt{content}          & : & le contenu du bloc de message. \\
-- \texttt{MAC}              & : & valeur du hacher MAC.\\
-- \texttt{padding}          & : & Le bourage qui est utilisé pour forcer la taille du bloc.\\
+- \texttt{MAC}              & : & la valeur du haché MAC.\\
+- \texttt{padding}          & : & le bourage qui est utilisé pour forcer la taille du bloc.\\
 - \texttt{padding\_length}  & : & la taille du bourage utilisé qui doit être plus petit que la \\
-                            &   & taille du bloc chiffré et il peut être a 0.\\
+                            &   & taille du bloc chiffré et il peut être à '0'.\\
 \end{tabular}
 \\
 
-La taille des données chiffrée (\texttt{SSLCiphertext.length}) est égale à la somme de \texttt{SSLCompressed.length}, \texttt{CipherSpec.hash\_size} et \texttt{padding\_length} plus un.
+La taille des données chiffrées (\texttt{SSLCiphertext.length}) est égale à la somme de \texttt{SSLCompressed.length}, \texttt{CipherSpec.hash\_size} et \texttt{padding\_length} + 1.
 
 \paragraph{CBC : \textit{Cipher Block Chaining} \\}
 C'est un mode de chiffrement qui a été très utilisé : enchaînement des blocs.\\
 Sur chaque bloc, un OU exclusif avec le chiffrement du bloc précédent est appliqué. Un vecteur d'initialisation est lui aussi utilisé. Contrairement au mode ECB, les blocs identiques ne seront pas chiffrés de la même façon. On ne pourra donc pas repérer de chaîne de caractères récurrentes aussi facilement. Ce mode de chiffrement possède plusieurs inconvénients :
 \begin{itemize}
-\item un chiffrement de plusieurs blocs en parallèles est impossible (puisque chaque bloc dépend du chiffrement du précédent). Déchiffrer avec un IV incorrect entraînera une corruption dans le premier bloc en clair, mais les blocs suivants seront corrects. C'est parce qu'un texte claire peut être récupéré grâce à deux blocs adjacents du texte chiffré. Le déchiffrement, contrairement au chiffrement, peut donc être parallélisé. À noter que si un seul bit change dans le texte chiffré, le bloc clair correspondant est complètement corrompu.
+\item un chiffrement de plusieurs blocs en parallèles est impossible (puisque chaque bloc dépend du chiffrement du précédent). Déchiffrer avec un IV incorrect entraînera une corruption dans le premier bloc en clair, mais les blocs suivants seront corrects. C'est parce qu'un texte clair peut être récupéré grâce à deux blocs adjacents du texte chiffré. Le déchiffrement, contrairement au chiffrement, peut donc être parallélisé. À noter que si un seul bit change dans le texte chiffré, le bloc clair correspondant est complètement corrompu.
 \item Si une erreur se produit sur un bloc, elle sera répercutée sur tous les suivants. La propagation d'erreur n'est pas limitée.
 \end{itemize}
 \begin{figure}[H]
@@ -335,14 +335,14 @@ Il a d'abord été défini par le NIST dans le FIPS 81 (\url{http://www.itl.nist
 
 \subsubsection{Description de la faille}
 
-En Septembre 2011, une attaque en man in the middle très efficace a vu le jour contre les protocoles SSLv3 et TLS 1.0. \cite{ekr2011beast} \cite{imperial2011beast} \cite{goodin2011beast} \cite{gallagher2011beast}. L'attaque est à clair choisi. Le but étant d'insérer des morceaux de texte clair grâce au navigateur dans la requête chiffrée avec ces protocoles, ceci afin de récupérer les cookies de session.\\
+En Septembre 2011, une attaque en \textit{man in the middle} très efficace a vu le jour contre les protocoles SSLv3 et TLS 1.0. \cite{ekr2011beast} \cite{imperial2011beast} \cite{goodin2011beast} \cite{gallagher2011beast}. L'attaque est à clair choisi. Le but étant d'insérer des morceaux de texte clair grâce au navigateur dans la requête chiffrée avec ces protocoles, ceci afin de récupérer les cookies de session.\\
 
 La technique est basique, un individu enregistre plusieurs cookies de session auprès de divers sites officiels (banques, messageries, etc...). Puis, il clique malencontreusement sur du code Java malveillant (publicité, image, etc...). et l'attaque se déroule automatiquement. L'ensemble des cookies est envoyé au serveur malveillant qui n'a plus qu'à déchiffrer les clés de session.\\
 
 La cause viendrait du mode de chiffrement choisi : CBC. SSL/TLS est un protocole qui chiffre un canal de communication. De ce fait il ne chiffre pas un fichier unique, mais une série d'enregistrements. Il y a deux façons d'utiliser le mode CBC dans ce cas précis :
 \begin{itemize}
-\item Prendre chacun de ces enregistrements indépendamment des autres. Générer un nouveau vecteur d'initialisation à chaque fois.
-\item Traiter ces enregistrements comme un seul objet en les concaténant. Le vecteur d'initialisation est donc choisi aléatoirement pour le premier enregistrement et pour les autres, il aura pour valeur le dernier bloc de l'enregistrement précédent.\\
+\item prendre chacun de ces enregistrements indépendamment des autres. Générer un nouveau vecteur d'initialisation à chaque fois;
+\item traiter ces enregistrements comme un seul objet en les concaténant. Le vecteur d'initialisation est donc choisi aléatoirement pour le premier enregistrement et pour les autres, il aura pour valeur le dernier bloc de l'enregistrement précédent.\\
 
 \end{itemize}
 
@@ -373,7 +373,7 @@ struct {
 } Certificate;
 \end{verbatim}
 
-la liste de certificats (\texttt{certificate\_list}) est une séquence de certificats. Le certificats de l'envoyeur DOIT venir en premier. Les suivants sont ceux qui forment la chaîne de certification. Les certificats auto-signés qui spécifient un certificat racine peuvent être omis de la chaîne, sous condition que le certificat à l'extrémité de la chaîne soit dans tous les cas validé.\\
+La liste de certificats (\texttt{certificate\_list}) est une séquence de certificats. Le certificat de l'envoyeur DOIT venir en premier. Les suivants sont ceux qui forment la chaîne de certification. Les certificats auto-signés qui spécifient un certificat racine peuvent être omis de la chaîne, sous condition que le certificat à l'extrémité de la chaîne soit dans tous les cas validé.\\
 
 Le même message type et la même structure seront utilisés pour la réponse au client du message de requête de certificat.
 
@@ -383,15 +383,15 @@ Le même message type et la même structure seront utilisés pour la réponse au
 Six chercheurs des universités de Stanford et d'Austin au Texas, analysent une attaque en Man in the Middle autour des certificats SSL sans utilisation d'un navigateur. Le titre est sans appel "Le code le plus dangereux du monde" \cite{validate2012martin}.\\
 
 
-SSL doit permettre d'être sécurisé en toutes circonstances, que le cache DNS soit empoisonné, que les attaquants contrôlent les points d'accès et les routeurs, etc. . Il assure théoriquement trois grands principes de la cryptologie : la confidentialité, l'intégrité et l'authentification. Nous connaissons certaines failles au niveau du navigateur et de l'implantation SSL (voir ci-dessus). Mais il existe également d'autres cas d'utilisation du protocole SSL. Par exemple:
+SSL doit permettre d'être sécurisé en toutes circonstances, que le cache DNS soit empoisonné, que les attaquants contrôlent les points d'accès et les routeurs, etc. Il assure théoriquement trois grands principes de la cryptologie : la confidentialité, l'intégrité et l'authentification. Nous connaissons certaines failles au niveau du navigateur et de l'implantation SSL (voir ci-dessus). Mais il existe également d'autres cas d'utilisation du protocole SSL. Par exemple:
 \begin{itemize}
-\item Administration à distance basé sur le cloud, stockage sécurisé sur le cloud en local.
-\item Transmissions de données sensibles (ex: e-commerce)
-\item Services en ligne comme les messageries électroniques
-\item Authentification via applications mobiles comme Android et iOS\\
+\item administration à distance basé sur le cloud, stockage sécurisé sur le cloud en local;
+\item transmissions de données sensibles (ex: e-commerce);
+\item services en ligne comme les messageries électroniques;
+\item authentification via applications mobiles comme Android et iOS.\\
 \end{itemize}
 
-L'étude montre que la validation des certificats SSL est casée sur plusieurs applications et librairies dont :
+L'étude montre que la validation des certificats SSL est basée sur plusieurs applications et librairies dont :
 \begin{itemize}
 \item OpenSSL
 \item JSSE
@@ -401,19 +401,19 @@ L'étude montre que la validation des certificats SSL est casée sur plusieurs a
 \item etc...\\
 \end{itemize}
 
-En fait, un attaquant en Man In The Middle peut intercepter le secret entre un client et un serveur utilisant une connexion SSL. Il peut ainsi récupérer des numéros de carte bancaire, avoir accès à une messagerie, récupérer des mots de passes, etc... La cause principale vient du fait que les développeurs retouchent les librairies cryptographiques à leur façon. En voulant réparer un bug ou en souhaitant rendre SSL compatible avec leurs API, ils injectent de nouvelles vulnérabilités. De plus, l'application est souvent propriétaire et payante ce qui rend le déboggage difficile.\\
+En fait, un attaquant en \textit{Man In The Middle} peut intercepter le secret entre un client et un serveur utilisant une connexion SSL. Il peut ainsi récupérer des numéros de carte bancaire, avoir accès à une messagerie, récupérer des mots de passe, etc. La cause principale vient du fait que les développeurs retouchent les librairies cryptographiques à leur façon. En voulant réparer un bug ou en souhaitant rendre SSL compatible avec leurs API, ils injectent de nouvelles vulnérabilités. De plus, l'application est souvent propriétaire et payante ce qui rend le déboggage difficile.\\
 
 
-Que ce soit accidentel ou intentionnel, l'une des conséquences les plus graves est la non-validation de certificat sur des contexte où la sécurité est primordiale (e.g. payement en ligne). La faute ne revient pas directement au code d'OpenSSL, mais à une mauvaise utilisation des différentes fonctions et options.\\
+Que ce soit accidentel ou intentionnel, l'une des conséquences les plus graves est la non-validation de certificat sur des contextes où la sécurité est primordiale (e.g. payement en ligne). La faute ne revient pas directement au code d'OpenSSL, mais à une mauvaise utilisation des différentes fonctions et options.\\
 
 
 Voici quelques exemples concrets concernant différentes API :
 \begin{itemize}
-\item Les services comme Amazon's Flexible Payments Service PHP et PayPal Payments Standard PHP passent le paramètre \texttt{CURLOPT\_SSL\_VERIFYHOST} à true alors que la valeur doit être passée à 2. La conséquence est la désactivation de la validation du certificat
-\item Lynx, un navigateur textuel très connu et souvent utilisé dans le développement d'applications, vérifie les certificats auto-signés seulement si la fonction de validation de certificat GnuTLS retourne une valeur négative. Malheureusement, dans certains cas la fonction peut retourner 0 pour certaines erreurs (dont les certificats signés par une autorité sans confiance).
-\item La librairie SSLSocketFactory de JSSE, très réputée, ne fait pas de vérification si la cypher suite du client vaut NULL ou est une chaîne vide.
-\item Vulnérabilités sur Apache HttpClient, WebSockets, Android, ...
-\item Autres causes célèbres : non reconnaissance des expressions régulières, non vérification du résultat de la validation, désactivation de l'authentification.\\
+\item les services comme Amazon's Flexible Payments Service PHP et PayPal Payments Standard PHP passent le paramètre \texttt{CURLOPT\_SSL\_VERIFYHOST} à \textit{true} alors que la valeur doit être passée à 2. La conséquence est la désactivation de la validation du certificat;
+\item lynx, un navigateur textuel très connu et souvent utilisé dans le développement d'applications, vérifie les certificats auto-signés seulement si la fonction de validation de certificat GnuTLS retourne une valeur négative. Malheureusement, dans certains cas la fonction peut retourner 0 pour certaines erreurs (dont les certificats signés par une autorité sans confiance);
+\item la librairie SSLSocketFactory de JSSE, très réputée, ne fait pas de vérification si la cypher suite du client vaut NULL ou est une chaîne vide;
+\item vulnérabilités sur Apache HttpClient, WebSockets, Android, ...;
+\item autres causes célèbres : non reconnaissance des expressions régulières, non vérification du résultat de la validation, désactivation de l'authentification.\\
 \end{itemize}
 
 
@@ -423,14 +423,14 @@ Voici quelques exemples concrets concernant différentes API :
 OpenSSL ne déroge pas à la règle.\\
 Voici quelques vulnérabilités du code :
 \begin{itemize}
-\item Les contraintes de nom x509 ne sont pas correctement validés.
-\item Les applications DOIVENT fournir elles même leur code de vérification de nom d'hôte. Or, des protocoles comme HTTPS, LDAP ont chacun leurs propres notions de validations. Ainsi, Apache Libcloud utilise les librairie Python eux-même utilisant des commandes OpenSSL. Et sa méthode de vérification du nom d'hôte comporte des vulnérabilités pouvant causer des attaques en man in the middle (e.g "google.com" et "oogle.com" vérifie la même expression régulière)
-\item Un programme utilisant OpenSSL peut exécuter la fonction \texttt{SSL\_connect} pour le handshake SSL. Bien que certaines erreurs de validation soient signalées par \texttt{SSL\_connect}, d'autres ne peuvent être vérifier qu'en appelant la fonction \texttt{SSL\_get\_verify\_result}, alors que \texttt{SSL\_connect} se contente de retourner "OK".
+\item les contraintes de nom x509 ne sont pas correctement validés;
+\item les applications DOIVENT fournir elles même leur code de vérification de nom d'hôte. Or, des protocoles comme HTTPS, LDAP ont chacun leurs propres notions de validations. Ainsi, Apache Libcloud utilise les librairies Python, elles-même utilisant des commandes OpenSSL. Et sa méthode de vérification du nom d'hôte comporte des vulnérabilités pouvant causer des attaques en \textit{Man in the Middle} (e.g "google.com" et "oogle.com" vérifie la même expression régulière);
+\item un programme utilisant OpenSSL peut exécuter la fonction \texttt{SSL\_connect} pour le handshake SSL. Bien que certaines erreurs de validation soient signalées par \texttt{SSL\_connect}, d'autres ne peuvent être vérifiées qu'en appelant la fonction \texttt{SSL\_get\_verify\_result}, alors que \texttt{SSL\_connect} se contente de retourner "OK".\\
 \end{itemize}
 
 \subsubsection{Exemple : Trillian}
 
-Trillian est une messagerie cliente instantanée reliée à OpenSSL pour la sécurisation de l'établissement de connexion. Par défaut OpenSSL ne soulève pas d'exception en cas de certificat auto-signé ou de non-confiance auprès de la chaîne de vérification. A la place, il envoie un drapeau. De plus, il ne vérifie jamais le nom d'hôte. Si l'application appelle la fonction \texttt{SSL\_CTX\_set} pour initialiser le drapeau \texttt{SSL\_VERIFY\_PEER}, alors \texttt{SSL\_connect} se ferme et affiche un message d'erreur lorsque le certificat n'est pas valide. Mais Trillian n'initialise jamais ce drapeau. Par conséquent, \texttt{SSL\_connect} va retourner 1 et le statut de la validation du certificat peut être connu en appelant la fonction \texttt{SSL\_get\_verify\_result}. Encore une fois, Trillian n'appelle pas cette fonction. Les conséquences sont très lourdes : vols de mots de passes, compromissions de services, révélations des paramètres de sécurité, etc...\\
+Trillian est une messagerie cliente instantanée reliée à OpenSSL pour la sécurisation de l'établissement de connexion. Par défaut OpenSSL ne soulève pas d'exception en cas de certificat auto-signé ou de non-confiance auprès de la chaîne de vérification. À la place, il envoie un drapeau. De plus, il ne vérifie jamais le nom d'hôte. Si l'application appelle la fonction \texttt{SSL\_CTX\_set} pour initialiser le drapeau \texttt{SSL\_VERIFY\_PEER}, alors \texttt{SSL\_connect} se ferme et affiche un message d'erreur lorsque le certificat n'est pas valide. Mais Trillian n'initialise jamais ce drapeau. Par conséquent, \texttt{SSL\_connect} va retourner 1 et le statut de la validation du certificat peut être connu en appelant la fonction \texttt{SSL\_get\_verify\_result}. Encore une fois, Trillian n'appelle pas cette fonction. Les conséquences sont très lourdes : vols de mots de passe, compromissions de services, révélations des paramètres de sécurité, etc...\\
 
 
 L'étude montre que l'attaque est possible sur la version 5.1.0.19 et antérieure de Trillian.
@@ -439,9 +439,9 @@ L'étude montre que l'attaque est possible sur la version 5.1.0.19 et antérieur
 
 Les chercheurs nous donnent alors plusieurs leçons à retenir, dont voici quelques points :
 \begin{itemize}
-\item Premièrement, les vulnérabilités doivent être trouvées et réparées lors des phases de tests. Certaines se trouvent très facilement si les procédures de tests sont bien réalisées.
-\item Deuxièmement, la plupart des librairies SSL ne sont pas \textbf{sûres par défaut}, laissant le choix de la sécurité aux applications de plus haut niveau avec choix des options, choix de la vérification de l'hôte, choix d'interprétation des résultats.
-\item Troisièmement, même les librairies SSL sûrs par défaut peuvent être mal utilisées par des développeurs changeant les paramètres par défaut par des paramètres non sécurisés. La cause peut venir d'une \textbf{mauvaise documentation} ou d'une mauvaise formalisation de la part de l'API. Les API devraient entre autre proposer des abstractions de haut niveau pour les développeurs comme des tunnels d'authentification, plutôt que de les laisser traiter des détails de bas niveau comme la vérification du nom d'hôte.\\
+\item premièrement, les vulnérabilités doivent être trouvées et réparées lors des phases de tests. Certaines se trouvent très facilement si les procédures de tests sont bien réalisées;
+\item deuxièmement, la plupart des librairies SSL ne sont pas \textbf{sûres par défaut}, laissant le choix de la sécurité aux applications de plus haut niveau avec choix des options, choix de la vérification de l'hôte, choix d'interprétation des résultats;
+\item troisièmement, même les librairies SSL sûres par défaut peuvent être mal utilisées par des développeurs changeant les paramètres par défaut par des paramètres non sécurisés. La cause peut venir d'une \textbf{mauvaise documentation} ou d'une mauvaise formalisation de la part de l'API. Les API devraient entre autres proposer des abstractions de haut niveau pour les développeurs comme des tunnels d'authentification, plutôt que de les laisser traiter des détails de bas niveau comme la vérification du nom d'hôte.\\
 \end{itemize}
 
 Nous conseillons surtout une meilleure documentation d'OpenSSL, et des rapports d'erreurs d'interfaces plus simples et plus consistants afin d'éviter les erreurs d'interprétation. L'idée des chercheurs de proposer des abstractions de haut niveau pour les applications semblent être une très bonne idée.
