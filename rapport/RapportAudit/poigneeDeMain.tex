@@ -95,7 +95,7 @@ Il n'existe pas de RFC pour SSL version 2. En effet, ce protocole a été pensé
 	
 	
 	\subsubsection{Implémentation}
-	Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s2_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl2.h+, on retrouve bien les algorithmes du draft comme montré sur le  tableau \ref{algosOpenssl}.
+	Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant par \verb+s2_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl2.h+, on retrouve bien les algorithmes du draft comme montré sur le  tableau \ref{algosOpenssl}.
 
 \begin{table}[H]
 \centering
@@ -134,7 +134,7 @@ On y trouve également des constantes non définies dans le draft avec des comme
 
 \end{itemize}
 
-Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de rétro-compatilibité depuis SSL v3. Celles commentées par \verb+SSLeay+ sont des vestiges de l'ancêtre d'OpenSSL : SSLeay. Elles sont sûrement conservées pour la rétro-compatibilité avec des vieux logiciels utilisant SSLeay. La \verb+MS hack+ est spécifique à Windows
+Les constantes commentées avec \verb+v3+ sont présentes pour des raisons de rétro-compatilibité depuis SSL v3. Celles commentées par \verb+SSLeay+ sont des vestiges de l'ancêtre d'OpenSSL : SSLeay. Elles sont sûrement conservées pour la rétro-compatibilité avec des vieux logiciels utilisant SSLeay. La \verb+MS hack+ est spécifique à Windows.
 
 
 \subsection{Audit 5.2 : SSL version 3}
@@ -217,7 +217,7 @@ La version 3 du protocole SSL est décrite dans la RFC 6101 \cite{rfc6101}. On y
 
 \subsubsection{Implémentation}
 
-Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant pas \verb+s3_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl3.h+, on y retrouve les algorithmes de la RFC, référencés en table \ref{algosOpensslV3}.
+Dans le code d'OpenSSL, cette version du protocole SSL se trouve dans les fichiers commençant par \verb+s3_+ du répertoire \verb+ssl/+. Les constantes sont déclarées dans le fichier \verb+ssl3.h+, on y retrouve les algorithmes de la RFC, référencés en table \ref{algosOpensslV3}.
 
 \begin{table}[H]
 \centering
@@ -373,7 +373,7 @@ index 0ddfe19..c5df2cb 100644
 \subsection{Audit 5.3 : TLS version 1}
 \subsubsection{Spécifications}
 
-La version 1 de TLS est décrite dans la RFC 2246 \cite{rfc2246}. Ce protocole est assez similaire à SSL 3 mais il y a quelques différences notables. Il y est notamment prévu un mécanisme de rétro-compatibilité vers SSL 3. La plus grosse différence est que TLS, contrairement à SSL, permet de commencer une connexion non chiffré sur un port usuel tel que le 80 et bascule en mode chiffré avec la commande STARTTLS.
+La version 1 de TLS est décrite dans la RFC 2246 \cite{rfc2246}. Ce protocole est assez similaire à SSL 3 mais il y a quelques différences notables. Il y est notamment prévu un mécanisme de rétro-compatibilité vers SSL 3. La plus grosse différence est que TLS, contrairement à SSL, permet de commencer une connexion non chiffrée sur un port usuel tel que le 80 et bascule en mode chiffré avec la commande STARTTLS.
 
 Du point de vue des algorithmes de chiffrement, on a globalement la même liste que SSL 3 et les algorithmes de Fortezza ont été retirés, comme on peut le constater sur le tableau \ref{algosTLS1}.
 
@@ -554,13 +554,13 @@ La RFC 4162 \cite{rfc4162} ajoute l'algorithme de chiffrement SEED, dont la list
 Des extensions TLS du hello client sont décrites dans les RFC 3546 \cite{rfc3546}, 4366 \cite{rfc4366}, 4492 \cite{rfc4492} et 4507 \cite{rfc4507}:
 \begin{itemize}
 \item \textbf{Server Name Indication} : permet d'indiquer au serveur quel est le nom du serveur qu'il demande, cela est utilisé lorsqu'il y a plusieurs hôtes virtuels sur une même machine;
-\item \textbf{Maximum Fragment Length Negotiation} : sans cette extension, TLS spécifie une taille maximale fixe de fragment à $2^{14}$ octets. Cette extension permet aux clients d'adapter cette taille en fonction des limites de mémoire ou de bande passante. Valeurs autorisées : $2^9, 2^{10}, 2^{11}, 2^{12}$. Si la valeur n'est pas dans cette liste, le serveur doit interrompre la poignée de main.
-\item \textbf{Client Certificate URLs} : sans cette extension, TLS spécifie que lors l'authentification client, ce dernier doit envoyer son certificat pendant la poignée de main. Grâce à cette extension, le client peut économiser de l'espace disque en stoquant son certificat à une autre adresse
-\item \textbf{Trusted CA Indication} : indique les clefs de CA racines possède le client
-\item \textbf{Truncated HMAC} : permet de tronquer le code MAC à 10 octets pour économiser dela bande passante
-\item \textbf{Certificate Status Request} : indique que le client souhaite vérifier la validité du certificat du serveur avec une requête OCSP par exemple
-\item \textbf{Supported Elliptic Curves} : indique les courbes elliptiques supportées par le client
-\item \textbf{Session Ticket} : permet de rétablir une session précédente
+\item \textbf{Maximum Fragment Length Negotiation} : sans cette extension, TLS spécifie une taille maximale fixe de fragment à $2^{14}$ octets. Cette extension permet aux clients d'adapter cette taille en fonction des limites de mémoire ou de bande passante. Valeurs autorisées : $2^9, 2^{10}, 2^{11}, 2^{12}$. Si la valeur n'est pas dans cette liste, le serveur doit interrompre la poignée de main;
+\item \textbf{Client Certificate URLs} : sans cette extension, TLS spécifie que lors de l'authentification client, ce dernier doit envoyer son certificat pendant la poignée de main. Grâce à cette extension, le client peut économiser de l'espace disque en stoquant son certificat à une autre adresse;
+\item \textbf{Trusted CA Indication} : indique les clefs de CA racines possède le client;
+\item \textbf{Truncated HMAC} : permet de tronquer le code MAC à 10 octets pour économiser dela bande passante;
+\item \textbf{Certificate Status Request} : indique que le client souhaite vérifier la validité du certificat du serveur avec une requête OCSP par exemple;
+\item \textbf{Supported Elliptic Curves} : indique les courbes elliptiques supportées par le client;
+\item \textbf{Session Ticket} : permet de rétablir une session précédente.\\
 \end{itemize}
 
 \subsubsection{Implémentation}
@@ -653,7 +653,7 @@ La version 1.1 de TLS est spécifiée par la RFC 4346 \cite{rfc4346}. Différenc
 \begin{itemize}
 \item l'IV implicite est remplacé par une IV explicite (protection contre les attaques sur CBC : \url{http://www.openssl.org/~bodo/tls-cbc.txt});
 \item utilisation de l'alerte \verb+bad_record_mac+ plutôt que \verb+decryption_failed+ lors des erreurs de padding;
-\item les sessions fermées prématurément peuvent être reprises.
+\item les sessions fermées prématurément peuvent être reprises.\\
 \end{itemize}
 
 \paragraph{Algorithmes supplémentaires de la RFC 5054} 
@@ -713,7 +713,7 @@ On retrouve les constantes dans \verb+ssl/tls1.h+ :
 \subsubsection{Failles}
 \subsubsubsection{\label{CVE-2012-2333}CVE-2012-2333}
 
-Un integer underflow permettait de causer un déni de service dans les protocoles TLS 1.1, 1.2 et DTLS. Cette faille \cite{CVE20122333} a été publiée le 10 mai 2012 par Codenomicon et affecte les versions d'OpenSSL suivantes :
+Un \textit{integer underflow} permettait de causer un déni de service dans les protocoles TLS 1.1, 1.2 et DTLS. Cette faille \cite{CVE20122333} a été publiée le 10 mai 2012 par Codenomicon et affecte les versions d'OpenSSL suivantes :
 \begin{itemize}
 \item < 0.9.8x
 \item 1.0.0x < 1.0.0j
