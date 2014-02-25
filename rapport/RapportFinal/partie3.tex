@@ -1,19 +1,40 @@
 \chapter{Analyse dynamique}
 
 \section{Objectifs}
-L'objectif de ce projet consiste à étudier le comportement d'une machine cliente lorsqu'elle se connecte en SSL/TLS sur un serveur. Bien qu'à la base considéré comme optionnel, nous avons décidé de développer ce projet car nous avions de l'avance sur les parties précédentes. \\
+L'objectif de ce projet consiste à étudier le comportement d'une machine cliente lorsqu'elle se connecte sur un serveur HTTPS. Bien qu'à la base considérée comme optionnelle, nous avons décidé de développer cette partie du projet car nous avions de l'avance sur les parties précédentes et que l'analyse du code d'OpenSSL nous a donné des idées sur l'implémentation de cet outil. \\
 
-Nous avons codé un serveur permettant d'analyser les différentes \textit{ciphersuite} utilisées à l'établissement de connexion d'un client à un serveur, et d'établir un diagnostique sur la qualité des suites utilisées par le client. Pour rappel, une \textit{ciphersuite} est une combinaison de noms pour l'authentification, le chiffrement, et les algorithmes MAC utilisés pour négocier les paramètres de sécurité pour une connexion réseau par TLS (\textit{Transport Layer Security})/ SSL (\textit{Secure Sockets Layer}). La structure de ces suites est définie dans la RFC 5246 \cite{rfc5246} et fut également décrite dans le rapport d'audit d'OpenSSL (Chapitre 5, Protocoles SSL/TLS).\\
+Nous avons développé un serveur HTTPS permettant d'analyser les différentes \textit{ciphersuite} utilisées à l'établissement de connexion d'un client à un serveur, et d'établir un diagnostique sur la qualité des suites utilisées par le client. Pour rappel, une \textit{ciphersuite} est une combinaison de noms pour l'échange des clefs, l'authentification, le chiffrement, et les algorithmes MAC utilisés pour négocier les paramètres de sécurité pour une connexion réseau par TLS (\textit{Transport Layer Security})/ SSL (\textit{Secure Sockets Layer}). La structure de ces suites est définie dans la RFC 5246 \cite{rfc5246} et fut également décrite dans le rapport d'audit d'OpenSSL (Chapitre 5, Protocoles SSL/TLS).\\
 
 
 
 La figure \ref{systServer} illustre le système à mettre en place.
 \begin{figure}[H]
-	\begin{center}
-	\includegraphics[scale=0.2]{images/logo_univ.png}
-	\end{center}
-\caption{Système Client/Serveur d'analyse SSL/TLS}
-\label{systServer}
+\begin{center}
+\begin{tikzpicture}[remember picture]
+\begin{umlseqdiag} 
+\umlobject[class=Navigateur] {C};
+\umlobject[class=Serveur HTTPS,x=7] {S};
+
+\begin{umlcall}[dt=6,op={TCP connect},return={TCP accept},padding=4]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=6,op={SSL connect},return={SSL accept},padding=4]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=6,op={GET /site/analyze HTTP/1.0},return={code HTML}]{C}{S}
+
+\begin{umlcallself}[op={Récupérer version du protocole}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer support de la compression TLS}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer ciphersuite cliente}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer algorithmes de signature clients}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer courbes elliptiques clientes}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer support ticket TLS}]{S}\end{umlcallself} 
+
+\end{umlcall}
+
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+\caption{Schéma de l'analyse dynamique du navigateur client}
+	\label{systServer}
 \end{figure}
 
 
@@ -51,7 +72,7 @@ Si le client utilise une version \texttt{TLS 1.0} ou \texttt{SSLv3}, alors celui
 \subsubsection{Ciphersuites}
 Nous avons pu identifier toutes les \textit{ciphersuites} étant considérées comme peu sûres, à savoir :
 \begin{itemize}
-\item les \textit{ciphersuites} utilisant des clés de taille inférieure à 128 bits pour le chiffrement ;
+\item les \textit{ciphersuites} utilisant des clefs de taille inférieure à 128 bits pour le chiffrement ;
 \item les \textit{ciphersuites} ne spécifiant aucun chiffrement pour la connexion ; 
 \item les \textit{ciphersuites} sans authentification serveur, rendant l'attaque d'homme par le milieu possible ;
 \item autres \textit{ciphersuites} étant supposées arrêtées après SSL 3.0, ou dont les caractéristiques de sûreté ne sont pas connues.
@@ -59,7 +80,7 @@ Nous avons pu identifier toutes les \textit{ciphersuites} étant considérées c
 
 
 \subsubsection{Courbes elliptiques}
-La RFC 5430 \ref{rfc5430} décrit deux niveaux de sécurité pour les courbes elliptiques, les clés de 128 bits et le cles de 192 bits, référencés sur le tableau \ref{ciphsuiteSec}. 
+La RFC 5430 \ref{rfc5430} décrit deux niveaux de sécurité pour les courbes elliptiques, les clefs de 128 bits et le clesf de 192 bits, référencés sur le tableau \ref{ciphsuiteSec}. 
 
 \begin{table}[H]
 \centering
@@ -100,42 +121,21 @@ Les tickets de session permettent d'accélérer la reprise de communication chif
 
 
 \section{Implémentation}
-Le serveur fut développé en C et il implémente les méthodes suivantes :
+Pour la partie TCP, nous avons utilisé une bibliothèque écrite en Licence 3 et simplifiée pour notre utilisation : SocketTCP.
+
+Le serveur HTTPS a été développé en C et il implémente les méthodes suivantes :
 \begin{itemize}
-\item \verb+sigaction+
 \item \verb+get_version (SSL *ssl)+, qui retourne la version de connexion utilisée ; 
 \item \verb+get_ecc_list (SSL *ssl)+, qui retourne la liste des courbes elliptiques ; 
-\item \verb+get_cipher_suite_string(SSL_CIPHER *c)+, qui retourne un \textit{ciphersuite} à un état donné ; 
-\item \verb+get_cipher_suite_list(SSL *ssl)+, qui permet l'affichage de tous les \textit{ciphersuites} ; 
-\item \verb+get_sig_algs(SSL *ssl)+, qui renvoie les algorithmes de signature ; 
-\item \verb+get_analyze_page(SSL *ssl)+ qui permet l'affichage global de la page ;
-\item \verb+handle_connection(void * param)+  qui gère globalement la connexion entre le serveur et le client ;
-\item \verb+new_thread(SocketTCP *socket)+ .
+\item \verb+get_cipher_suite_string (SSL_CIPHER *c)+, qui retourne le texte associé à une \textit{ciphersuite} ; 
+\item \verb+get_cipher_suite_list (SSL *ssl)+, qui permet l'affichage de toutes les \textit{ciphersuites} ; 
+\item \verb+get_sig_algs (SSL *ssl)+, qui renvoie les algorithmes de signature ; 
+\item \verb+get_analyze_page (SSL *ssl)+ qui génère la réponse complète (en-tête et corps HTTP);
+\item \verb+handle_connection (void *param)+  qui gère la connexion entre le serveur et le client : gestion des ressources statiques (CSS, JS) et de l'appel à l'analyse dynamique (\verb+get_analyze_page+) ;
+\item \verb+new_thread (SocketTCP *socket)+ qui gère le lancement des threads pour chaque connexion.\\
 \end{itemize}
 
+Pour développer un tel serveur, il a simplement fallu s'appuyer sur un serveur HTTP basique puis rajouter la surcouche SSL dans \verb+handle_connection+ avec mise en place d'un contexte SSL et lecture/écriture chiffrée.\\
 
 
-
-
-\begin{figure}[H]
-\begin{center}
-\includegraphics[scale=0.2]{images/logo_univ.png}
-\end{center}
-\caption[Exemple 1]{Exemple de figure avec titre raccourci}
-\label{fig1}
-\end{figure}
-
-
-\begin{table}[H]
-\centering
-\begin{tabularx}{17cm}{|l|l|l|X|l|}
-\hline
-\textbf{Identifiant} & \textbf{KeyExch} & \textbf{Authn}& \textbf{Enc}& \textbf{MAC}\\
-\hline
-\verb+TLS_SRP_SHA_WITH_3DES_EDE_CBC_SHA+&SRP SHA1&SRP SHA1&3DES CBC&SHA1\\
-\hline
-\end{tabularx}
-\caption{Exemple tableau}
-\label{tableauEx}
-\end{table}
-
+Pour le rendu de la page, nous sommes restés consistant avec le site développé lors du sprint 2 et avons donc utilisé le bootstrapt twitter. De plus, il nous permet d'indiquer les niveaux de sécurité avec des badges colorés qui permettent d'identifier visuellement et rapidement les problèmes.
