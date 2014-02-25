@@ -1,0 +1,90 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel} 
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
+ \tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    %Define style for boxes
+    punkt/.style={
+           rectangle, dashed,
+           rounded corners,
+           draw=black, very thin,
+           minimum height=2em,
+           minimum width = 2cm,
+           text centered},
+    square/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height=.5cm,
+           text centered},
+    data/.style={
+           rectangle,
+           draw=black, thick,
+           minimum height= 2cm,
+           minimum width = 2cm,
+           text centered},
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick,
+           shorten <=1pt,
+           shorten >=1pt,},
+    asym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           red!100},
+    sym/.style={
+           <->,
+           thin,
+           shorten <=1pt,
+           shorten >=1pt,
+           blue!100}
+}
+\usepackage{pgfplots}
+\usepackage{eurosym}
+\usepackage{rotating}
+\usepackage{array}
+
+\usetheme{Antibes}
+\usecolortheme{beaver}
+\setbeamertemplate{sections/subsections in toc}[square]
+\setbeamertemplate{blocks}[square]%
+
+\author{Claire Smets -- William Boisseleau -- Pascal Edouard -- Mathieu Latimier -- Julien Legras}
+\title{Soutenance projet annuel - Audit des implantations SSL/TLS}
+\titlegraphic{\includegraphics[height=3em]{logo_univ.png}}
+\institute{Master 2 Sécurité des Systèmes Informatiques}
+
+\date{28/02/2014}
+
+\begin{document}
+{
+\setbeamertemplate{headline}[default] 
+\begin{frame}
+  \titlepage
+\end{frame}
+}
+
+%% <METTRE ICI LE NOM DU SPEAKER>
+\frame{
+\frametitle{Sommaire}
+\tableofcontents
+}
+
+\section{Présentation du projet}
+\frame{
+\frametitle{Présentation du projet}
+\begin{block}{Titre du bloc}
+	Contenu
+\end{block}
+}
+
+\end{document}
