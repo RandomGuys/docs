@@ -11,7 +11,7 @@ Enfin, avec tous les moduli que nous avons extraits, nous avons pu construire de
 
 \section{ZMAP}
 
-ZMAP est un outil permettant de faire des scans réseau.  Il est capable de scanner toutes les adresses IPv4 possibles, avec une moyenne de 1.4 millions de paquets envoyés par secondes sur les connexions à très haut débit. Nous l'avons utilisé pour scanner l'ensemble des adresses IPv4, en envoyant simplement des paquets SYN aux adresses visées sur le port 443 pour SSL.\\
+ZMAP est un outil permettant de faire des scans réseau.  Il est capable de scanner toutes les adresses IPv4 possibles, avec une moyenne de 1.4 millions de paquets envoyés par seconde sur les connexions à très haut débit. Nous l'avons utilisé pour scanner l'ensemble des adresses IPv4, en envoyant simplement des paquets SYN aux adresses visées sur le port 443 pour SSL.\\
 
 
 Pour l'installer sur nos machines, voici la procédure à suivre :
@@ -46,15 +46,15 @@ Une fois que l'on avait la liste d'adresses fournie par ZMAP, il nous restait à
 
 \subsection{Récupération des certification}
 
-Nous avons codé un scripts perl pour la récupération de certificats SSL (ssl\_collector.pl), suivant l'algorithme \ref{alg:recupCertif}.\\
+Nous avons codé un script perl pour la récupération de certificats SSL (ssl\_collector.pl), suivant l'algorithme \ref{alg:recupCertif}.\\
 
 
 \begin{algorithm}[H]
 \label{alg:recupCertif}
  %\SetAlgoLined % For previous releases [?]
- \Entree{Fichier f, contenant les adresse ayant le port 443 ouvert}
- \Sortie{Certificats et clé de session des adresses}
- \Donnees{log, certificat, clé de session}
+ \Entree{Fichier f, contenant les adresses ayant le port 443 ouvert}
+ \Sortie{Certificats et clef de session des adresses}
+ \Donnees{log, certificat, clef de session}
  
  \PourTous{adresses de f}{
 	Se connecter au serveur\;
@@ -63,12 +63,12 @@ Nous avons codé un scripts perl pour la récupération de certificats SSL (ssl\
 	 		on incrémente le nombre d'échecs de protocoles\;
 	 	}
 	 	\Si{le log contient \textit{handshake}}{
-	 		on incrémente le nombre d'échecs de poignée de main\;
+	 		on incrémente le nombre d'échecs de poignées de mains\;
 		}
 	}{
 	On capture la session (dont le certificat serveur)\;
 	\Si{!echec de capture de session}{
-		on extrait le certificat et la clé de session\;
+		on extrait le certificat et la clef de session\;
 	}	 
 	}
 }
@@ -168,7 +168,7 @@ Lors du scan nous avons récupéré 85 000 certificats uniques, mais nous avons 
 
 
 Le premier arbre se contente de multiplier l'ensemble des moduli par groupe de deux.
-Le second arbre calcule deux modulos du résultat produit, selon le carré des résulats stockés par l'arbre des produits (aux étapes intermédiaires).\\
+Le second arbre calcule deux moduli du résultat produit, selon le carré des résulats stockés par l'arbre des produits (aux étapes intermédiaires).\\
 
 
 Une fois le second arbre calculé, les dernières feuilles des arbres indiquent soit un $PGCD(\text{res\_final}, N_i ) = 1$ (donc avec des entiers premiers uniques), ou un $PGCD(\text{res\_final}, N_i ) = p$ (entier premier non unique).\\
@@ -236,14 +236,14 @@ Lors de nos tâches d'optimisation, nous avons réalisé qu'il était possible d
 
 
 L'algorithme est le même, seul le choix de la structure change.
-Dans la première méthode, nous utilisions des fichiers binaires GMP à chaque étape de construction, dans la  seconde nous stockons l'intégralité de l'arbre des produits en mémoire.\\
+Dans la première méthode, nous utilisions des fichiers binaires GMP à chaque étape de construction, dans la seconde nous stockons l'intégralité de l'arbre des produits en mémoire.\\
 
 
 Pour accélérer la construction de l'arbre, nous utilisons des \textit{threads}, qui parallélisent le traitement de chaque niveau d'arbre (sur la largeur de l'arbre).
 Nous avons tenté d'améliorer encore le procédé, en parallélisant le calcul sur la hauteur de l'arbre. Il s'est avéré que ce n'était pas aussi efficace à cause des dépendances entre les niveaux, nous avons donc abandonné cette partie.\\
 
 
-Nous allons dans cette partie expliciter les composantes principales implémentées en mémoire de l'algorithme de factorisation.  Nous développerons notamment la méthode \texttt{computeSuperSpeed}, qui prend en entrée un nom de fichier, contenant la liste des moduli. 
+Nous allons dans cette partie expliciter les composantes principales implémentées en mémoire de l'algorithme de factorisation. Nous développerons notamment la méthode \texttt{computeSuperSpeed}, qui prend en entrée un nom de fichier, contenant la liste des moduli. 
 
 
 \subsubsection{Initialisation}
@@ -271,9 +271,9 @@ Nous allons dans cette partie expliciter les composantes principales implément�
 
 Dans cette fraction de méthode, on initialise les différentes variables :
 \begin{itemize}
-	\item le fichier contenant les moduli au format binaire est chargé, dans le vecteur \texttt{v}. Le vecteur est une structure décrit par son nombre d'éléments et par une liste de \texttt{mpz\_t} ;
-	\item on calcule le nombre de niveaux à dérouler charger, considérant que l'arbre est binaire ;
-	\item on initialise enfin les vecteurs de la structure \texttt{product\_tree}. Il s'agit d'une structure représentant  l'arbre des produit, composée d'une hauteur d'arbre et d'une liste de vecteurs.
+	\item le fichier contenant les moduli au format binaire est chargé, dans le vecteur \texttt{v}. Le vecteur est une structure décrite par son nombre d'éléments et par une liste de \texttt{mpz\_t} ;
+	\item on calcule le nombre de niveaux à dérouler, considérant que l'arbre est binaire ;
+	\item on initialise enfin les vecteurs de la structure \texttt{product\_tree}. Il s'agit d'une structure représentant l'arbre des produits, composée d'une hauteur d'arbre et d'une liste de vecteurs.
 \end{itemize}
 
 
@@ -329,7 +329,7 @@ Nous avons pensé à intégrer des améliorations pour couper des branches inuti
 
 \end{lstlisting}
 
-Le calcul de l'arbre des restes se fait aussi efficacement. On récupère de l'arbre des restes le produit correspondant au niveau équivalent de celui de l'arbre des restes, produit que l'on élève au carré. On effectue ensuite le calcul modulaire requis suivant l'algorithme. On remarque également le \textit{multi-threading} effectué. Durant ce calcul, on ne conserve en mémoire que le niveau $j$ et $j-1$ de l'arbre des restes, afin de ne pas surcharger la mémoire. \\
+Le calcul de l'arbre des restes se fait aussi efficacement. On récupère de l'arbre des restes, le produit correspondant au niveau équivalent de celui de l'arbre des restes, produit que l'on élève au carré. On effectue ensuite le calcul modulaire requis suivant l'algorithme. On remarque également le \textit{multi-threading} effectué. Durant ce calcul, on ne conserve en mémoire que le niveau $j$ et $j-1$ de l'arbre des restes, afin de ne pas surcharger la mémoire. \\
 
 
 
@@ -463,12 +463,12 @@ En comparant avec les résultats du projet \textit{factorable} de l'Université 
 Pour la suite de l'analyse des résultats, nous nous sommes focalisés sur le scan Sonar.
 
 \subsection{Entropie}
-Le graphe suivant représente le pourcentage d'entropie des 757 facteurs premiers trouvés. Ce niveau d'entropie a été calculé selon l'entropie de Shannon (représentation binaire des clefs). Nous nous sommes basés sur la bibliothèque \verb+libdisorder+ (\url{http://libdisorder.freshdefense.net/}) qui fournit un programme de tests. Ce dernier a été modifié pour nos besoins et pour pouvoir injecter les résultats dans gnuplot pour obtenir le graphe suivant :
+Le graphe suivant représente le pourcentage d'entropie des 757 facteurs premiers trouvés. Ce niveau d'entropie a été calculé selon l'entropie de Shannon (représentation binaire des clefs). Nous nous sommes basés sur la bibliothèque \verb+libdisorder+ (\url{http://libdisorder.freshdefense.net/}) qui fournit un programme de tests. Ce dernier a été modifié pour nos besoins et pour pouvoir injecter les résultats dans \texttt{gnuplot} pour obtenir le graphe suivant :
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=16cm]{images/entropyprimes.eps}
-\caption[Entropie moyenne]{Entropie moyenne des facteurs communs : 0.998518 - Entropie moyenne des second facteurs : 0.998551}
+\caption[Entropie moyenne]{Entropie moyenne des facteurs communs : 0.998518 - Entropie moyenne des seconds facteurs : 0.998551}
 \label{entropiePrime}
 \end{figure}
 
