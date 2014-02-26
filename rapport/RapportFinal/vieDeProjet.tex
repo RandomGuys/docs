@@ -132,22 +132,77 @@ Nous avons choisi de réaliser l'ensemble de nos documents (comptes-rendus, rapp
 
 Les éditeurs/compilateurs de LaTeX sont nombreux, nous avons opté pour deux d'entres eux : Gummi et TexMaker.
 
-\section{Ressources de tests}
+\section{Tests}
 
 Pour nos tests nous avons eu besoin de quelques outils que nous détaillons ci-dessous.
 
-\subsection{Netkit}
+\subsection{Ressources de Tests}
+\subsubsection{Netkit}
 
 Netkit est un environnement permettant de configurer et de tester un réseau virtuel rapidement et sans grandes ressources.\\
 Lors des procédures de tests de la première partie, nous voulions générer un petit réseau comportant toutes les configurations possibles rencontrables lors du scan, de la récupération de certificats et de la post-récupération (extraction de données, gestion des doublons, liens symboliques, etc...).\\
 Nous avons donc décidé de réaliser ce petit réseau à l'aide de l'outil Netkit.
 
-\subsection{Pencil}
+\subsubsection{Pencil}
 
 Pencil est un logiciel de création de maquettes typographiques libre et gratuit développé par Evolution Solutions.
 Nous nous sommes servis de ce logiciel afin de réaliser les maquettes des pages web attendues pour chacune des trois parties.\\
 Le rendu final n'est pas exactement celui des maquettes car nous avons également utilisé plusieurs frameworks pour améliorer la qualité graphique (i.e. HighCharts, BootStraps), mais le contenu et la disposition est sensiblement la même.
 Ces tests nous ont permis de partir sur une base commune.
+
+\subsection{Procédures de tests}
+
+Pour la configuration du réseau minimaliste, possédant différentes configurations que nous pourrons rencontrer lors du scan, puis de la récupération du certificat, les différentes configurations sont les suivantes :
+\begin{itemize}
+\item une machine avec un certificat SSL présent et valide
+\item une machine avec un certificat SSL présent et révoqué
+\item une machine avec un certificat SSL modifié (donc incorrect)
+\item une machine avec un certificat SSL présent et valide mais doublé
+\item une machine avec un certificat SSL présent et valide, mais tournant sur un autre port que 443
+\item une machine avec un certificat SSL présent et valide avec changement de configuration (tests sur la 1e machine - SSLCiphers, SSLProtocols, ...)
+\end{itemize}
+
+Pour créer un certificat d'autorité SSL :
+\begin{itemize}
+\item On génère un couple clé privée, clé publique RSA de 1024 bits\\
+\begin{verbatim}
+openssl genrsa 1024 > cert.key
+\end{verbatim}
+\item On créer un certificat auto-signé (peu nous importe la nature du certificat ici) - ce sera notre certificat racine\\
+\begin{verbatim}
+openssl req -new -x509 -days 365 -key cert.key > cert.crt
+\end{verbatim}
+\item Ensuite, on fait une demande de certificat auprès du certificat autorité\\
+\begin{verbatim}
+openssl req -new -key test.key > test.csr
+\end{verbatim}
+\item Enfin, on peut signer ce dernier avec notre certificat racine\\
+\begin{verbatim}
+openssl x509 -req -in test.csr -out test.crt -CA cert.crt -CAkey cert.key -CAcreateserial -CAserial cert.srl
+\end{verbatim}
+\end{itemize}
+
+Pour révoquer un certificat :
+\begin{itemize}
+\item 
+\begin{verbatim}
+openssl ca -revoke test.crt -cert test.crt -keyfile test.key -config openssl.cnf
+\end{verbatim}
+\item 
+\begin{verbatim}
+openssl ca -gencrl -config openssl.cnf -crldays 7 -out listcrl.crl
+\end{verbatim}
+\end{itemize}
+
+Il ne faut pas oublier de concaténer les certificats, il sera nécessaire dans la configuration de notre serveur web :
+\begin{itemize}
+\item 
+\begin{verbatim}
+cat test.crt cert.crt > concatcert.crt
+\end{verbatim}
+\end{itemize}
+
+Pour ce qui est de la preuve de F, nous avons un jeu de tests avec des arbres comportant un nombre de nœuds impairs ou pairs, et comportant des nombres premiers communs ou non.
 
 \section{Ressources techniques}
 
