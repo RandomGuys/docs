@@ -98,14 +98,57 @@
 \subsection{Récupération}
 \subsubsection{Adresses}
 \frame{
-    \frametitle{Récupération des adresses}
-
+    \frametitle{Récupération des adresses 1}
+    	\begin{block}{ZMAP}
+	\begin{itemize}
+		\item open source ;
+		\item outil de scan réseau ;
+		\item adresses IPv4 ;
+		\item paquets SYN sur le port 443.\\
+	\end{itemize}
+	\end{block}
 }
 
 \subsubsection{Certificats}
-\frame{
-    \frametitle{Récupération des certificats}
+\frame	{
+    \frametitle{Récupération des certificats 1}
     %% Certificats + clefs
+    \begin{block}{Application Récupération de Certificats}
+	\begin{itemize}
+		\item script perl ;
+		\item certificats SSL ;
+		\item stocker l'ensemble des empreintes dans un dossier : 
+		\begin{itemize}
+			\item certificats ;
+			\item clefs de session.\\
+		\end{itemize}	
+	\end{itemize}
+	\end{block}
+}
+
+\frame{
+    \frametitle{Récupération des certificats 2}
+    	\begin{block}{Algorithme}
+		algo de récupération des certificats	
+	\end{block}
+}
+
+\frame{
+    \frametitle{Gestion des doublons 1}
+	\begin{block}{Gestion des doublons}
+	\begin{itemize}
+		\item script perl ;
+		\item si une empreinte de trouve déjà dans le dossier : on la stocke dans un autre dossier, celui des doublons ;
+		\item liens symboliques.\\
+	\end{itemize}
+	\end{block}	
+}
+
+\frame{
+    \frametitle{Gestion des doublons 2}
+	\begin{block}{Algorithme gestion des doublons}
+		algo de gestion des doublons
+	\end{block}	
 }
 
 %% 5 MIN
@@ -133,7 +176,23 @@
 \frame{
 %% 1 MIN -- CLAIRE
 \frametitle{Introduction}
-
+	\begin{block}{Contexte}
+	\begin{itemize}
+		\item récent scandal sur la NSA ;
+		\item beaucoup d'outils utilisés. \\
+	\end{itemize}
+	Mais à qui peut-on faire confiance?
+	\end{block}
+	\begin{block}{Audit d'OpenSSL}
+		Cinq grands axes : 
+		\begin{itemize}
+			\item l'entropie ;
+			\item la génération des clefs ;
+			\item le chiffrement et les protocoles ;
+			\item les signatures et les authentifications ;
+			\item les protocoles SSL et TLS.\\
+		\end{description}
+	\end{block}
 }
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Entropie}
