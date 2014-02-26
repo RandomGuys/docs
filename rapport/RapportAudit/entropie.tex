@@ -167,9 +167,9 @@ et en sortie :
 			
 			Désormais, la taille de la \textit{pool} est hardcodée dans le noyau Linux (\texttt{/drivers/char/random.c:275})\\
 			
-			Linux offre également la possibilité de récupérer de l'aléatoire depuis un RNG matériel avec la fonction \texttt{get\_random\_bytes\_arch}\\
-		
-			Un patch est également disponible afin de générer de l'aléatoire avec un débit de 100kB/s \cite{mueller2013rng}. L'entropie est récupérée par le \textit{CPU timing jitter}.\\
+			Linux offre également la possibilité de récupérer de l'aléatoire depuis un RNG matériel avec la fonction \texttt{get\_random\_bytes\_arch}. Un patch est également disponible afin de générer de l'aléatoire avec un débit de 100kB/s \cite{mueller2013rng}. L'entropie est récupérée par le \textit{CPU timing jitter}.\\
+			Enfin, il est possible d'utiliser des outils externes générateurs d'entropie, tel que \textit{Havege} \cite{havege}.
+			
 			
 		\subsubsubsection{Sous Windows}
 		
