@@ -235,16 +235,41 @@ Le python et le C++ étaient également de très bons choix, mais les développe
 
 \subsection{Langages de scripts : Bash et Perl}
 
-\subsection{IDE : Eclipse}
+Nous avons opté également pour du développement de scripts pour des algorithmes peu complexes nécessitant plusieurs appels systèmes, surtout pour les commandes OpenSSL (extraction de moduli dans un certificat, connexion au serveur, récupération de champs dans un ensemble X509).\\
+L'avantage des scripts est qu'ils sont facilement modifiables. On pouvait donc les réarranger pour les réutiliser à d'autres fins.
+
+\subsection{IDE : Eclipse pour C}
+
+Eclipse est un environnement de développement et gestionnaire de projets pouvant supporter plusieurs langages de développement comme le Java, l'Android, le C, le C++, etc...\\
+Nous avons utilisé cet éditeur afin de mieux lire le code d'OpenSSL et d'identifier les failles à l'aide des différents commits de l'équipe OpenSSL. Nous l'avons également utilisé pour la troisième partie du projet.
 
 \section{IHM}
 
-\subsection{Langage Web : HTML5, CSS, PHP, Javascript, AjaX, JQuery}
+\subsection{Site Web}
 
-\subsection{Design avec BootStrap}
+Nous avons établit un site web local afin de regrouper tout nos résultats sur une interface que nous pourrons offrir au client. Les trois parties sont certes indépendantes, mais elles se complètent parfaitement afin de mieux comprendre la sécurité actuelle de l'Internet, des protocoles SSL/TLS et du logiciel de génération de clés cryptographiques le plus répandu : OpenSSL.\\
+L'ensemble du site web repose sur le framework \textbf{BootStrap}.\\
+
+Sur le premier onglet nous avons réaliser des études statistiques sur les certificats SSL récupérés (certificats contenant des facteurs communs à d'autres certificats, regroupement par \textit{issuer}, recherche utilisateur, tri par taille de clés, etc...).\\
+Les certificats sont stockés en base \textbf{MySQL}, et les graphiques sont générés via le framework \textbf{HighCharts}.\\
+
+Sur le second onglet nous listons quelques primitives cryptographiques d'OpenSSL à auditer. Nous avons intégré deux modes un en écriture et un en lecture seule, et chaque élément de cette page est enregistré dans notre base de données.\\
+
+Enfin, sur le dernier onglet, nous étudions la sécurité du navigateur client en affichant les algorithmes de chiffrement, les algorithmes de signatures, les méthodes de compressions, les versions de protocoles, les courbes elliptiques et les tickets de sessions. Un code couleur est également défini afin d'identifier les \textit{ciphersuites} faibles (Jaune), critiques (Rouge) et fortes (Verte).
 
 \subsection{Doxygen}
 
-\subsection{Base de donnée : MySQL}
+Doxygen est un générateur de documentation sous licence libre capable de produire une documentation logicielle à partir du code source d'un programme. Il supporte entre autres le langage C qui est le langage de développement utilisé par OpenSSL. Nous avons décidé de rediriger le code source d'OpenSSL sous Doxygen pour faciliter sa compréhension, et pouvoir analyser plus facilement l'arborescence de la fonction.\\
+La fonction de recherche de code de Doxygen nous a également fait gagner du temps, notamment sur le choix des primitives cryptographiques à étudier et l'identification de vulnérabilités.\\
 
 \section{Gestion des risques}
+
+Durant ces six semaines, nous avons été confrontés à deux risques que nous avions listés dans le document d'analyse des risques.
+\begin{itemize}
+\item Nous avons eu régulièrement des absences occasionnelles, en grande partie à cause des entretiens pour nos stages, mais aussi pour des problèmes d'administration, de cours, maladies, empêchements.
+\item Nous n'avons pas pu récupérer les adresses IP des serveurs SSH, le scan de port SSH étant interdit nous avons reçu une plainte d'Amazon, et nous avons décidé avec l'accord du client d'abandonner cette partie.\\
+\end{itemize}
+
+Pour le premier point, nous avons bien suivi le plan d'action, en partant sur une base de travail de 8h par jour, et en rattrapant le retard accumulé si possible en semaine ou le samedi. Notre bonne organisation nous a permis de ne pas accumuler de retard, et de pouvoir prendre rapidement la tâche d'un autre en cas d'absence prolongée.\\
+
+Aucun autre risque identifié n'est survenu durant le projet.
