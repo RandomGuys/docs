@@ -20,7 +20,7 @@ L'entropie est la base pour générer des nombres pseudo-aléatoire. Elle joue d
 	\item [une batterie de tests : ] elle fait partie également intégrante du système. Des tests sont réalisés pour déterminer l’état de santé du générateur aléatoire, permettant de s’assurer que la source d’entropie fonctionne comme attendu.\\
 \end{description}
 
-Plusieurs standards parlent de l'entropie, dont principalement la RFC 4086 et le FIPS 140. Mais malgré les recommandations, quelques failles ont été trouvées. Pour plus d'informations, nous vous invitons à aller consulter le rapport d'audit.
+Plusieurs standards parlent de l'entropie, dont principalement la RFC 4086 \ref{rfc4086} et le FIPS 140 \ref{fips140-1} \ref{fips140-2}. Mais malgré les recommandations, quelques failles ont été trouvées. Pour plus d'informations, nous vous invitons à aller consulter le rapport d'audit.
 
 \subsection{Génération des clefs}
 
@@ -48,7 +48,7 @@ De nombreux protocoles de chiffrement existent :
 \end{itemize}
 
 RSA étant l'un des algorithmes les plus utilisés en cryptographie asymétrique, et le temps nous ayant été limité, nous nous sommes concentrés dessus.\\
-Cependant, RSA seul n'est plus d'une sécurité absolue. Il est combiné à OAEP, qui constitue une sorte de prétraitement à RSA lui même. Nous parlons de RSA-OAEP. Grâce à OAEP, un padding est rajouté avant l'application de RSA. La norme princiaple qui se charge des recommandations sur RSA est la PKCS\#1, qui a aussi le nom de RFC 3447.
+Cependant, RSA seul n'est plus d'une sécurité absolue. Il est combiné à OAEP, qui constitue une sorte de prétraitement à RSA lui même. Nous parlons de RSA-OAEP. Grâce à OAEP, un padding est rajouté avant l'application de RSA. La norme princiaple qui se charge des recommandations sur RSA est la PKCS\#1, qui a aussi le nom de RFC 3447 \ref{rfc3447} \ref{rfc3447_trad}.
 Plusieurs failles ont été trouvées et suite à ces découvertes, des recommandations ont été faites. Pour de plus amples informations nous vous invitons à parcourir le rapport d'audit.
 
 \subsection{Signature et chiffrement}
@@ -61,7 +61,7 @@ La signature électronique est de plus en plus utilisée de nos jours, de façon
 \label{digital sig}
 \end{figure}
 
-La RFC 3447 apporte aussi des recommandations à ce propos, ainsi que la RFC R979. Pour consulter les principales failles que nous avons trouvées à ce sujet, nous vous invitons à aller consulter le rapport d'audit.
+La RFC 3447 \ref{rfc3447} \ref{rfc3447_trad} apporte aussi des recommandations à ce propos, ainsi que la RFC 979 \ref{rfc979}. Pour consulter les principales failles que nous avons trouvées à ce sujet, nous vous invitons à aller consulter le rapport d'audit.
 
 \subsection{Protocole SSL/TLS}
 SSL et TLS (successeur de SSL) sont des protocoles de sécurisation des échanges sur internet. Les versions 2 et 3 de SSL ont été développées par Netscape puis le brevet a été racheté par l’IETF en 2001 qui a publié une évolution de ce protocole en TLS. Ce protocole fonctionne selon un mode client-serveur et fournit les objectifs de sécurité suivants :
