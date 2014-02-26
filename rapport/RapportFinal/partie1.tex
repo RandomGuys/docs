@@ -44,36 +44,122 @@ Il y a plusieurs options disponibles, nous avons utilisé la commande suivante p
 
 Une fois que l'on avait la liste d'adresses fournie par ZMAP, il nous restait à récupérer les certificats sur les serveurs dont le port HTTPS était ouvert, en établissant une connexion sur chacun d'eux.\\
 
+\subsection{Récupération des certification}
 
-Pour cela nous avons écrit deux scripts Perl, un pour la récupération de certificat SSH (que nous n'avons pas testé à cause de l'avertissement reçu), et un autre pour la récupération de certificats SSL (\verb+ssl_collector.pl+).
+Nous avons codé un scripts perl pour la récupération de certificats SSL (ssl\_collector.pl), suivant l'algorithme \ref{alg:recupCertif}.\\
+
+
+\begin{algorithm}[H]
+\label{alg:recupCertif}
+ %\SetAlgoLined % For previous releases [?]
+ \Entree{Fichier f, contenant les adresse ayant le port 443 ouvert}
+ \Sortie{Certificats et clé de session des adresses}
+ \Donnees{log, certificat, clé de session}
+ 
+ \PourTous{adresses de f}{
+	Se connecter au serveur\;
+	\eSi{echec}{
+		\Si{le log contient \textit{protocol}}{
+	 		on incrémente le nombre d'échecs de protocoles\;
+	 	}
+	 	\Si{le log contient \textit{handshake}}{
+	 		on incrémente le nombre d'échecs de poignée de main\;
+		}
+	}{
+	On capture la session (dont le certificat serveur)\;
+	\Si{!echec de capture de session}{
+		on extrait le certificat et la clé de session\;
+	}	 
+	}
+}
+
+\Retour{certificats et clés de session}
+\caption{Récupération des certificats} 
+\end{algorithm}
+\vspace{0.7cm}
+
 
 Commandes OpenSSL utilisées :
 \begin{itemize}
-\item pour l'établissement de la connexion (avec \verb+s_client+) :
-
+\item pour l'établissement de la connexion (avec s\_client) :
 \begin{verbatim}
-echo  \" \" | timeout 20 openssl s_client -connect $addr:443 -sess_out tmp_$addr.pem 
+$ echo  \" \" | timeout 20 openssl s_client -connect $addr:443 -sess_out tmp_$addr.pem 
 -ignore_critical -showcerts -CApath /etc/ssl/certs > /dev/null 2> tmp_$addr.log
 \end{verbatim}
+
 \item  pour la capture de session (avec sess\_id) :
 \begin{verbatim}
-openssl sess_id -in tmp_$addr.pem -cert > certs/$addr.pem 2> tmp_$addr.log
+$ openssl sess_id -in tmp_$addr.pem -cert > certs/$addr.pem 2> tmp_$addr.log
 \end{verbatim}
+
 \item pour la récupération du certificat et de la clé privée :
 \begin{verbatim}
-openssl x509 -in certs/$addr.pem -noout -pubkey > keys/$addr.pem 2> tmp_$addr.log
+$ openssl x509 -in certs/$addr.pem -noout -pubkey > keys/$addr.pem 2> tmp_$addr.log
 \end{verbatim}
 \end{itemize}
 
-Pour ce qui est de la gestion des doublons, nous avons également écrit un autre script Perl (\verb+clean.pl+).
 
-La chaîne d'utilisation est donc la suivante :
-\begin{verbatim}
-~ $ ./ssl_collector ips.txt
-~ $ ./clean.pl
+\subsection{Gestion des doublons}
+
+Pour ce qui est de la gestion des doublons, nous avons également créé un autre script perl (\texttt{clean.pl}). Le concept est simple, nous allons stocker l'ensemble des empreintes des certificats dans un dossier spécifique (certs\_doublons). Si une empreinte se trouve déjà dans le dossier, on la stocke dans un autre dossier contenant les doublons (à l'aide de comparaisons sur les liens symboliques).\\
+
+
+\begin{algorithm}[H]
+\label{alg:clean}
+ %\SetAlgoLined % For previous releases [?]
+ \Entree{Pré-requis : Exécution de l'algorithme ssl\_collector \\
+ Création d'un dossier D contenant les certificats à traiter}
+ \Sortie{Dossiers : certs\_doublons, certs\_links; Fichier : moduli}
+ \Donnees{Certificats C; Fingerprint F; Chaîne de caractères S; Modulo M}
+ certs\_doublons $\leftarrow$ dossier\_vide\;
+ certs\_links $\leftarrow$ dossier\_vide\;
+ moduli $\leftarrow$ fichier\_vide\;
+ \PourTous{C $\in$ D}{
+ 	F $\leftarrow$ \textit{fingerprint}(C)\;
+ 	S $\leftarrow$ \textit{nom\_fichier}(C)\;
+ 	M $\leftarrow$ \textit{modulo}(C)\;
+ 	\Si{échec(F)}{
+ 		continue\;
+ 	}
+ 	\eSi{F $\in$ certs\_links}{
+ 		certs\_doublons/F $\leftarrow$ concat(certs\_doublons/F, S)\;
+ 	}{
+ 		moduli $\leftarrow$ concat(moduli, M)\;
+ 		certs\_links $\leftarrow$ F\;
+ 	}
+ }
+ \caption{Gestion des doublons} 
+\end{algorithm}
+\vspace{0.7cm}
+
+Commandes OpenSSL utilisées :
+\begin{itemize}
+\item pour la récupération du \textit{fingerprint} :
+\begin{verbatim} 
+$ openssl x509 -noout -in $file -modulus 2> /dev/null | cut -d'=' -f2 |
+ sha512sum | cut -d' ' -f1 2> /dev/null 
 \end{verbatim}
 
+\item pour savoir le \textit{fingerprint} se trouve dans \textit{certs\_links} :
+\begin{verbatim} 
+$ ls -l certs_links | grep $hash 2> /dev/null
+\end{verbatim}
+
+\item pour ajouter le modulo dans le fichier \textit{moduli} :
+\begin{verbatim} 
+$ openssl x509 -noout -in $file -modulus 2> /dev/null | cut -d'=' -f2 >> moduli 
+\end{verbatim}
+
+\item Pour créer un lien symbolique dans \textit{certs\_links}
+\begin{verbatim} 
+$ ln -s ../$file certs_links/$hash > /dev/null 2> /dev/null
+\end{verbatim}
+\end{itemize}
+
+
 \section{Factorisation}
+
+
 
 \subsection{Algorithmes}
 
@@ -82,11 +168,14 @@ Lors du scan nous avons récupéré 85 000 certificats uniques, mais nous avons 
 
 
 Le premier arbre se contente de multiplier l'ensemble des moduli par groupe de deux.
-Le second arbre calcule deux modulos du résultat produit, selon le carré des résulats stockés par l'arbre des produits (aux étapes intermédiaires) :
+Le second arbre calcule deux modulos du résultat produit, selon le carré des résulats stockés par l'arbre des produits (aux étapes intermédiaires).\\
 
-Une fois le second arbre calculé, les dernières feuilles des arbres indiquent soit un $PGCD(\text{res\_final}, N_i ) = 1$ (donc avec des entiers premiers uniques), ou un $PGCD(\text{res\_final}, N_i ) = p$ (entier premier non unique).
 
-Voici les algorithmes de ces deux arbres :
+Une fois le second arbre calculé, les dernières feuilles des arbres indiquent soit un $PGCD(\text{res\_final}, N_i ) = 1$ (donc avec des entiers premiers uniques), ou un $PGCD(\text{res\_final}, N_i ) = p$ (entier premier non unique).\\
+
+
+Voici les algorithmes de ces deux arbres :\\
+
 
 \begin{algorithm}[H]
 \label{alg:productTree}
