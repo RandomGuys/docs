@@ -2,23 +2,23 @@
 
 \section{Objectifs}
 
-Le site web fut principalement un moyen de présenter, de façon graphique, le résultat des différentes partie abordées durant ce projet. Pour la première partie, il consistait à afficher, grâce à l'utilisation des diagrammes, les statistiques de notre étude sur les certificats. La deuxième partie tourne plus autour de l'audit. Nous avons souhaité présenter un résumé de notre rapport d'audit, qui a était livré lors de la deuxième livraison. Enfin, notre site fut aussi une plate-forme pour l'intégration de la troisième partie du projet qui consiste à tester la navigateur client. \\
+Le site web fut principalement un moyen de présenter, de façon graphique, le résultat des différentes parties abordées durant ce projet. Pour la première partie, il consistait à afficher, grâce à l'utilisation des diagrammes, les statistiques de notre étude sur les certificats. Pour la deuxième partie, nous avons souhaité présenter le rapport d'audit au format HTML, celui-ci a également été livré lors de la deuxième livraison au format LaTeX. Enfin, notre site fut aussi une plate-forme pour l'intégration de la troisième partie du projet qui consiste à tester le navigateur du client. \\
 
 
 \section{Statistiques}
 
-Après certaine recherche, nous nous sommes mis d'accord sur l'utilisation de l'application javascript \textit{Highcharts} pour la représentation des différents diagrammes sur le site. L'utilisation reste simple et varier. Il fut possible de l'utiliser de 3 façon différentes : 
+Après quelques recherches, nous nous sommes mis d'accord sur l'utilisation de l'application javascript \textit{Highcharts} pour la représentation des différents diagrammes sur le site. L'utilisation est simple et varié, nous l'avons utilisé de trois façons différentes : 
 \begin{itemize}
-\item \textbf{Statique} : données sont récupérées directement depuis un tableau HTML;
-\item \textbf{Dynamique} : données sont récupérer depuis la base de données;
-\item \textbf{AJAX} : données sont récupérer par des appels AJAX\\
+\item \textbf{Statique} : données sont récupérées directement depuis un tableau HTML ;
+\item \textbf{Dynamique} : données sont récupérées depuis la base de données ;
+\item \textbf{AJAX} : données sont récupérées par des appels AJAX.\\
 \end{itemize}
 
-Chaque diagrammes possèdent une fonctionnalité \textit{tooltip} qui offre plus d'information sur les données représenter. Il est actionné lors du passage de la souris sur une part du cadre du diagramme circulaire (voir figure \ref{taille_clefs})
+Chaque diagramme possède une fonctionnalité \textit{tooltip} qui offre plus d'informations sur les données représentées. Il est actionné lors du passage de la souris sur une part du cadre du diagramme circulaire (cf. figure \ref{taille_clefs})
 
 \subsection{Statistiques Générales}
 
-Nous avons souhaité faire une comparaison entre les deux scans réaliser durant le développement de la première partie du projet. De ce fait, nous présentons sur un même diagramme la proportion des certificats récupérer et les certificats qui y sont vulnérables pour le premier et deuxième scan. On y affiche également un tableau contenant, en chiffres, les valeurs du diagramme ainsi que le pourcentage des certificats vulnérables par rapport au certificats récupérés.
+Nous avons souhaité faire une comparaison entre les deux scans réalisés durant le développement de la première partie du projet. De ce fait, nous présentons sur un même diagramme la proportion des certificats récupérés et ceux qui sont vulnérables pour le premier et deuxième scan. On y affiche également un tableau contenant, en chiffres, les valeurs du diagramme ainsi que le pourcentage de certificats vulnérables sur l'ensemble récupéré.
 
 \begin{figure}[H]
 \begin{center}
@@ -30,7 +30,7 @@ Nous avons souhaité faire une comparaison entre les deux scans réaliser durant
 
 \subsection{Taille des clefs}
 
-On représente ici, avec un diagramme circulaire, les tailles des clefs des certificats récupérés. De tout les certificats se trouvant sur notre base de données, on identifie ceux possédant une taille de clef commençant de 512o à 16384o.
+On représente ici, avec un diagramme circulaire, les tailles des clefs des certificats récupérés. De tout les certificats se trouvant sur notre base de données, on identifie ceux possédant une taille de clef allant de 512 octets à 16.384 octets.
 
 \begin{figure}[H]
 \begin{center}
@@ -42,7 +42,7 @@ On représente ici, avec un diagramme circulaire, les tailles des clefs des cert
 
 \subsection{Les émetteurs}
 
-Cette partie concerne plutôt un tableau représentatif de tout les émetteurs se trouvant sur notre base de données. On y récupère aussi, par deux requêtes SQL le nombre total de certificats qui possèdent chaque émetteur ainsi que le nombre de certificats qui y sont vulnérables.
+Cette partie représente un tableau de tout les émetteurs se trouvant sur notre base de données. On y récupère aussi, à l'aide de deux requêtes SQL, le nombre total de certificats que possède chacun des émetteur ainsi que le nombre de certificats vulnérables.
 
 \begin{figure}[H]
 \begin{center}
@@ -54,11 +54,11 @@ Cette partie concerne plutôt un tableau représentatif de tout les émetteurs s
 
 \subsection{Onglet de recherche}
 
-Nous avons également intégré un outil de recherche de certificats. L'utilisateur peut faire des recherches en se basant sur les trois critères suivantes :
+Nous avons également intégré une barre de recherches. L'utilisateur peut ainsi faire une recherche avancée, en choisissant parmi les critères suivants :
 \begin{itemize}
-\item Le sujet (\textit{subject}) se trouvant sur le certificat,
-\item L'émetteur (\textit{issuer}),
-\item et la taille de la clef\\
+\item Le sujet (\textit{subject} ;
+\item L'émetteur (\textit{issuer}) ;
+\item La taille de la clef.\\
 \end{itemize}
 
 \begin{figure}[H]
@@ -69,7 +69,7 @@ Nous avons également intégré un outil de recherche de certificats. L'utilisat
 \label{search_bar}
 \end{figure}
 
-La requête est envoyé sur le serveur par un appel en AJAX et le résultat est affiché avec un diagramme circulaire en représentant le nombre total de certificats retrouvés en base et le nombre de certificats vulnérables.
+La requête est envoyée sur le serveur via un appel en AJaX. Le résultat est alors affiché, avec un diagramme circulaire, pour représenter le nombre total de certificats et de certificats vulnérables contenus dans la base.
 
 \begin{figure}[H]
 \begin{center}
@@ -82,17 +82,17 @@ La requête est envoyé sur le serveur par un appel en AJAX et le résultat est 
  
 \section{Résumé d'audit}
 
-Nous souhaitions, pour cette partie, intégrer le rapport d'Audit directement sur le site web. De ce fait, nous avons utilisé un outil de conversion de fichier \textit{tex} dans un dossier de fichiers \textit{html} que nous avons ensuite rejoins dans le dossier racine de notre site. Afin de garder la même mise en forme des pages web du site, nous avons modifié les différentes balises en y rajoutant les styles nécessaires.
+Nous souhaitions, pour cette partie, intégrer le rapport d'audit directement sur le site web. De ce fait, nous avons utilisé un outil de conversion de fichier \textit{TeX} dans un dossier de fichiers \textit{HTML} que nous avons ensuite rejoins dans le dossier racine de notre site. Afin de garder la même mise en forme des pages web du site, nous avons modifié les différentes balises en y rajoutant les styles nécessaires.
 
 
 \section{Test Navigateur Client}
 
-Cette partie intègre l'outil permettant d'analyser les différentes \textit{ciphersuite} utilisées à l'établissement de connexion d'un client à un serveur, comme expliqué au chapitre \ref{analyseDynamique}. La page est divisé en 4 sections :
+Cette partie intègre l'outil permettant d'analyser les différentes \textit{ciphersuite} utilisées à l'établissement de connexion entre un client et un serveur, comme expliqué au chapitre \ref{analyseDynamique}. La page est divisé en 4 sections :
 \begin{itemize}
-\item Version et Algorithmes de chiffrement supportées
-\item Algorithmes de signatures,
-\item Courbes elliptiques
-\item Légende\\
+\item Version et Algorithmes de chiffrements supportés ;
+\item Algorithmes de signatures supportés ;
+\item Courbes elliptiques ;
+\item Légende.\\
 \end{itemize}
 
 \begin{figure}[H]
@@ -102,4 +102,3 @@ Cette partie intègre l'outil permettant d'analyser les différentes \textit{cip
 \caption{Site Web - Test du Navigateur}
 \label{test_client}
 \end{figure}
-
