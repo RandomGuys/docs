@@ -5,14 +5,18 @@
 Nous pouvons retenir plusieurs points importants sur ce projet.\\
 Premièrement, malgré les nombreuses études démontrant les vulnérabilités des certificats circulant sur Internet, elles persistent toujours et il devient urgent de bien sécuriser sa machine contre des attaques aussi efficaces et rapides (quelques jours à peine) face à des serveurs mal sécurisés.\\
 
-Deuxièmement, nous avons en l'espace de quelques jours trouvé plusieurs vulnérabilités sur le code d'OpenSSL, et nous pouvons en conclure qu'il est nécessaire d'adopter rapidement une politique d'action plutôt qu'une politique de réaction.\\
+Deuxièmement, nous avons en l'espace de quelques jours trouvé plusieurs vulnérabilités sur le code d'OpenSSL, et nous pouvons en conclure qu'il est nécessaire d'adopter rapidement une politique d'action plutôt qu'une politique de réaction. De plus, nous avons fait face à un code très mal documenté, avec un paramétrage par défaut contestable, et aucune classe de haut niveau. Il est au minimum important de retravailler la documentation. Sur deux semaines nous n'avons pu faire qu'un audit de surface. Un audit complet, en profondeur, prendrait beaucoup plus de temps mais serait vraiment un sujet de projet intéressant.\\
 
-Troisièmement, nous avons fait face à un code très mal documenté, avec un paramétrage par défaut contestable, et aucune classe de haut niveau. Il est au minimum important de retravailler la documentation.\\
+Troisièmement, nous avons pu identifier les différentes faiblesses qui pouvaient être implémentées dans un navigateur client se connectant à un serveur de façon "sécurisée". L'outil développé est générérique et permet de tester n'importe quel navigateur.
 
-Enfin, sur deux semaines nous n'avons pu faire qu'un audit de surface. Un audit complet, en profondeur, prendrait beaucoup plus de temps mais serait vraiment un sujet de projet intéressant.\\
 
 \paragraph{Apports du projet :\\}
-Le projet nous a apportés plus d'expériences dans plusieurs domaines (développement applicatif, scripts, web, base de données, réseaux, cryptographie, ...). Nous avons cherché à rendre un projet soigné, dont chaque partie serait liée et serait directement accessible sur une même plateforme.\\
-Notre étude sur la deuxième partie nous a permis d'analyser en détail des articles scientifiques; il s'agissait d'un bon exercice de style pour notre futur professionnel. De plus, ce projet a attisé notre curiosité, et sachant qu'il ne faut pas se fier aux systèmes de sécurité mis en place, cela nous a donné l'envie à tous de continuer nos recherches sur les problématiques liés à la sécurité.
+Le projet nous a apporté plus d'expérience dans différents domaines (développement applicatif, scripts shell et perl, web, base de données, réseaux, cryptographie, etc). Nous avons cherché à rendre un projet soigné, dont chaque partie est liée et directement accessible sur une même plateforme.\\
+Notre étude sur la deuxième partie nous a permis d'analyser en détails des articles scientifiques. Il s'agissait d'un bon exercice de style pour notre futur professionnel. De plus, ce projet a attisé notre curiosité : il ne faut pas se fier aux systèmes de sécurité mis en place.\\
+Nous avons aussi été régulièrement suivis pour une bonne gestion du projet. Par conséquent, nous avons aussi pu affiner nos méthodes et nos documents. La communication entre les membres a été particulièrement importante et efficace, et nous a permis d'avancer et de prendre des décisions dans des conditions optimales. 
 
 \paragraph{Axes d'améliorations :\\}
+Il aurait été intéressant de faire notre étude de factorisation sur des clefs SSH. De plus, nous aurions pu travailler à plus grande échelle, en récupérant encore d'avantage de certificats (plusieurs millions) afin d'approcher l'étude faite par l'université de Californie et de Michigan.\\
+
+Nous aurions pu passer davantage de temps sur la structure organisationnelle des tâches avant d'entrer dans la réalisation, en mettant en place un cadre précis pour chacune d'entre elles. Il aurait été judicieux de mieux évaluer la réalisation de la troisième partie, et mieux étudier sa faisabilité. En effet, nous avons pu constater qu'elle était très liée au chapitre sur l'implémentation des protocoles SSL/TLS de l'audit.\\
+
