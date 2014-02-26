@@ -52,6 +52,7 @@
 \usepackage{eurosym}
 \usepackage{rotating}
 \usepackage{array}
+\usepackage{multicol}
 
 \usetheme{Antibes}
 \usecolortheme{beaver}
@@ -73,18 +74,144 @@
 \end{frame}
 }
 
-%% <METTRE ICI LE NOM DU SPEAKER>
+%% 2 MIN -- PASCAL
+\section{Introduction}
+\subsection{Sujet et problématique}
 \frame{
-\frametitle{Sommaire}
-\tableofcontents
-}
-
-\section{Présentation du projet}
-\frame{
-\frametitle{Présentation du projet}
+\frametitle{Sujet et problématique}
 \begin{block}{Titre du bloc}
 	Contenu
 \end{block}
 }
 
+\frame{
+\frametitle{Sommaire}
+\begin{multicols}{2}
+\tableofcontents
+\end{multicols}
+}
+
+%% PARTIE 1 - 16 MIN
+\section{Audit des clefs RSA des certificats}
+
+%% 4 MIN -- CLAIRE
+\subsection{Récupération}
+\subsubsection{Adresses}
+\frame{
+    \frametitle{Récupération des adresses}
+
+}
+
+\subsubsection{Certificats}
+\frame{
+    \frametitle{Récupération des certificats}
+    %% Certificats + clefs
+}
+
+%% 5 MIN
+\subsection{Factorisation}
+\frame{
+    \frametitle{Factorisation}
+    %% ALGOS -- WILLIAM
+    %% OPTIM -- JULIEN
+}
+\frame{
+    \frametitle{Factorisation -- Démonstration}
+
+}
+
+%% 5 MIN -- PASCAL
+\subsection{Résultats}
+\frame{
+    \frametitle{Résultats}
+    %% site : stats
+}
+
+
+%% PARTIE 2 - 16 MIN
+\section{Audit d'OpenSSL}
+\frame{
+%% 1 MIN -- CLAIRE
+\frametitle{Introduction}
+
+}
+%% 4 MIN -- WILLIAM (3 MIN)
+\subsection{Entropie}
+\frame{
+\frametitle{Entropie}
+
+}
+
+%% MATHIEU (1 MIN)
+\frame{
+\frametitle{Entropie -- Démonstration}
+
+}
+
+%% 2 MIN -- MATHIEU
+\subsection{Génération des clefs}
+\frame{
+\frametitle{Génération des clefs}
+
+}
+
+%% 2 MIN -- CLAIRE
+\subsection{Chiffrement et protocoles}
+\frame{
+\frametitle{Chiffrement et protocoles}
+
+}
+
+%% 2 MIN -- MATHIEU
+\subsection{Signature et authentification}
+\frame{
+\frametitle{Signature et authentification}
+
+}
+
+%% 3 MIN -- JULIEN
+\subsection{Protocole SSL/TLS}
+\frame{
+\frametitle{Protocole SSL/TLS}
+
+}
+
+%% 2 MIN -- CLAIRE
+\subsection{Ouverture}
+\frame{
+\frametitle{Ouverture}
+
+}
+
+
+%% PARTIE 3  - 8 MIN
+\section{Analyse dynamique du navigateur client}
+%% 2 MIN 30 -- WILLIAM
+\subsection{Faiblesses identifiées}
+\frame{
+\frametitle{Faiblesses identifiées}
+
+}
+
+%% 2 MIN 30 --  JULIEN
+\subsection{Implémentation}
+\frame{
+\frametitle{Implémentation}
+
+}
+
+%% 3 MIN -- MATHIEU
+\subsection{Démonstration}
+\frame{
+\frametitle{Démonstration}
+%% Chrome
+%% Lynx 
+%% s_client
+}
+
+%% 2 MIN -- PASCAL
+\section{Conclusion}
+\frame{
+\frametitle{Conclusion}
+}
 \end{document}
