@@ -1,4 +1,29 @@
 \addcontentsline{toc}{section}{Introduction}
 \section*{Introduction}
 
-Intro rapport final
+En août 2012, l'Université du Michigan détecte une vulnérabilité critique sur les certificats RSA et DSA d'Internet \cite{mining2012nadia}. Certains ont, en effet, des facteurs premiers communs avec d'autres certificats, et sont donc sujets à une attaque par factorisation. Une telle attaque permet de retrouver très rapidement les clefs privées de ces certificats vulnérables.\\
+Les chiffres sont de plus très élevés, sur 12 828 613 certificats:
+\begin{itemize}
+\item 714 243 utilisent des clefs vulnérables dont 43 852 sont dues à une insuffisance d'entropie;
+\item \textbf{64 081 utilisent des clefs RSA pouvant être factorisées};
+\item \textbf{4 147 utilisent (encore) des clefs prévisibles générées par Debian lors du bug de 2006}
+\item 123 038 utilisent (encore) des clefs RSA de 512 bits.\\
+\end{itemize}
+
+Partant de cette étude, notre client souhaitait voir si la sécurité d'Internet avait été améliorée ces deux dernières années en marchant sur les traces de l'Université du Michigan. Dans un second temps il souhaitait que l'on analyse le code d'OpenSSL ainsi que sa sécurité au niveau des primitives cryptographiques. Enfin, il nous a été demandé d'évaluer le niveau de sécurité de nos navigateurs actuels.\\
+
+Ce rapport présentera chacune des trois parties de notre projet dans des chapitres distincts, pour conclure sur un chapitre concernant la vie du projet, nos méthodes de travail, les outils et les ressources utilisées, les choix de développements et notre gestion des risques.\\
+
+Dans la partie concernant l'audit de clefs cryptographiques nous détaillerons l'ensemble des algorithmes utilisés lors des phases de récupération, de factorisation et de traitement des certificats SSL.\\
+
+Dans la partie concernant l'audit statique d'OpenSSL, nous ferons un résumé du rapport d'audit en soulevant les points importants concernant le contexte d'utilisation des primitives cryptographiques, les normes visées, les failles ou vulnérabilités trouvées, et les recommandations.\\
+
+Enfin, dans la partie concernant l'analyse dynamique, nous parlerons des objectifs fixés, nous expliquerons la mise en place du serveur HTTPS où nous identifierons certaines faiblesses.
+
+\section*{Remerciements}
+
+Nous tenons tout d'abord à remercier notre client et professeur M. Ayoub Otmani, pour nous avoir donner un sujet de projet passionnant et complet. Il nous a en effet permis de mieux nous placer dans un contexte de projet professionnel, et il a su nous donner de bons choix dans notre étude afin de récupérer des informations pertinentes.\\
+
+Nous le remercions également M. Arnaud Citerin pour nous avoir donné l'accès au serveur de calcul de l'Université afin de faire de récupérer plus rapidement nos résultats lors de la factorisation.\\
+
+Nous remercions finalement l'ensemble du corps enseignant pour nous avoir donné la formation nécessaire afin d'atteindre cet objectif.
