@@ -1,57 +1,57 @@
 \chapter{Vie de projet}
 \section{Présentation de l'équipe}
 
-Notre équipe est formée de cinq membres, tous étudiants à l'université de Rouen, dont un est également étudiant à l'INSA.
-La définition des rôles s'est faite assez rapidement, nous souhaitions changer de rôle par rapport au projet de l'année dernière, afin de mieux explorer la gestion de projet.
+Notre équipe est formée de cinq membres, tous étudiants à l'université de Rouen, dont un est également étudiant à l'INSA de Rouen. La définition des rôles s'est faite assez rapidement, nous souhaitions changer de rôle par rapport au projet de l'année dernière, afin de mieux explorer la gestion de projet.
 Nous avons donc désigné Pascal Edouard comme chef de projet, Julien Legras comme Responsable technique, Claire Smets comme responsable client, et deux testeurs William Boisseleau et Mathieu Latimier.
-Le choix des deux testeurs vient  du grand nombre de tests sur notre projet. Les résultats devant être sans faille.
+Le choix des deux testeurs vient du grand nombre de tests à implémenter sur notre projet, les résultats devant être sans faille.\\
 
-Bien que chacun ait un rôle attitré, tous contribuent à différentes tâches du projet (tâches de développement, d'études, de tests, d'interfaces, etc...).
+
+Bien que chacun ait un rôle attitré, tous contribuent à différentes tâches du projet (tâches de développement, d'étude, de tests, d'interfaces, etc...).
 
 \section{Le client}
 
-M. Otmani est notre client pour ce projet. Le cahier des charges se divise en trois grandes parties, pour la première, le client attend de nous un audit de clefs cryptographiques solide, présentable, et intuitif. Pour cela, il nous a conseillé d'étudier un article publié par des universitaires de Californie et du Michigan, ainsi que le site factorable.net.
-Pour la seconde partie, nous devions faire un audit du code source d'OpenSSL par rapport aux normes prescrites (ex: RFC, PKCS, NIST, ...)
-Le client souhaite notamment que l'on étudie la génération d'aléa, la génération des clefs, et le chiffrement.
-Enfin, dans la dernière partie, le client nous propose d'établir un diagnostic de connexion entre un client et un serveur sur plusieurs critères comme la génération des nonces, la génération de la clef primaire, le contrôle des certificats, le respect du protocole, le choix de l'algorithme etc.
+M. Otmani est notre client pour ce projet. Le cahier des charges se divise en trois grandes parties. Pour la première, le client attend de nous un audit solide sur les clefs cryptographiques, présentable, et intuitif. Pour cela, il nous a conseillé d'étudier un article publié par des universitaires de Californie et du Michigan, ainsi que le site \texttt{factorable.net}. \\
 
-Cette dernière partie est optionnelle, elle sera effectuée si le temps nous le permet.
 
-Le projet se déroule sur six semaines, le temps de travail est de 8h/jour (pour pouvoir palier le temps perdu par chacun pour la recherche de stage, les charges administratives, etc...)
+
+Pour la seconde partie, nous devions faire un audit du code source d'OpenSSL par rapport aux normes prescrites (ex: RFC, PKCS, NIST, ...). Le client souhaite notamment que l'on étudie la génération d'aléa, la génération des clefs, et le chiffrement.\\
+
+Enfin, dans la dernière partie, le client nous propose d'établir un diagnostic de connexion entre un client et un serveur sur plusieurs critères comme la génération des nonces, la génération de la clef primaire, le contrôle des certificats, le respect du protocole, le choix de l'algorithme etc.\\
+
+Cette dernière partie est optionnelle, elle sera effectuée si le temps nous le permet. Le projet se déroule sur six semaines, le temps de travail est de 8h/jour (pour pouvoir palier le temps perdu par chacun pour la recherche de stage, les charges administratives, etc...)
 
 \section{Méthode agile : SCRUM}
 
-Nous avons choisi d'utiliser la méthode de développement agile SCRUM (comme indiqué dans le Plan de Développement) afin d’apporter une discipline de développement et de délivrer les résultats dans les meilleures conditions.\\
-Dans ses sous-parties nous allons revenir sur le choix de la méthode, puis nous allons détailler son application tout au long du projet.
+Nous avons choisi d'utiliser la méthode de développement agile SCRUM (comme indiqué dans le Plan de Développement) afin d'apporter une discipline de développement et de délivrer les résultats dans les meilleures conditions. Dans ces sous-parties nous allons revenir sur le choix de la méthode, puis nous allons détailler son application tout au long du projet.
 
 \subsection{Pourquoi Scrum ?}
 
-Les méthodes agiles ont fait leur preuve dans leur efficacité et leur qualité de développement. De plus, Scrum permet un suivi et une transparence totale avec le client. Le découpage en sprints est adapté à notre projet puisqu’il se déroule en différentes parties et sur une période relativement courte.
+Les méthodes agiles ont fait leur preuve dans leur efficacité et leur qualité de développement. De plus, Scrum permet un suivi et une transparence totale avec le client. Le découpage en sprints est adapté à notre projet puisqu'il se déroule en différentes parties et sur une période relativement courte.
 
 \subsection{Valeurs et principes}
 
 \paragraph{Les individus et leurs interactions plus que les processus et les outils} : la méthodologie Scrum correspond à la communication entre les collaborateurs à tous les niveaux (client/fournisseurs, testeurs/programmeurs, ...) afin de ne pas perdre de temps ni d’énergie avec des malentendus ou de l’incompréhension.\\
 
-Cette valeur a été primordiale pour nous, la force de notre projet réside dans cette bonne communication entre chacun des membres.
-Nous avons ainsi pu :
+Cette valeur a été primordiale pour nous, la force de notre projet réside dans cette bonne communication entre chacun des membres. Nous avons ainsi pu :
 \begin{itemize}
-\item détecter rapidement les problèmes avec de bonnes phases de tests, des réunions techniques en cas de doute, ...;
-\item rentrer efficacement dans les sujets les plus importants du projet, surtout pour la partie de l'audit de code OpenSSL;
-\item exposer efficacement nos travaux au client, les possibilités qui s'offrent à nous pour mieux satisfaire ses besoins;
+\item détecter rapidement les problèmes avec de bonnes phases de tests, des réunions techniques en cas de doute, ... ;
+\item rentrer efficacement dans les sujets les plus importants du projet, surtout pour la partie de l'audit de code OpenSSL ;
+\item exposer efficacement nos travaux au client, les possibilités qui s'offrent à nous pour mieux satisfaire ses besoins ;
 \item nous mettre tous à niveau sur chaque partie en résumant le travail de chacun lors de chaque réunion.\\
 \end{itemize}
 
 
-\paragraph{La collaboration avec les clients plus que la négociation contractuelle} : une approche directe avec le client qui se sent beaucoup plus impliqué dans le projet afin qu’il puisse apporter ses avis et remarques.\\
+\paragraph{La collaboration avec les clients plus que la négociation contractuelle} : une approche directe avec le client qui se sent beaucoup plus impliqué dans le projet afin qu'il puisse apporter ses avis et remarques.\\
 
 Nous sommes partis du principe que le client faisait partie intégrante de l'équipe. Son avis nous intéressant, nous lui avons montré lors de toutes nos réunions nos travaux afin qu'il puisse s'assurer du bon avancement du projet et qu'il puisse nous aiguiller pour la suite.\\
+
 De plus, nous évitions au maximum de faire des livraisons ou des demandes au client par messagerie électronique, préférant des rencontres interpersonnelles.
 
 
-\paragraph{L’adaptation au changement plus que le suivi d’un plan} : être capable de s’adapter lorsqu’une modification importante est nécessaire.\\
+\paragraph{L’adaptation au changement plus que le suivi d’un plan} : être capable de s’adapter lorsqu'une modification importante est nécessaire.\\
 
-Nous sommes partis d'un but général fixé sans détailler les étapes de chaque tâche afin de laisser libre cours au changement de contexte, aux risques pouvants être rencontrés, aux sujets que le client souhaitait plus appronfondir, etc...\\
-Les livraisons correspondent donc aux besoins du client, et sont modulables afin d'appronfondir l'étude.
+Nous sommes partis d'un but général fixé sans détailler les étapes de chaque tâche afin de laisser libre cours au changement de contexte, aux risques pouvant être rencontrés, aux sujets que le client souhaitait plus approfondir, etc...\\
+Les livraisons correspondent donc aux besoins du client, et sont modulables afin d'approfondir l'étude.
 
 \subsection{Réunions}
 
@@ -65,10 +65,10 @@ Ces réunions s'apparentent aux "Mélées Quotidiennes" du SCRUM.
 
 Nous nous réunissons deux fois par semaine, le jeudi.
 En début d'après-midi, ou en fin de matinée, nous passons dans une salle au calme, pour parler des difficultés techniques rencontrées, des axes d'améliorations, de la réorganisation ou du découpage des tâches si besoin.\\
-Nous évoquons également les points importants à apporter au client pour la réunion qui suit.\\
-Ces réunions s'apparentent aux "Planifications du Sprint" et à la "Rétrospective de Sprint" du SCRUM.
 
-L'après-midi, selon la disponibilité du client, nous nous réunissons pour parler de notre avancée, relever les remarques et les envies du client, présenter nos résultats ou livrer une partie de projet finie.\\
+Nous évoquons également les points importants à apporter au client pour la réunion qui suit. Ces réunions s'apparentent aux "Planifications du Sprint" et à la "Rétrospective de Sprint" du SCRUM.\\
+
+L'après-midi, selon la disponibilité du client, nous nous réunissons pour parler de notre avancée, relever les remarques et les demandes du client, présenter nos résultats ou livrer une partie de projet finie.\\
 Ces réunions s'apparentent aux "Revue de Sprint" du SCRUM.
 
 \subsubsection{Réunions d'urgences}
@@ -86,13 +86,16 @@ Durant ces six semaines de travail, nous avons eu l'occasion de tester plusieurs
 \subsection{Git}
 
 Git est un logiciel libre de gestion de versions décentralisé, créé par Linus Torvalds en 2005, accessible sur les systèmes Linux et Windows.\\
-Un logiciel de gestion de versions est un logiciel qui permet de stocker un ensemble de fichiers en conservant la chronologie de toutes les modifications qui ont été effectuées dessus. Il permet notamment de retrouver les différentes versions d’un lot de fichiers connexes.\\
-Lorsqu'un membre a terminé sa tâche, il ajoute les fichiers modifiés sur la branche concerné, en placant un commentaire pour expliquer les modifications apportées.\\
+
+Un logiciel de gestion de versions est un logiciel qui permet de stocker un ensemble de fichiers en conservant la chronologie de toutes les modifications qui ont été effectuées dessus. Il permet notamment de retrouver les différentes versions d'un lot de fichiers connexes.\\
+
+Lorsqu'un membre a terminé sa tâche, il ajoute les fichiers modifiés sur la branche concerné, en plaçant un commentaire pour expliquer les modifications apportées.\\
+
 Il est ensuite plus simple de voir les différences entre chaque version, et de retrouver une ancienne version si besoin.\\
 
 \subsection{Redbooth}
 
-Redbooth (anciennement Teambox) est un outil de gestion de projet en ligne pour des équipes de quelques membres. Il nous permet de suivre l'évolution des tâches : en cours de réalisation et celles à venir. Ces tâches peuvent être de différentes sortes :
+\textit{Redbooth} (anciennement \textit{Teambox}) est un outil de gestion de projet en ligne pour des équipes de quelques membres. Il nous permet de suivre l'évolution des tâches, telles que les tâches en cours de réalisation et celles à venir. Ces tâches peuvent être de différentes sortes :
 \begin{itemize}
 \item tâches du projet;
 \item tâches de gestion de projet (outils, documents livrables);
@@ -102,15 +105,18 @@ Redbooth (anciennement Teambox) est un outil de gestion de projet en ligne pour 
 
 \subsection{Google drive}
 
-Google Drive est un service clourd proposé par google en 2012 pour le stockage et le partage de fichier.\\
-C'est une bonne alternative au Git, qui nous permettait de partager des ressources sous toutes formes (articles, logiciels, scripts), et nos résultats en vrac afin de pouvoir les tester sur nos machines (listes d'adresses IP, certificats, fichiers d'insertion en base de données, etc.)\\
-Une fois les fichiers validés ils pouvaient être déplacés vers le Git si l'on pensait qu'ils avaient une importance pour le projet final.\\
-Il nous permettait également de synchroniser nos résultats notamment lors de notre état de l'art pour la partie 2 du projet.
+Google Drive est un service \textit{cloud} proposé par google en 2012 pour le stockage et le partage de fichier.\\
+
+C'est une bonne alternative au Git, qui nous permettait de partager des ressources sous toutes formes (articles, logiciels, scripts), et nos résultats pêle-mêle, afin de pouvoir les tester sur nos machines (listes d'adresses IP, certificats, fichiers d'insertion en base de données, etc.)\\
+
+
+Une fois les fichiers validés ils pouvaient être déplacés vers le Git si l'on pensait qu'ils avaient une importance pour le projet final. Il nous permettait également de synchroniser nos résultats notamment lors de notre état de l'art pour la partie 2 du projet.
 
 \subsection{Google Hangouts}
 
 Hangouts est une plate-forme de messagerie instantanée qui nous permettait de partager nos ressentis, d'indiquer notre progression sur une tâche aux autres, proposer de l'aide si besoin.\\
 Ce service est très utile car il nous permettait également de rester sur la même plate-forme que le Drive et nos mails, ce qui était un gain de temps non négligeable.
+
 
 \subsection{GanttProject et Gantter}
 
@@ -127,30 +133,33 @@ Nous avons tout d'abord réalisé notre diagramme de Gantt avec GanttProject, ma
 
 De plus, le diagramme du Gantter est plus esthétique que notre précédent diagramme, ce qui nous permettait de retrouver plus facilement nos informations.
 
+
 \subsection{LaTeX et BibTeX}
 
-Latex est un langage de structuration de document créé en 1983 par Leslie Lamport. Il utilise des macro-commandes qui seront interprétés par un processeur de texte TeX.\\
-Bibtex est un logiciel de gestion de références bibliographiques qui nous a servi à gérer et traiter notre base bibliographique à travers nos documents Latex.\\
+Latex est un langage de structuration de document créé en 1983 par Leslie Lamport. Il utilise des macro-commandes qui seront interprétés par un processeur de texte TeX. Bibtex est un logiciel de gestion de références bibliographiques qui nous a servi à gérer et traiter notre base bibliographique à travers nos documents Latex.\\
 
-Nous avons choisi de réaliser l'ensemble de nos documents (comptes-rendus, rapports, livrables) sous LaTeX pour qu'ils soient homogènes (nous partions sur la même base), réutilisables et modulables (découpage sous forme de briques).
+Nous avons choisi de réaliser l'ensemble de nos documents (comptes-rendus, rapports, livrables) sous LaTeX pour qu'ils soient homogènes (nous partions sur la même base), réutilisables et modulables (découpage sous forme de briques).\\
+
 
 Les éditeurs/compilateurs de LaTeX sont nombreux, nous avons opté pour deux d'entres eux : Gummi et TexMaker.
 
+
+
 \section{Tests}
 
-Pour nos tests nous avons eu besoin de quelques outils que nous détaillons ci-dessous.
+Lors de notre projet, nous avons mis en place des procédures de test en amont, permettant de valider le code développé. Ceci n'étant pas requis en tant que livrable, nous les décrirons rapidement dans cette section. Les procédures de tests sont disponibles sur le dépôt git \cite{notregit}. Nous avons eu besoin de quelques outils que nous détaillons ci-dessous. 
 
 \subsection{Ressources de Tests}
 \subsubsection{Netkit}
 
-Netkit est un environnement permettant de configurer et de tester un réseau virtuel rapidement et sans grandes ressources.\\
-Lors des procédures de tests de la première partie, nous voulions générer un petit réseau comportant toutes les configurations possibles rencontrables lors du scan, de la récupération de certificats et de la post-récupération (extraction de données, gestion des doublons, liens symboliques, etc...).\\
+Netkit est un environnement permettant de configurer et de tester un réseau virtuel rapidement et sans grandes ressources. Lors des procédures de tests de la première partie, nous voulions générer un petit réseau comportant toutes les configurations possibles rencontrables lors du scan, de la récupération de certificats et de la post-récupération (extraction de données, gestion des doublons, liens symboliques, etc...).\\
+
 Nous avons donc décidé de réaliser ce petit réseau à l'aide de l'outil Netkit.
 
 \subsubsection{Pencil}
 
-Pencil est un logiciel de création de maquettes typographiques libre et gratuit développé par Evolution Solutions.
-Nous nous sommes servis de ce logiciel afin de réaliser les maquettes des pages web attendues pour chacune des trois parties.\\
+Pencil est un logiciel de création de maquettes typographiques libre et gratuit développé par \textit{Evolution Solutions}. Nous nous sommes servis de ce logiciel afin de réaliser les maquettes des pages web attendues pour chacune des trois parties.\\
+
 Le rendu final n'est pas exactement celui des maquettes car nous avons également utilisé plusieurs frameworks pour améliorer la qualité graphique (i.e. HighCharts, BootStraps), mais le contenu et la disposition est sensiblement la même.
 Ces tests nous ont permis de partir sur une base commune.
 
@@ -158,51 +167,58 @@ Ces tests nous ont permis de partir sur une base commune.
 
 Pour la configuration du réseau minimaliste, possédant différentes configurations que nous pourrons rencontrer lors du scan, puis de la récupération du certificat, les différentes configurations sont les suivantes :
 \begin{itemize}
-\item une machine avec un certificat SSL présent et valide
-\item une machine avec un certificat SSL présent et révoqué
-\item une machine avec un certificat SSL modifié (donc incorrect)
-\item une machine avec un certificat SSL présent et valide mais doublé
-\item une machine avec un certificat SSL présent et valide, mais tournant sur un autre port que 443
-\item une machine avec un certificat SSL présent et valide avec changement de configuration (tests sur la 1e machine - SSLCiphers, SSLProtocols, ...)
+\item une machine avec un certificat SSL présent et valide ;
+\item une machine avec un certificat SSL présent et révoqué ;
+\item une machine avec un certificat SSL modifié (donc incorrect) ;
+\item une machine avec un certificat SSL présent et valide mais doublé ;
+\item une machine avec un certificat SSL présent et valide, mais tournant sur un autre port que 443 ; 
+\item une machine avec un certificat SSL présent et valide avec changement de configuration (tests sur la 1e machine - SSLCiphers, SSLProtocols, ...).
 \end{itemize}
 
 Pour créer un certificat d'autorité SSL :
 \begin{itemize}
-\item On génère un couple clé privée, clé publique RSA de 1024 bits\\
+\item On génère un couple clé privée, clé publique RSA de 1024 bits
 \begin{verbatim}
-openssl genrsa 1024 > cert.key
+$ openssl genrsa 1024 > cert.key
 \end{verbatim}
-\item On créer un certificat auto-signé (peu nous importe la nature du certificat ici) - ce sera notre certificat racine\\
+
+\item On créer un certificat auto-signé (peu nous importe la nature du certificat ici) - ce sera notre certificat racine
 \begin{verbatim}
-openssl req -new -x509 -days 365 -key cert.key > cert.crt
+$ openssl req -new -x509 -days 365 -key cert.key > cert.crt
 \end{verbatim}
-\item Ensuite, on fait une demande de certificat auprès du certificat autorité\\
+
+\item Ensuite, on fait une demande de certificat auprès du certificat autorité
 \begin{verbatim}
-openssl req -new -key test.key > test.csr
+$ openssl req -new -key test.key > test.csr
 \end{verbatim}
-\item Enfin, on peut signer ce dernier avec notre certificat racine\\
+
+\item Enfin, on peut signer ce dernier avec notre certificat racine
 \begin{verbatim}
-openssl x509 -req -in test.csr -out test.crt -CA cert.crt -CAkey cert.key -CAcreateserial -CAserial cert.srl
+$ openssl x509 -req -in test.csr -out test.crt -CA cert.crt -CAkey cert.key -CAcreateserial -CAserial cert.srl
 \end{verbatim}
+
 \end{itemize}
 
 Pour révoquer un certificat :
 \begin{itemize}
+
 \item 
 \begin{verbatim}
-openssl ca -revoke test.crt -cert test.crt -keyfile test.key -config openssl.cnf
+$ openssl ca -revoke test.crt -cert test.crt -keyfile test.key -config openssl.cnf
 \end{verbatim}
+
 \item 
 \begin{verbatim}
-openssl ca -gencrl -config openssl.cnf -crldays 7 -out listcrl.crl
+$ openssl ca -gencrl -config openssl.cnf -crldays 7 -out listcrl.crl
 \end{verbatim}
+
 \end{itemize}
 
 Il ne faut pas oublier de concaténer les certificats, il sera nécessaire dans la configuration de notre serveur web :
 \begin{itemize}
 \item 
 \begin{verbatim}
-cat test.crt cert.crt > concatcert.crt
+$ cat test.crt cert.crt > concatcert.crt
 \end{verbatim}
 \end{itemize}
 
@@ -212,7 +228,7 @@ Pour ce qui est de la preuve de F, nous avons un jeu de tests avec des arbres co
 
 Pour ce qui est du développement de scripts, de la gestion du site web avec base de données et de la mise en place du navigateur sécurisé de la troisième partie nous avons utilisé les machines de l'université et nos ordinateurs portables. Mais pour les parties plus délicates comme le scan de ports Internet, la récupération de certificats ou la factorisation des moduli pour la première partie nous avions des ressources techniques plus importantes.
 
-\paragraph{Connexion internet : } pour la première partie, nous avions besoin d'une bonne connexion internet pour le scan, ainsi que pour la récupération des certificats. Il fallait prendre certaines précautions afin de ne pas congestionner le réseau, et éviter également que le proxy ne dérange le déroulement des scripts. Ainsi nous avons lancé les scans importants les vendredi soirs, en utilisant la prise ethernet extérieur.
+\paragraph{Connexion internet : } pour la première partie, nous avions besoin d'une bonne connexion internet pour le scan, ainsi que pour la récupération des certificats. Il fallait prendre certaines précautions afin de ne pas congestionner le réseau, et éviter également que le proxy ne dérange le déroulement des scripts. Ainsi nous avons lancé les scans importants les vendredi soirs, en utilisant la prise ethernet extérieure.
 
 \paragraph{Serveur de calcul de l'Université :} ce serveur nous a permis de factoriser les moduli lors du deuxième scan (plus conséquent - environ 500 000 certificats), et de gagner du temps sur l'avancement de notre projet.
 
@@ -220,57 +236,65 @@ Pour ce qui est du développement de scripts, de la gestion du site web avec bas
 
 \subsection{Langage C et librairie GnuMP}
 
-Nous avons décidé avant de débuter le projet de faire une étude en benchmark-test \cite{chooseprogram2013} \cite{marceau2009program} \cite{udemypng} (test de performance CPU, RAM, taille de code), sans oublier deux principes fondamentaux qui sont la gestion des grands entiers et les préférences de chacun (degré de compétence, aisance).\\
-Les codes sont basés sur l'utilisation combinée de structures et d'algorithmes complexes (sur arbres, ensembles, anneaux, etc...).\\
+Nous avons décidé avant de débuter le projet de faire une étude en benchmark-test \cite{chooseprogram2013} \cite{marceau2009program} \cite{udemypng} (test de performance CPU, RAM, taille de code), sans oublier deux principes fondamentaux qui sont la gestion des grands entiers et les préférences de chacun (degré de compétence, aisance). Les codes sont basés sur l'utilisation combinée de structures et d'algorithmes complexes (sur arbres, ensembles, anneaux, etc...).\\
 
-Plusieurs langages ont étés testés parmis lesquelles :
+Plusieurs langages ont étés testés parmi lesquelles :
 \begin{itemize}
-\item C;
-\item C++;
-\item Java;
-\item Perl;
-\item Python;
+\item C ;
+\item C++ ;
+\item Java ;
+\item Perl ;
+\item Python ;
 \item Ruby.\\
 \end{itemize}
 
-Nous avons au final décidé d'utiliser le langage C avec la librairie GnuMP \cite{gmplib} pour la gestion des grands entiers, et le compilateur CMAKE.
-Le langage C est l'un des plus rapides en temps d'exécution, il est également l'un de ceux qui consomment le moins de mémoire. Il est également très performant sur la gestion des grands entiers.\\
+Nous avons au final décidé d'utiliser le langage C avec la librairie GnuMP \cite{gmplib} pour la gestion des grands entiers, et le compilateur CMAKE. Le langage C est l'un des plus rapides en temps d'exécution, il est également l'un de ceux qui consomment le moins de mémoire. Il est également très performant sur la gestion des grands entiers.\\
+
 Le python et le C++ étaient également de très bons choix, mais les développeurs ont une meilleure maîtrise du C.
 
 \subsection{Langages de scripts : Bash et Perl}
 
 Nous avons opté également pour du développement de scripts pour des algorithmes peu complexes nécessitant plusieurs appels systèmes, surtout pour les commandes OpenSSL (extraction de moduli dans un certificat, connexion au serveur, récupération de champs dans un ensemble X509).\\
+
 L'avantage des scripts est qu'ils sont facilement modifiables. On pouvait donc les réarranger pour les réutiliser à d'autres fins.
 
 \subsection{IDE : Eclipse pour C}
 
 Eclipse est un environnement de développement et gestionnaire de projets pouvant supporter plusieurs langages de développement comme le Java, l'Android, le C, le C++, etc...\\
-Nous avons utilisé cet éditeur afin de mieux lire le code d'OpenSSL et d'identifier les failles à l'aide des différents commits de l'équipe OpenSSL. Nous l'avons également utilisé pour la troisième partie du projet.
+
+
+Nous avons utilisé cet éditeur afin de mieux lire le code d'OpenSSL et d'identifier les failles à l'aide des différents \textit{commits} de l'équipe OpenSSL. Nous l'avons également utilisé pour la troisième partie du projet.
 
 \section{IHM}
 
 \subsection{Site Web}
 
-Nous avons établit un site web local afin de regrouper tout nos résultats sur une interface que nous pourrons offrir au client. Les trois parties sont certes indépendantes, mais elles se complètent parfaitement afin de mieux comprendre la sécurité actuelle de l'Internet, des protocoles SSL/TLS et du logiciel de génération de clés cryptographiques le plus répandu : OpenSSL.\\
+Nous avons établi un site web local afin de regrouper tout nos résultats sur une interface que nous pourrons offrir au client. Les trois parties sont certes indépendantes, mais elles se complètent parfaitement afin de mieux comprendre la sécurité actuelle de l'Internet, des protocoles SSL/TLS et du logiciel de génération de clés cryptographiques le plus répandu : OpenSSL.\\
+
+
+
 L'ensemble du site web repose sur le framework \textbf{BootStrap}.\\
 
-Sur le premier onglet nous avons réaliser des études statistiques sur les certificats SSL récupérés (certificats contenant des facteurs communs à d'autres certificats, regroupement par \textit{issuer}, recherche utilisateur, tri par taille de clés, etc...).\\
-Les certificats sont stockés en base \textbf{MySQL}, et les graphiques sont générés via le framework \textbf{HighCharts}.\\
 
-Sur le second onglet nous listons quelques primitives cryptographiques d'OpenSSL à auditer. Nous avons intégré deux modes un en écriture et un en lecture seule, et chaque élément de cette page est enregistré dans notre base de données.\\
+Sur le premier onglet nous avons réalisé des études statistiques sur les certificats SSL récupérés (certificats contenant des facteurs communs à d'autres certificats, regroupement par \textit{issuer}, recherche utilisateur, tri par taille de clés, etc...). Les certificats sont stockés en base \textbf{MySQL}, et les graphiques sont générés via le framework \textbf{HighCharts}.\\
+
+
+Sur le second onglet nous listons quelques primitives cryptographiques d'OpenSSL à auditer. Nous avons intégré deux modes : un en écriture et un en lecture seule, et chaque élément de cette page est enregistré dans notre base de données.\\
+
 
 Enfin, sur le dernier onglet, nous étudions la sécurité du navigateur client en affichant les algorithmes de chiffrement, les algorithmes de signatures, les méthodes de compressions, les versions de protocoles, les courbes elliptiques et les tickets de sessions. Un code couleur est également défini afin d'identifier les \textit{ciphersuites} faibles (Jaune), critiques (Rouge) et fortes (Verte).
 
 \subsection{Doxygen}
 
 Doxygen est un générateur de documentation sous licence libre capable de produire une documentation logicielle à partir du code source d'un programme. Il supporte entre autres le langage C qui est le langage de développement utilisé par OpenSSL. Nous avons décidé de rediriger le code source d'OpenSSL sous Doxygen pour faciliter sa compréhension, et pouvoir analyser plus facilement l'arborescence de la fonction.\\
+
 La fonction de recherche de code de Doxygen nous a également fait gagner du temps, notamment sur le choix des primitives cryptographiques à étudier et l'identification de vulnérabilités.\\
 
 \section{Gestion des risques}
 
 Durant ces six semaines, nous avons été confrontés à deux risques que nous avions listés dans le document d'analyse des risques.
 \begin{itemize}
-\item Nous avons eu plusieurs "absences occasionnelles", en grande partie à cause des entretiens pour nos stages, mais aussi pour des problèmes d'administration, de cours, maladies, empêchements.
+\item Nous avons eu plusieurs des "absences occasionnelles", en grande partie à cause des entretiens pour nos stages, mais aussi pour des problèmes d'administration, de cours, maladies, empêchements ;
 \item Nous n'avons pas pu récupérer les adresses IP des serveurs SSH, le scan de port SSH étant interdit nous avons reçu une plainte d'Amazon, et nous avons décidé avec l'accord du client d'abandonner cette partie.\\
 \end{itemize}
 
