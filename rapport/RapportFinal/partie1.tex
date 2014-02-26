@@ -42,14 +42,14 @@ Il y a plusieurs options disponibles, nous avons utilisé la commande suivante p
 
 \section{Application RC}
 
-Une fois que l'on avait la liste d'adresse fournie par ZMAP, il nous restait à récupérer les certificats sur les serveurs dont le port SSL était ouvert, en établissant une connexion sur chacun d'eux.\\
+Une fois que l'on avait la liste d'adresses fournie par ZMAP, il nous restait à récupérer les certificats sur les serveurs dont le port HTTPS était ouvert, en établissant une connexion sur chacun d'eux.\\
 
 
-Pour cela nous avons codé deux scripts perl, l'un pour la récupération de certificat SSH (que nous n'avons pas testé à cause de l'avertissement reçu), et un autre pour la récupération de certificats SSL (ssl\_collector.pl).
+Pour cela nous avons écrit deux scripts Perl, un pour la récupération de certificat SSH (que nous n'avons pas testé à cause de l'avertissement reçu), et un autre pour la récupération de certificats SSL (\verb+ssl_collector.pl+).
 
 Commandes OpenSSL utilisées :
 \begin{itemize}
-\item pour l'établissement de la connexion (avec s\_client) :
+\item pour l'établissement de la connexion (avec \verb+s_client+) :
 
 \begin{verbatim}
 echo  \" \" | timeout 20 openssl s_client -connect $addr:443 -sess_out tmp_$addr.pem 
@@ -65,7 +65,7 @@ openssl x509 -in certs/$addr.pem -noout -pubkey > keys/$addr.pem 2> tmp_$addr.lo
 \end{verbatim}
 \end{itemize}
 
-Pour ce qui est de la gestion des doublons, nous avons également créé un autre script perl (clean.pl).
+Pour ce qui est de la gestion des doublons, nous avons également écrit un autre script Perl (\verb+clean.pl+).
 
 La chaîne d'utilisation est donc la suivante :
 \begin{verbatim}
@@ -77,9 +77,8 @@ La chaîne d'utilisation est donc la suivante :
 
 \subsection{Algorithmes}
 
-L'objectif final de cette première partie était de déterminer s'il existait des facteurs premiers communs
-parmi les clefs récupérées. Pour cela nous avons développé deux arbres de factorisation.
-Lors du scan nous avions récupéré 85.000 certificats uniques, mais nous avons également souhaité faire la factorisation avec les données du projet Sonar de Rapid7 Labs avec 523 000 certificats.\\
+L'objectif final de cette première partie était de déterminer s'il existait des facteurs premiers communs parmi les clefs récupérées. Pour cela nous avons développé deux arbres de factorisation.
+Lors du scan nous avons récupéré 85 000 certificats uniques, mais nous avons également souhaité faire la factorisation avec les données du projet Sonar de Rapid7 Labs avec 523 000 certificats.\\
 
 
 Le premier arbre se contente de multiplier l'ensemble des moduli par groupe de deux.
@@ -152,10 +151,10 @@ Dans la première méthode, nous utilisions des fichiers binaires GMP à chaque 
 
 
 Pour accélérer la construction de l'arbre, nous utilisons des \textit{threads}, qui parallélisent le traitement de chaque niveau d'arbre (sur la largeur de l'arbre).
-Nous avons tenté d'améliorer encore le procédé, en parallélisant le calcul sur la hauteur de l'arbre. Il s'est avéré que ce n'était pas aussi efficace, nous avons donc abandonné cette partie.\\
+Nous avons tenté d'améliorer encore le procédé, en parallélisant le calcul sur la hauteur de l'arbre. Il s'est avéré que ce n'était pas aussi efficace à cause des dépendances entre les niveaux, nous avons donc abandonné cette partie.\\
 
 
-Nous allons dans cette partie expliciter les composantes principales implémentées en mémoire de l'algorithme de factorisation.  Nous développerons notamment la méthode \texttt{computerSuperSpeed}, qui prend en entrée un nom de fichier, contenant la liste des moduli. 
+Nous allons dans cette partie expliciter les composantes principales implémentées en mémoire de l'algorithme de factorisation.  Nous développerons notamment la méthode \texttt{computeSuperSpeed}, qui prend en entrée un nom de fichier, contenant la liste des moduli. 
 
 
 \subsubsection{Initialisation}
@@ -181,7 +180,7 @@ Nous allons dans cette partie expliciter les composantes principales implément�
 	printf ("Done.\n\n");
 \end{lstlisting}
 
-Dans cette fraction de méthode, on initialise les différents variables :
+Dans cette fraction de méthode, on initialise les différentes variables :
 \begin{itemize}
 	\item le fichier contenant les moduli au format binaire est chargé, dans le vecteur \texttt{v}. Le vecteur est une structure décrit par son nombre d'éléments et par une liste de \texttt{mpz\_t} ;
 	\item on calcule le nombre de niveaux à dérouler charger, considérant que l'arbre est binaire ;
@@ -207,7 +206,7 @@ Dans cette fraction de méthode, on initialise les différents variables :
 	}
 \end{lstlisting}
 
-Le déroulement de l'arbre des produits est plutôt simple. Les éléments connexes sont multipliés à chaque niveau puis stockés dans le niveau suivant correspondant. On remarque également la méthode de parallélisation sur cette boucle afin d'accélérer la multiplication.\\
+Le déroulement de l'arbre des produits est plutôt simple. Les éléments connexes sont multipliés à chaque niveau puis le résultat est stocké dans le niveau suivant correspondant. On remarque également la méthode de parallélisation sur cette boucle afin d'accélérer la multiplication.\\
 
 Nous avons pensé à intégrer des améliorations pour couper des branches inutiles, ou encore accélérer le développement de l'arbre en parallélisant également en hauteur, mais ces opérations se sont avérées inutiles car elles nécessitaient la mise en place de tests qui ralentissaient l'exécution du programme. L'opération de multiplication n'est en effet que très légèrement gourmande en processus, nous avons décidé de garder un développement d'arbre le plus épuré possible.\\
 
@@ -241,7 +240,7 @@ Nous avons pensé à intégrer des améliorations pour couper des branches inuti
 
 \end{lstlisting}
 
-Le calcul de l'arbre des restes se fait aussi efficacement. On récupère de l'arbre des reste le produit correspondant au niveau équivalent de celui de l'arbre des reste, produit que l'on passe au carré. On effectue ensuite le calcul modulaire requis suivant l'algorithme. On remarque également le \textit{multi-threading} effectué. Durant ce calcul, on ne conserve en mémoire que le niveau $j$ et $j-1$ de l'arbre des restes, afin de ne pas surcharger la mémoire. \\
+Le calcul de l'arbre des restes se fait aussi efficacement. On récupère de l'arbre des restes le produit correspondant au niveau équivalent de celui de l'arbre des restes, produit que l'on élève au carré. On effectue ensuite le calcul modulaire requis suivant l'algorithme. On remarque également le \textit{multi-threading} effectué. Durant ce calcul, on ne conserve en mémoire que le niveau $j$ et $j-1$ de l'arbre des restes, afin de ne pas surcharger la mémoire. \\
 
 
 
@@ -265,7 +264,7 @@ Afin de ne pas avoir à ajouter des tests dans la boucle principale, nous avons 
 
 
 \subsubsection{Identification des moduli vulnérables}
-Il convient enfin d'analyser les PGCD obtenus. Dans un premier temps, on récupère tous PGCD étant différents de 1, que l'on stocke dans un vecteur de moduli vulnérables potentiels. De plus, si celui-ci est premier, alors on stocke ce premier dans un vecteur les listant. 
+Il convient enfin d'analyser les PGCD obtenus. Dans un premier temps, on récupère tous les PGCD étant différents de 1, que l'on stocke dans un vecteur de moduli potentiellement vulnérables. De plus, si celui-ci est premier, alors on stocke ce premier dans un vecteur spécifique : \verb+potentielVuln+. 
 
 \begin{lstlisting}[style=customc,caption=fact\_superspeed.c - partie 5a, label=fact5]
 	vec_t potentielVuln, premiers;
@@ -286,7 +285,7 @@ Il convient enfin d'analyser les PGCD obtenus. Dans un premier temps, on récup�
 \end{lstlisting}
 
 
-Enfin, on récupère tous les moduli vulnérables potentiels étant divisible par un premier récupéré. On en profite également pour récupérer $q$ où $\text{moduli}=p*q$ avec $p$ étant le premier récupéré. On renvoie ces éléments en sortie standard. 
+Enfin, on récupère tous les moduli vulnérables potentiels étant divisibles par un premier récupéré. On en profite également pour récupérer $q$ où $\text{moduli}=p*q$ avec $p$ étant le premier récupéré. On écrit ces éléments dans un fichier : \verb+moduli_p_q+. 
 \begin{lstlisting}[style=customc,caption=fact\_superspeed.c - partie 5b, label=fact5]
     	potentielVuln.count = pvuln;
 	premiers.count = ppremier;
