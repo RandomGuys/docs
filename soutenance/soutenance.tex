@@ -69,6 +69,9 @@
 \usepackage{multicol}
 \usepackage{etex}
 \usepackage{tikz-uml} 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
 \usetheme{Antibes}
 \usecolortheme{beaver}
 \setbeamertemplate{sections/subsections in toc}[square]
@@ -238,10 +241,10 @@
 \end{center}
 }
 
-	\begin{block}{Certificats mal formés}
+	\begin{block}{Certificats malformés}
 		\begin{itemize}
 			\item \textit{Common Name} vide : validation impossible au regard du nom de domaine ;
-			\item \textit{Serial Number} seul : absence d'informations sur le certificat.\\
+			\item \textit{Serial Number} seul : absence totale d'informations sur le certificat.\\
 		\end{itemize}
 	\end{block}
 }
@@ -292,6 +295,89 @@
 %% 5 MIN
 % julien et william
 \subsection{Factorisation}
+
+\frame{
+    \frametitle{Factorisation}
+    \framesubtitle{Rappels sur la génération des clefs RSA}
+    {\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap] (applirc) {Appli RC};
+\node[square,right=of applirc, fill=green!30] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] (facteurs) {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applif)(clefs)(facteurs)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+
+\begin{block}{Algorithme de génération de clefs RSA}
+\begin{enumerate}
+\item générer $p$ et $q$ premiers et différents;
+\item calculer $N = p \times q$ et $\phi(N)= (p-1)\times(q-1)$ (indicatrice d'Euler);
+\item tirer aléatoirement $e \in \mathbb{Z}/\phi(N)\mathbb{Z}$;
+\item calculer $d$ tel que $d \times e \equiv 1 \mod{\phi(N)}$;
+\item $clef\, publique = N, e$ ; \textit{clef privée} $= p, q, d$
+\end{enumerate}
+\end{block}
+}
+
+\frame{
+    \frametitle{Factorisation}
+    \framesubtitle{Factorisation des clefs RSA}
+    {\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap] (applirc) {Appli RC};
+\node[square,right=of applirc, fill=green!30] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] (facteurs) {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applif)(clefs)(facteurs)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+
+\begin{block}{Factorisation de clefs RSA}
+\begin{enumerate}
+\item Algorithme naïf :
+\begin{itemize}
+\item calcul de PGCD deux à deux;
+\item complexité : $O(n!)$.
+\end{itemize}
+\item Algorithme de Bernstein \textit{How to find smooth parts of integers?}
+\begin{itemize}
+\item structure arborescente;
+\item complexité : $O(n\times lb(n))$.
+\end{itemize}
+\end{enumerate}
+\end{block}
+}
+
+
 \frame{
     \frametitle{Factorisation}
     \framesubtitle{PGCD deux à deux}
@@ -443,43 +529,72 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 
 \frame[containsverbatim]{
     \frametitle{Factorisation}
-    \centering
-    \Huge{Démonstration}
+    \begin{center}
+    \Huge Démonstration
+    \newline
     \normalsize
+    
     Jeu de données : \verb+15, 22, 437, 1189, 527, 21, 3233, 3827+
-
+    \end{center}
 }
 
 %% 5 MIN -- PASCAL
-\subsection{Résultats}
+\subsection{Bilan}
 \frame{
-    \frametitle{Résultats}
-\begin{block}{Base de données}
+    \frametitle{Bilan}
+    
+\begin{block}{Deux jeux de données}
+\begin{enumerate}
+\item clefs récupérées par notre script : 90 000;
+\item clefs du projet Sonar  : 527 000 fin janvier \url{https://scans.io/stduy/sonar.rdns/}.
+\end{enumerate}
+
+\end{block}
+
+
+\begin{block}{Traitement}
    	\begin{itemize}
-		\item récupération des facteurs communs - clefs publiques;
-		\item scripts perl \& requêtes SQL. \\
+   	    \item factorisation ;
+   	    \item insertion dans une base de données;
+		\item développement d'une interface web avec graphiques :
+		\begin{enumerate}
+		    \item 125 vulnérables (0,12\%);
+		    \item 2 382 vulnérables (0,46\%) -- 40 de Cisco.
+		\end{enumerate}
 	\end{itemize}
 \end{block}
 
-\begin{block}{Statistiques}
-   	\begin{itemize}
-		\item émetteurs;
-		\item  99.6\% (R) - 0.4\% (V);
-		\item critères de recherche :
-		\begin{itemize}
-			\item taille de clefs;
-			\item émetteurs, sujets : CISCO - 6280 (R) - 40 (V).\\
-		\end{itemize}
-	\end{itemize}
-\end{block}
 }
 
+\subsection{Démonstration}
+\frame{
+    \frametitle{Analyse d'un certificat vulnérable}
+    \centering
+    \includegraphics[width=9cm]{qualis_notation.jpg}
+}
 
 %% PARTIE 2 - 16 MIN
 \section{Audit d'OpenSSL}
 \frame{
 %% 1 MIN -- CLAIRE
-\frametitle{Introduction}
+\frametitle{Introduction I}
+\begin{block}{OpenSSL}
+API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
+\newline
+\textbf{450 000 lignes de code}.
+\end{block}
+
+\begin{block}{Historique d'OpenSSL}
+\begin{itemize}
+\item SSLeay développé par Eric Young \& Tim Hudson chez Cryptosoft;
+\item 1998 -- passation du projet à la communauté : OpenSSL;
+\item 6 janvier 2014 -- version 1.0.1f.
+\end{itemize}
+\end{block}
+}
+
+\frame{
+    \frametitle{Introduction II}
 	\begin{block}{Contexte}
 	\begin{itemize}
 		\item origine de vulnérabilité des certificats ;
@@ -488,31 +603,22 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 	\end{itemize}
 	\end{block}
 	\begin{block}{Audit d'OpenSSL}
-		Cinq grands axes : 
+		Trois grands axes : 
 		\begin{itemize}
 			\item la génération de l'aléatoire ;
 			\item la génération des clefs ;
-			\item le chiffrement et les protocoles ;
-			\item les signatures et les authentifications ;
-			\item les protocoles SSL et TLS.\\
+			\item le protocole SSL/TLS.\\
 		\end{itemize}
 	\end{block}
 }
 
 \frame{
-\frametitle{Failles}
+\frametitle{Méthodologie de recherche de failles}
 	\begin{block}{Où ?}
 		\begin{itemize}
-			\item site des CVE ;
+			\item site des CVE mitre;
 			\item site de Vigil@nce ;
 			\item RFC et standards.\\
-		\end{itemize}
-	\end{block}
-	
-	\begin{block}{Quand ?}
-		\begin{itemize}
-			\item ces dernières années ;
-			\item failles plus anciennes.
 		\end{itemize}
 	\end{block}
 	
@@ -524,29 +630,56 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 
 \frame[containsverbatim]{
 \frametitle{OpenSSL}
-	\begin{block}{Observation}
-	    Développé par Eric Young \& Tim Hudson :
-		\begin{itemize}
-			\item documentation;
-			\item code développé en mode réactif;
-			\item lisibilité du code;
-			\begin{itemize}
-			\item exemple de code
-			\begin{verbatim}
+
+	    \begin{alertblock}{Points négatifs}
+	        \begin{itemize}
+	        \item documentation peu fournie;
+	        \item développement en mode réactif;
+	        \item illisibilité du code :
+	        \begin{verbatim}
 				n=((p[0]&0x7f)<<8)|p[1];				
 			\end{verbatim}
-			\item nom des fichiers : 
+	        \end{itemize}
+	    \end{alertblock}
+	\begin{exampleblock}{Poins positifs}
+		\begin{itemize}
+			\item nom des fichiers standardisé : 
 			\verb+s3_+ ;
-			\end{itemize}
 			\item commentaires des commits.\\
 		\end{itemize}
-	\end{block}
+	\end{exampleblock}
 }
-
-
 
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Générateur aléatoire}
+%% 2 MIN -- MATHIEU
+
+\frame{
+\frametitle{Génération des clefs}
+\begin{block}{Principes de Kerckhoffs}
+	\begin{itemize}
+	\item le \textit{secret} réside dans la clef ;
+	\item les algorithmes de génération de clefs ne doivent donner aucune information sur la clef.
+	\end{itemize}
+\end{block}
+
+\begin{center}
+\begin{tikzpicture}[node distance=.1cm]
+\node[draw, text width=2cm] (genalea1) {Générateur aléatoire};
+\node[below=of genalea1, yshift=-1cm] (clefsym) {Clef symétrique};
+\draw (genalea1) edge[->] (clefsym) ;
+
+\node[draw, text width=2cm, right=of genalea1, xshift=1cm] (genalea2) {Générateur aléatoire};
+\node[right=of genalea2] (plus) {+};
+\node[draw, text width=3cm,right=of plus] {Structure mathématique};
+\node[below=of plus, yshift=-1.2cm] (clefasym) {Clef asymétrique};
+\draw (plus) edge[->] (clefasym);
+
+\end{tikzpicture}
+\end{center}
+
+}
+
 \frame{
 \frametitle{Générateur aléatoire}
 \framesubtitle{Définitions}
@@ -556,7 +689,11 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \begin{itemize}
 
 \item problème aléatoire ;
-\item mesure de l'entropie : $H(X) = - \sum_x P(X=x)*\log_2(P(X=x))	 $ ;
+\item mesure de l'entropie : $H(X) = - \sum_x P(X=x)\times\log_2(P(X=x))$ (exprimée en Shannon) :
+\begin{itemize}
+\item si la VA est équirépartie alors l'entropie est maximale;
+\item sinon inférieure à 50\%.
+\end{itemize}
 \item entropie et moduli.
 
 \end{itemize}
@@ -567,12 +704,13 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 
 \frame{
 \frametitle{Entropie}
-
+\vspace*{-1cm}
 \begin{center}
 \begin{tikzpicture}[scale=0.75, every node/.style={scale=0.75},node distance=1.5cm]
 \node (donnees) [io,pattern=dots,pattern color=orange] {Données};
+\node (bruit) [below=of donnees, yshift=1.9cm] {BRUIT};
 \node (digit) [process, right of=donnees, xshift=4cm] {Numérisation};
-\node (cond) [process, below of=digit,text width=3cm,yshift=-0.5cm] {Conditionnement (optionnel)};
+\node (cond) [process, below of=digit,text width=3cm,yshift=-1.5cm] {Traitement (optionnel)};
 \node (bat) [process, right of=cond, xshift=4cm] {Batterie de tests}; 
 \node (dec) [decision, below of=cond,yshift=-1.2cm] {Sortie}; 
 \node (appli) [process, below of=dec, yshift=-1cm] {Application};
@@ -582,7 +720,7 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \end{pgfonlayer}
 
 \begin{pgfonlayer}{background}
-\node[punkt, fit=(donnees)(digit), fill=yellow!20] (groupclient) {};
+\node[punkt, fit=(donnees)(digit)(bruit), fill=yellow!20] (groupclient) {};
 \end{pgfonlayer}
 
 \draw [arrow] (donnees) -- (digit);
@@ -632,25 +770,7 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 \end{block}
 }
 
-%% 2 MIN -- MATHIEU
 \subsection{Génération des clefs I}
-\frame{
-\frametitle{Génération des clefs}
-\begin{block}{Principes de Kerchkoff}
-	\begin{itemize}
-	\item Le \textit{secret} réside dans la clef ;
-	\item les algorithmes de génération de clefs ne doivent donner aucune information sur la clef.
-	\end{itemize}
-\end{block}
-
-\begin{block}{Deux grands types de générateur de clés}
-\begin{itemize}
-\item Générateurs de bits aléatoires (RGB) pour les clés privées de certains algorithmes (i.e. AES, DSA) ou pour le salage (i.e. \textit{seed} de RSA)
-\item Générateurs de clefs asymétriques, qui utilisent des fonctions à sens uniques, largement diffusées et ne devant délivrer aucune information sur le secret.
-\end{itemize}
-\end{block}
-
-}
 
 \frame{
 \frametitle{Génération des clefs II}
