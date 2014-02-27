@@ -275,7 +275,7 @@
 	\node	[block2]	(gcd1)	[below=of div1]	{$pgcd(.,N_1)$} edge [<-] (div1);
 	\node	[block2]	(gcd2) [below=of div2]		{$pgcd(.,N_2)$} edge [<-] (div2);
 	\node	[block2]	(gcd3) [below=of div3]		{$pgcd(.,N_3)$} edge [<-] (div3);
-	\node	[block2]	(gcd4) [below=of div4]	 	{$pgcd(.,N_4)$} edge [<-] (div4);\pause
+	\node	[block2]	(gcd4) [below=of div4]	 	{$pgcd(.,N_4)$} edge [<-] (div4);
 \end{scope}
 
 \end{tikzpicture}
@@ -324,7 +324,7 @@
 	\node	[block2]	(gcd1) [below=of div1]	{$pgcd(3,6)=3$} edge [<-] (div1);
 	\node	[block2]	(gcd2) [below=of div2]		{$pgcd(12,15)=3$} edge [<-] (div2);
 	\node	[block2]	(gcd3) [below=of div3]		{$pgcd(13,77)=1$} edge [<-] (div3);
-	\node	[block2]	(gcd4) [below=of div4]	 	{$-$} edge [<-] (div4);\pause
+	\node	[block2]	(gcd4) [below=of div4]	 	{$-$} edge [<-] (div4);
 \end{scope}
 
 \end{tikzpicture}
@@ -526,11 +526,38 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 	\end{block}
 }
 
+
+\frame[containsverbatim]{
+\frametitle{OpenSSL}
+	\begin{block}{Observation}
+		\begin{itemize}
+			\item lisibilité du code;
+			\begin{verbatim}
+				n=((p[0]&0x7f)<<8)|p[1];				
+			\end{verbatim}
+			\item documentation;
+			\item commentaires.\\
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Quand ?}
+		\begin{itemize}
+			\item année passée ;
+			\item failles plus anciennes.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Corrections ?}
+		Présence de corrections? Si oui, lesquelles et par qui?
+	\end{block}
+}
+
+
+
 %% 4 MIN -- WILLIAM (3 MIN)
-\subsection{Entropie}
-\subsection{Entropie}
+\subsection{Générateur aléatoire}
 \frame{
-\frametitle{Entropie}
+\frametitle{Générateur aléatoire}
 \framesubtitle{Définitions}
 
 
@@ -649,14 +676,14 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 %% 2 MIN -- CLAIRE
 \subsection{Chiffrement et protocoles}
 \frame{
-\frametitle{Chiffrement et protocoles 1}
+\frametitle{Chiffrement et protocoles I}
 	\begin{block}{RSA-OAEP}
 		laïus RSA-OAEP (fonctionnement, +, -)
 	\end{block}
 }
 
 \frame{
-\frametitle{Chiffrement et protocoles 2}
+\frametitle{Chiffrement et protocoles II}
 	\begin{block}{Manger's attack}
 		\begin{itemize}
 			\item OpenSSL 1.0.0 ;
@@ -669,24 +696,24 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 }
 
 \frame{
-\frametitle{Chiffrement et protocoles 3}
-	\begin{block}{CBC}
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=6cm]{CBC_chiff.png}
-			\label{CBC_chiff}
-		\end{figure}
-		
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=6cm]{CBC_dechiff.png}
-			\label{CBC_dechiff}
-		\end{figure}
-	\end{block}
+\frametitle{Chiffrement et protocoles III}
+\framesubtitle{CBC}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=7cm]{CBC_chiff.png}
+		\label{CBC_chiff}
+	\end{figure}
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=7cm]{CBC_dechiff.png}
+		\label{CBC_dechiff}
+	\end{figure}
 }
 
 \frame{
-\frametitle{Chiffrement et protocoles 4}
+\frametitle{Chiffrement et protocoles IV}
 	\begin{block}{\textit{Man in the Middle}}
 		\begin{itemize}
 			\item attaque à clair choisi ;
