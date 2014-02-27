@@ -81,6 +81,7 @@
 
 \date{28/02/2014}
 
+\setcounter{tocdepth}{1}
 \begin{document}
 {
 \setbeamertemplate{headline}[default] 
@@ -90,14 +91,16 @@
 }
 
 %% 2 MIN -- PASCAL
-\section{Introduction}
+\section*{Introduction}
 \subsection{Sujet et problématique}
 \frame{
 \frametitle{Sujet et problématique}
-\begin{block}{Les clefs qui rôdent sur internet}
+
+\begin{block}{Les clefs d'internet}
 	\begin{itemize}
-		\item clefs SSH (Port 22), SSL/TLS (Port 443)
-		\item taille des clefs + génération aléatoire\\
+		\item SSL/TLS (port 443);
+		\item évaluation du niveau de sécurité d'internet;
+		\item taille des clefs \& génération aléatoire.\\
 	\end{itemize}
 \end{block}
 
@@ -108,9 +111,8 @@
 
 \frame{
 \frametitle{Sommaire}
-\begin{multicols}{2}
 \tableofcontents
-\end{multicols}
+
 }
 
 %% PARTIE 1 - 16 MIN
@@ -142,7 +144,7 @@
 		\item stocker l'ensemble des empreintes dans un dossier : 
 		\begin{itemize}
 			\item certificats ;
-			\item clefs de session.\\
+			\item clefs publiques RSA.\\
 		\end{itemize}	
 	\end{itemize}
 	\end{block}
@@ -156,8 +158,7 @@
 				\label{alg:recupCertif}
 				 %\SetAlgoLined % For previous releases [?]
 				 \Entree{Fichier f, contenant les adresses ayant le port 443 ouvert}
-				 \Sortie{Certificats et clef de session des adresses}
-				 \Donnees{log, certificat, clef de session}
+				 \Sortie{Certificats et clefs publiques RSA des adresses}
 				 
 				 \PourTous{adresses de f}{
 					Se connecter au serveur\;
@@ -171,11 +172,11 @@
 					}{
 					On capture la session (dont le certificat serveur)\;
 					\Si{!echec de capture de session}{
-						on extrait le certificat et la clef de session\;
+						on extrait le certificat et la clef publique RSA\;
 					}	 
 					}
 				}
-				\Retour{certificats et clés de session}
+				\Retour{certificats et clefs publiques RSA}
 				
 				\end{algorithm}
 				\vspace{0.7cm}	
@@ -186,7 +187,7 @@
 \frametitle{Certificats récupérés}
 	\begin{block}{Failles}
 		\begin{itemize}
-			\item pas de Comon Name ;
+			\item pas de Common Name ;
 			\item que le Serial Number.\\
 		\end{itemize}
 	\end{block}
@@ -197,7 +198,7 @@
 	\begin{block}{Gestion des doublons}
 	\begin{itemize}
 		\item script perl ;
-		\item si une empreinte de trouve déjà dans le dossier : on la stocke dans un autre dossier, celui des doublons ;
+		\item si une empreinte déjà présente : on la stocke dans un autre dossier ;
 		\item liens symboliques.\\
 	\end{itemize}
 	\end{block}	
@@ -213,7 +214,6 @@
 			 \Entree{Pré-requis : Exécution de l'algorithme ssl\_collector \\
 			 Création d'un dossier D contenant les certificats à traiter}
 			 \Sortie{Dossiers : certs\_doublons, certs\_links; Fichier : moduli}
-			 \Donnees{Certificats C; Fingerprint F; Chaîne de caractères S; Modulo M}
 			 certs\_doublons $\leftarrow$ dossier\_vide\;
 			 certs\_links $\leftarrow$ dossier\_vide\;
 			 moduli $\leftarrow$ fichier\_vide\;
@@ -299,18 +299,18 @@
 		block2/.style={rectangle,draw,fill=orange!40}]	
 		
 
-	\node [block2] (N1)		[] {$2*3$};
-	\node [block2] (N2)		[right=of N1,xshift=1.2cm] {$3*5$} ;
-	\node [block2] (N3)		[right=of N2,xshift=1.2cm] {$7*11$} ;
+	\node [block2] (N1)		[] {$6$};
+	\node [block2] (N2)		[right=of N1,xshift=1.2cm] {$15$} ;
+	\node [block2] (N3)		[right=of N2,xshift=1.2cm] {$77$} ;
 	\node [block2] (N4)		[right=of N3,xshift=1.2cm] {$1$}  ;\pause	
 	
 	\node [block2] (N21) [below=of N1,xshift=+1.8cm] {$90$} edge [<-] (N1) edge [<-] (N2) ;	
-	\node [block2] (N22) [right=of N21,xshift=2cm] {$70$} edge [<-] (N3) edge [<-] (N4) ;	\pause
+	\node [block2] (N22) [right=of N21,xshift=2cm] {$77$} edge [<-] (N3) edge [<-] (N4) ;	\pause
 
 	\node [block2] (P) [below=of N21,xshift=1.4cm] {$6930$} edge [<-] (N21) edge [<-] (N22);\pause
 	
 	\node [block2] (mod1) [below=of P,xshift=-3.2cm] {$\mod (90)^2 = 6930$}  edge [<-] (P); 
-	\node [block2] (mod2) [below=of P,xshift=3.2cm] {$\mod (70)^2 = 1001$}  edge [<-] (P);\pause
+	\node [block2] (mod2) [below=of P,xshift=3.2cm] {$\mod (77)^2 = 1001$}  edge [<-] (P);\pause
 	
 	\node [block2] (mod21)		[below=of mod1,xshift=-1.5cm] {$\mod 6^2 = 18$} edge [<-] (mod1);
 	\node [block2] (mod22)		[below=of mod1,xshift=1.5cm] {$\mod 15^2 = 180$} edge [<-] (mod1);
@@ -332,69 +332,6 @@
 \end{tikzpicture}
 
 \end{center}
-
-\framebreak
-
-    \framesubtitle{Algorithmes associés : Arbre des produits, Arbre des restes}
-    
-    \begin{columns}
-    		\begin{column}{.48\textwidth}
-
-\begin{algorithm}[H]
- \scriptsize
- \Entree{tableau des moduli : T}
- \Sortie{Hauteur arbre, produits des moduli\\}
- 
- $v \leftarrow T$\;
- $level \leftarrow 0$\;
- \Tq{$|v|>1$}{
-  $tmp \leftarrow \emptyset$\;
-  \PourCh{$i \in \{0, .., |v| / 2\}$}{
-    $tmp[i] \leftarrow v[i\times2] \times v[i\times2 + 1]$\;
-  }
-  $storeProductLevel(v, level)$\;
-  $v \leftarrow tmp$\;
-  $level \leftarrow level + 1$\;
- }
- \Retour{level}
-
-\end{algorithm}\pause
-
-
-    		\end{column}
-    		\hfill
-    		
-    		\begin{column}{.48\textwidth}
-
-
-\begin{algorithm}[H]
- \scriptsize
- \Entree{Hauteur de l'arbre : level}
- \Sortie{PGCDs des moduli}
- \Tq{$level>0$}{
-  $P \leftarrow getRemainderLevel(level)$\;
-  $v \leftarrow getProductLevel(level-1)$\;
-  \PourCh{$i \in \{0, .., |v|\}$}{
-    $v[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
-  }
-  $storeRemainderLevel(v, level)$\;
-  $v \leftarrow tmp$\;
-  $level \leftarrow level - 1$\; 
- }
- $w \leftarrow \emptyset$\;
- \PourCh{$i \in \{0, .., |v|\}$}{
-    $w[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
-    $w[i] \leftarrow w[i] / v[i]$\;
-    $w[i] \leftarrow pgcd(w[i],v[i])$\;
-  }
- \Retour{w}
-
-\end{algorithm}
-
-    		\end{column}  
-    \end{columns}
-
-
 }
 
 
@@ -451,8 +388,12 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \end{block}
 }
 
-\frame{
-    \frametitle{Factorisation -- Démonstration}
+\frame[containsverbatim]{
+    \frametitle{Factorisation}
+    \centering
+    \Huge{Démonstration}
+    \normalsize
+    Jeu de données : \verb+15, 22, 437, 1189, 527, 21, 3233, 3827+
 
 }
 
@@ -460,20 +401,21 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \subsection{Résultats}
 \frame{
     \frametitle{Résultats}
-\begin{block}{Base de donnée}
+\begin{block}{Base de données}
    	\begin{itemize}
-		\item Récupération des facteurs communs - clefs publique
-		\item Scripts perl + requêtes SQL \\
+		\item récupération des facteurs communs - clefs publiques;
+		\item scripts perl \& requêtes SQL. \\
 	\end{itemize}
 \end{block}
 
 \begin{block}{Statistiques}
    	\begin{itemize}
-		\item Les émetteurs
-		\item Outil de recherche
+		\item émetteurs;
+		\item  99.6\% (R) - 0.4\% (V);
+		\item critères de recherche :
 		\begin{itemize}
-			\item taille de clef : 99.6\% (R) - 0.4\% (V)
-			\item émetteurs, sujet : CISCO - 6280 (R) - 40 (V)\\
+			\item taille de clefs;
+			\item émetteurs, sujets : CISCO - 6280 (R) - 40 (V).\\
 		\end{itemize}
 	\end{itemize}
 \end{block}
@@ -487,15 +429,15 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \frametitle{Introduction}
 	\begin{block}{Contexte}
 	\begin{itemize}
-		\item récent scandal sur la NSA ;
+		\item origine de vulnérabilité des certificats ;
+		\item contexte actuel : sentiment d'incertitude ;
 		\item beaucoup d'outils utilisés. \\
 	\end{itemize}
-	Mais à qui peut-on faire confiance?
 	\end{block}
 	\begin{block}{Audit d'OpenSSL}
 		Cinq grands axes : 
 		\begin{itemize}
-			\item l'entropie ;
+			\item la génération de l'aléatoire ;
 			\item la génération des clefs ;
 			\item le chiffrement et les protocoles ;
 			\item les signatures et les authentifications ;
@@ -510,13 +452,13 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 		\begin{itemize}
 			\item site des CVE ;
 			\item site de Vigil@nce ;
-			\item RFC.\\
+			\item RFC et standards.\\
 		\end{itemize}
 	\end{block}
 	
 	\begin{block}{Quand ?}
 		\begin{itemize}
-			\item année passée ;
+			\item ces dernières années ;
 			\item failles plus anciennes.
 		\end{itemize}
 	\end{block}
@@ -530,7 +472,10 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \frame[containsverbatim]{
 \frametitle{OpenSSL}
 	\begin{block}{Observation}
+	    Développé par Eric Young \& Tim Hudson :
 		\begin{itemize}
+			\item documentation;
+			\item code développé en mode réactif;
 			\item lisibilité du code;
 			\begin{itemize}
 			\item exemple de code
@@ -538,10 +483,9 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 				n=((p[0]&0x7f)<<8)|p[1];				
 			\end{verbatim}
 			\item nom des fichiers : 
-			\verb+SSL3_+ 
+			\verb+s3_+ ;
 			\end{itemize}
-			\item documentation;
-			\item commentaires.\\
+			\item commentaires des commits.\\
 		\end{itemize}
 	\end{block}
 }
@@ -559,7 +503,7 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \begin{itemize}
 
 \item problème aléatoire ;
-\item mesure de l'entropie $H(X) = - \sum_x P(X=x)*\log_2(P(X=x))	 $ ;
+\item mesure de l'entropie : $H(X) = - \sum_x P(X=x)*\log_2(P(X=x))	 $ ;
 \item entropie et moduli.
 
 \end{itemize}
@@ -574,7 +518,7 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \begin{center}
 \begin{tikzpicture}[scale=0.75, every node/.style={scale=0.75},node distance=1.5cm]
 \node (donnees) [io,pattern=dots,pattern color=orange] {Données};
-\node (digit) [process, right of=donnees, xshift=4cm] {Digitalisation};
+\node (digit) [process, right of=donnees, xshift=4cm] {Numérisation};
 \node (cond) [process, below of=digit,text width=3cm,yshift=-0.5cm] {Conditionnement (optionnel)};
 \node (bat) [process, right of=cond, xshift=4cm] {Batterie de tests}; 
 \node (dec) [decision, below of=cond,yshift=-1.2cm] {Sortie}; 
@@ -605,14 +549,14 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 
 \begin{block}{Tests}
 \begin{itemize}
-\item Tests trop anciens, \texttt{FIPS1} (1994), non mis à jour
+\item tests trop anciens, \texttt{FIPS 140-1} (1994), non mis à jour :
  	\begin{itemize}
- 	\item test monobit
-	\item test poker
-	\item test runs
-	\item test long runs
+ 	\item test monobit;
+	\item test poker;
+	\item test runs;
+	\item test long runs.
 	\end{itemize} 	 
-\item Autres tests proposés dans le rapport
+\item autres tests proposés dans le rapport.
 
 \end{itemize}
 \end{block}
@@ -627,22 +571,22 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 \begin{block}{Faille Debian 4.0 sous OpenSSL 0.9.8}
 Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut identifier rapidement ceux qui ont étés générés durant la faille Debian/OpenSSL entre 2006 et 2008.\\
 \begin{itemize}
-\item \textbf{Durée de l'attaque} : quelques heures
-\item \textbf{Conséquences} : forger de faux certificats, de fausses signatures et déchiffrer des messages privées.
-\item \textbf{Qui?} : grandes entreprises (e.g. IBM, CISCO), routeurs, universités, etc.
-\item \textbf{Fin de validité de certificats} : Entre 2020 et 2030.
+\item \textbf{durée de l'attaque} : quelques heures;
+\item \textbf{conséquences} : forger de faux certificats, de fausses signatures et déchiffrer des messages privées;
+\item \textbf{qui?} : grandes entreprises (e.g. IBM, CISCO), routeurs, universités, etc. ;
+\item \textbf{fin de validité de certificats} : 2020 -- 2030.
 \end{itemize}
 \end{block}
 }
 
 %% 2 MIN -- MATHIEU
-\subsection{Génération des clefs}
+\subsection{Génération des clefs I}
 \frame{
 \frametitle{Génération des clefs}
 \begin{block}{Principes de Kerchkoff}
 	\begin{itemize}
 	\item Le \textit{secret} réside dans la clef ;
-	\item Les algorithmes de génération de clés ne doivent donner aucune information sur la clé.
+	\item les algorithmes de génération de clefs ne doivent donner aucune information sur la clef.
 	\end{itemize}
 \end{block}
 
@@ -653,8 +597,10 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 \end{itemize}
 \end{block}
 
-\framebreak
+}
 
+\frame{
+\frametitle{Génération des clefs II}
 \begin{block}{Audit : Diffie-Hellman Ephémère en mode FIPS}
 \begin{itemize}
 \item \textbf{Description} : Un attaquant écoutant une communication chiffré en SSL/TLS entre un client et un serveur peut déchiffrer tout les messages en forçant la génération d'un secret Diffie-Hellman prédictible.
@@ -714,7 +660,7 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 	\end{block}
 	\begin{block}{Problème}
 		\begin{itemize}
-			\item SSL/TLS chiffre un canal de session ;
+			\item SSL/TLS chiffre un canal de communication ;
 			\item problème d'IV.\\
 		\end{itemize}
 	\end{block}
@@ -734,21 +680,21 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 \frametitle{Signature et authentification I}
 \begin{block}{Définition}
 \begin{itemize}
-\item Juridiquement, une signature électronique à même valeur qu'une signature manuscrite.
+\item Juridiquement, une signature électronique a même valeur qu'une signature manuscrite.
 \item Elle \textbf{DOIT} assurer l'intégrité, l'authentification et la non-répudiation d'un message.
 \end{itemize}
 \end{block}
 
-Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérification de messages signés, ou des fuites d'informations sur la clé privée ayant servi à chiffrer.
+Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérification de messages signés, ou des fuites d'informations sur la clef privée ayant servi à chiffrer.
 }
 
 \frame{
 \frametitle{Signature et authentification II}
 \begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.}
 \begin{itemize}
-\item \textbf{Description} : L'attaque se fait sur des morceaux de la signature récupéré afin de récupérer la clé privée bit à bit.
-\item \textbf{Comment?} : Du bon matériel, surtout au niveau de la mémoire vive (i.e. Système Linux avec une architecture SPARC) et un oracle (e.g. système de prédictions) permettant de fabriquer la clé.
-\item \textbf{Temps de l'attaque} : une centaine d'heure.
+\item \textbf{Description} : L'attaque se fait sur des morceaux de la signature afin de récupérer la clef privée bit à bit.
+\item \textbf{Comment?} : Du bon matériel, surtout au niveau de la mémoire vive (i.e. Système Linux avec une architecture SPARC) et un oracle (e.g. système de prédictions) permettant de fabriquer la clef.
+\item \textbf{Temps de l'attaque} : une centaine d'heures.
 \end{itemize}
 \end{block}
 }
@@ -757,9 +703,9 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 \frametitle{Signature et authentification III}
 \begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.} 
 \begin{itemize}
-\item \textbf{Un problème dans le code OpenSSL?} : La fonction \texttt{Fixed\_Window\_Exponentiation} utilise des milliers de multiplications, qui est opération la plus sensible en cas de dégradation du micro-processeur.
-\item \textbf{Solution :} Aucune! On pourrait utiliser la technique du \texttt{square\_and\_multiply} mais elle a l'inconvénient d'être vulnérable à une attaque par \textit{timing}.
-\item \textbf{Conséquences :} A moins que l'attaquant n'ai accès physiquement à votre machine les risques sont faibles. Cependant l'Université du Michigan cherche un moyen de faire des injections à distance à base d'\texttt{impulsions lasers}.
+\item \textbf{un problème dans le code OpenSSL?} : la fonction \texttt{Fixed\_Window\_Exponentiation} utilise des milliers de multiplications, qui est l'opération la plus sensible en cas de dégradation du micro-processeur.
+\item \textbf{solution :} Aucune! On pourrait utiliser la technique du \texttt{square\_and\_multiply} mais elle a l'inconvénient d'être vulnérable à une attaque par \textit{timing}.
+\item \textbf{conséquences :} à moins que l'attaquant n'ait accès physiquement à votre machine les risques sont faibles. Cependant l'Université du Michigan cherche un moyen de faire des injections à distance à base d'\texttt{impulsions lasers}.
 \end{itemize}
 \end{block}
 }
@@ -816,7 +762,7 @@ SSL 3 et TLS 1.0:
 \end{itemize}
 TLS 1.1 :
 \begin{itemize}
-\item \textbf{2011} (CVE-2011-4576) - récupération d'informations sur un échange précédent : mémoire non réinialisée;
+\item \textbf{2011} (CVE-2011-4576) - récupération d'informations sur un échange précédent : mémoire non réinitialisée;
 \item \textbf{2013} (CVE-2013-0169)- Lucky Thirteen : \textit{timing attack}, $2^{23}$ sessions TLS pour retrouver un bloc en clair;
 \end{itemize}
 TLS 1.2 :
@@ -842,7 +788,7 @@ TLS 1.2 :
 \end{block}
 
 \begin{alertblock}{Attention -- 25 février 2014}
-CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédiaires comme un certificat d'AC par défaut.
+CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédiaire comme un certificat d'AC par défaut.
 \end{alertblock}
 
 }
@@ -854,19 +800,6 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 \subsection{Faiblesses identifiées}
 \frame[allowframebreaks=1]{
 \frametitle{Faiblesses identifiées}
-\begin{block}{Critères}
-\begin{itemize}
-\item version du protocole
-\item \textit{ciphersuites} proposées par le client 
-\item courbes elliptiques supportées 
-\item algorithmes de signature 
-\item compression TLS
-\item activation ou non du ticket de session
-\end{itemize}
-\end{block}
-
-\framebreak
-
 \begin{center}
 \begin{tikzpicture}[node distance=0cm]
 \node (Client) at (-5,0) {\includegraphics[width=1.5cm]{computer}};
@@ -887,6 +820,16 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 
 \end{tikzpicture}
 \end{center}
+\begin{block}{Critères}
+\begin{itemize}
+\item version du protocole;
+\item \textit{ciphersuites} proposées par le client ;
+\item courbes elliptiques supportées ;
+\item algorithmes de signature ;
+\item compression TLS;
+\item activation ou non du ticket de session.
+\end{itemize}
+\end{block}
 
 }
 
@@ -932,35 +875,34 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 }
 
 %% 2 MIN -- MATHIEU
-\subsection{Qualis}
+\subsection{Qualys}
 \frame{
-\frametitle{Qualis SSL Labs}
+\frametitle{Qualys SSL Labs}
 \begin{block}{Description}
-Qualis est une plateforme multi-sécurité :
 \begin{itemize}
-\item Sécurité Réseau
-\item Sécurité Web
-\item etc\newline
+\item Qualys est une plateforme multi-sécurité :
+\item Le projet SSL Labs permet de :
+\begin{itemize}
+\item tester l'implémentation SSL du navigateur;
+\item tester la configuration et les certificats d'un serveur;
+\item lister les bonnes pratiques sur les déploiements SSL/TLS.
 \end{itemize}
-Le projet SSL Labs permet de :
-\begin{itemize}
-\item Tester l'implémentation SSL du navigateur.
-\item Tester la configuration et les certificats d'un serveur.
-\item Tester la configuration et les certificats d'un serveur.
-\item Lister les bonnes pratiques sur les déploiements SSL/TLS.
 \end{itemize}
 \end{block}
 
-\framebreak
+}
 
+
+\frame{
+\frametitle{Qualys SSL Labs}
 \begin{block}{Analyse des serveurs}
 L'analyse porte sur les points suivants :
 \begin{itemize}
-\item Contrôle du certificat
-\item Protocoles supportés
-\item Échange des clés
-\item Qualité de chiffrement 
-\item Système de notation
+\item contrôle du certificat;
+\item protocoles supportés;
+\item échange des clés;
+\item qualité de chiffrement; 
+\item système de notation.
 \end{itemize} 
 \end{block}
 }
@@ -1003,11 +945,23 @@ Nous pouvons modifier la \textit{ciphersuite} du client avec la commande \texttt
 \section{Conclusion}
 \frame{
 \frametitle{Conclusion}
-\begin{block}{Bilan}
+\begin{block}{Bilan du projet}
 	\begin{itemize}
-		\item Mise en évidence des clefs faibles
-		\item Évolution du code OpenSSL\\
+		\item mise en évidence des clefs faibles;
+		\item évaluation du code OpenSSL.\\
 	\end{itemize}
 \end{block}
+
+\begin{block}{Apports du projet}
+	\begin{itemize}
+		\item recherche approfondie de normes;
+		\item riche en développement et en recherche.\\
+	\end{itemize}
+\end{block}
+}
+
+\frame{
+\centering
+\huge Questions ?
 }
 \end{document}
