@@ -144,8 +144,35 @@
 \frame{
     \frametitle{Récupération des certificats 2}
     	\begin{block}{Algorithme}
-		algo de récupération des certificats	
-	\end{block}
+    		\tiny
+			\begin{algorithm}[H]
+				\label{alg:recupCertif}
+				 %\SetAlgoLined % For previous releases [?]
+				 \Entree{Fichier f, contenant les adresses ayant le port 443 ouvert}
+				 \Sortie{Certificats et clef de session des adresses}
+				 \Donnees{log, certificat, clef de session}
+				 
+				 \PourTous{adresses de f}{
+					Se connecter au serveur\;
+					\eSi{echec}{
+						\Si{le log contient \textit{protocol}}{
+					 		on incrémente le nombre d'échecs de protocoles\;
+					 	}
+					 	\Si{le log contient \textit{handshake}}{
+					 		on incrémente le nombre d'échecs de poignées de mains\;
+						}
+					}{
+					On capture la session (dont le certificat serveur)\;
+					\Si{!echec de capture de session}{
+						on extrait le certificat et la clef de session\;
+					}	 
+					}
+				}
+				\Retour{certificats et clés de session}
+				
+				\end{algorithm}
+				\vspace{0.7cm}	
+			\end{block}
 }
 
 \frame{
@@ -162,7 +189,33 @@
 \frame{
     \frametitle{Gestion des doublons 2}
 	\begin{block}{Algorithme gestion des doublons}
-		algo de gestion des doublons
+	\tiny
+		\begin{algorithm}[H]
+			\label{alg:clean}
+			 %\SetAlgoLined % For previous releases [?]
+			 \Entree{Pré-requis : Exécution de l'algorithme ssl\_collector \\
+			 Création d'un dossier D contenant les certificats à traiter}
+			 \Sortie{Dossiers : certs\_doublons, certs\_links; Fichier : moduli}
+			 \Donnees{Certificats C; Fingerprint F; Chaîne de caractères S; Modulo M}
+			 certs\_doublons $\leftarrow$ dossier\_vide\;
+			 certs\_links $\leftarrow$ dossier\_vide\;
+			 moduli $\leftarrow$ fichier\_vide\;
+			 \PourTous{C $\in$ D}{
+			 	F $\leftarrow$ \textit{fingerprint}(C)\;
+			 	S $\leftarrow$ \textit{nom\_fichier}(C)\;
+			 	M $\leftarrow$ \textit{modulo}(C)\;
+			 	\Si{échec(F)}{
+			 		continue\;
+			 	}
+			 	\eSi{F $\in$ certs\_links}{
+			 		certs\_doublons/F $\leftarrow$ concat(certs\_doublons/F, S)\;
+			 	}{
+			 		moduli $\leftarrow$ concat(moduli, M)\;
+			 		certs\_links $\leftarrow$ F\;
+			 	}
+			 }
+		\end{algorithm}
+		\vspace{0.7cm}
 	\end{block}	
 }
 
@@ -367,6 +420,29 @@
 		\end{itemize}
 	\end{block}
 }
+
+\frame{
+\frametitle{Failles}
+	\begin{block}{Où ?}
+		\begin{itemize}
+			\item site des CVE ;
+			\item site de Vigil@nce ;
+			\item RFC.\\
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Quand ?}
+		\begin{itemize}
+			\item année passée ;
+			\item failles plus anciennes.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Corrections ?}
+		Présence de corrections? Si oui, lesquelles et par qui?
+	\end{block}
+}
+
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Entropie}
 \subsection{Entropie}
