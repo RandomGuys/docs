@@ -181,6 +181,16 @@
 }
 
 \frame{
+\frametitle{Certificats récupérés}
+	\begin{block}{Failles}
+		\begin{itemize}
+			\item pas de Comon Name ;
+			\item que le Serial Number.\\
+		\end{itemize}
+	\end{block}
+}
+
+\frame{
     \frametitle{Gestion des doublons 1}
 	\begin{block}{Gestion des doublons}
 	\begin{itemize}
@@ -639,8 +649,64 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 %% 2 MIN -- CLAIRE
 \subsection{Chiffrement et protocoles}
 \frame{
-\frametitle{Chiffrement et protocoles}
+\frametitle{Chiffrement et protocoles 1}
+	\begin{block}{RSA-OAEP}
+		laïus RSA-OAEP (fonctionnement, +, -)
+	\end{block}
+}
 
+\frame{
+\frametitle{Chiffrement et protocoles 2}
+	\begin{block}{Manger's attack}
+		\begin{itemize}
+			\item OpenSSL 1.0.0 ;
+			\item OAEP : défaillant ?
+			\item contrôler la taille des paramètres à hacher ;
+			\item sur serveur : variations de délais ;
+			\item systèmes embarqués : plus problématique. \\
+		\end{itemize}
+	\end{block}
+}
+
+\frame{
+\frametitle{Chiffrement et protocoles 3}
+	\begin{block}{CBC}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=6cm]{CBC_chiff.png}
+			\label{CBC_chiff}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=6cm]{CBC_dechiff.png}
+			\label{CBC_dechiff}
+		\end{figure}
+	\end{block}
+}
+
+\frame{
+\frametitle{Chiffrement et protocoles 4}
+	\begin{block}{\textit{Man in the Middle}}
+		\begin{itemize}
+			\item attaque à clair choisi ;
+			\item récupérer cookies de session.\\
+		\end{itemize}
+	\end{block}
+	\begin{block}{Problème}
+		\begin{itemize}
+			\item SSL/TLS chiffre un canal de session ;
+			\item problème d'IV.\\
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Recommandations}
+		\begin{itemize}
+			\item ne pas utiliser CBC ;
+			\item concaténer tous les objets.\\
+		\end{itemize}
+	\end{block}
+	
 }
 
 %% 2 MIN -- MATHIEU
