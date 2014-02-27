@@ -5,6 +5,7 @@
 \usepackage{lmodern}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{algorithm2e}
 
 \usetikzlibrary{trees,shapes.geometric,arrows,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains	}
  \tikzset{
@@ -152,12 +153,170 @@
 }
 
 %% 5 MIN
+% julien et william
 \subsection{Factorisation}
 \frame{
     \frametitle{Factorisation}
-    %% ALGOS -- WILLIAM
-    %% OPTIM -- JULIEN
+    \framesubtitle{PGCD deux à deux}
+\begin{center}
+\begin{tikzpicture}
+\begin{scope}[node distance=1cm,on grid,>=stealth',
+		block/.style={rectangle,draw,fill=cyan!20},
+		comp/.style={circle,draw,fill=orange!40},
+		block2/.style={rectangle,draw,fill=orange!40}]	
+		
+
+	\node [block2] (N1)		[] {$N_1$};
+	\node [block2] (N2)		[right=of N1,xshift=1.2cm] {$N_2$} ;
+	\node [block2] (N3)		[right=of N2,xshift=1.2cm] {$N_3$} ;
+	\node [block2] (N4)		[right=of N3,xshift=1.2cm] {$N_4$}  ;\pause	
+	
+	\node [block2] (N21) [below=of N1,xshift=+1.8cm] {$N_1N_2$} edge [<-] (N1) edge [<-] (N2) ;	
+	\node [block2] (N22) [right=of N21,xshift=2cm] {$N_3N_4$} edge [<-] (N3) edge [<-] (N4) ;	\pause
+
+	\node [block2] (P) [below=of N21,xshift=1.4cm] {$N_1N_2N_3N_4$} edge [<-] (N21) edge [<-] (N22);\pause
+	
+	\node [block2] (mod1) [below=of P,xshift=-1.4cm] {$\mod (N_1N_2)^2$}  edge [<-] (P); 
+	\node [block2] (mod2) [right=of mod1,xshift=2cm] {$\mod (N_3N_4)^2$}  edge [<-] (P);\pause
+	
+	\node [block2] (mod21)		[below=of mod1,xshift=-1.8cm] {$\mod N_1^2$} edge [<-] (mod1);
+	\node [block2] (mod22)		[right=of mod21,xshift=1.2cm] {$\mod N_2^2$} edge [<-] (mod1);
+	\node [block2] (mod23)		[right=of mod22,xshift=1.2cm] {$\mod N_3^2$}  edge [<-] (mod2);
+	\node [block2] (mod24)		[right=of mod23,xshift=1.2cm] {$\mod N_4^2$}  edge [<-] (mod2);\pause
+
+	
+	\node [block2] (div1)		[below=of mod21] {$/N_1$} edge [<-] (mod21);
+	\node [block2] (div2)		[below=of mod22] {$/N_2$} edge [<-] (mod22);
+	\node [block2] (div3)		[below=of mod23] {$/N_3$}  edge [<-] (mod23);
+	\node [block2] (div4)		[below=of mod24] {$/N_4$}  edge [<-] (mod24);\pause
+
+	\node	[block2]	(gcd1)	[below=of div1]	{$pgcd(.,N_1)$} edge [<-] (div1);
+	\node	[block2]	(gcd2) [below=of div2]		{$pgcd(.,N_2)$} edge [<-] (div2);
+	\node	[block2]	(gcd3) [below=of div3]		{$pgcd(.,N_3)$} edge [<-] (div3);
+	\node	[block2]	(gcd4) [below=of div4]	 	{$pgcd(.,N_4)$} edge [<-] (div4);\pause
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}
 }
+
+
+\frame{
+    \frametitle{Factorisation}
+    \framesubtitle{Exemple}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9, every node/.style={scale=0.9}]
+\begin{scope}[node distance=1cm,on grid,>=stealth',
+		node/.style={transform shape},
+		block/.style={rectangle,draw,fill=cyan!20},
+		comp/.style={circle,draw,fill=orange!40},
+		block2/.style={rectangle,draw,fill=orange!40}]	
+		
+
+	\node [block2] (N1)		[] {$2*3$};
+	\node [block2] (N2)		[right=of N1,xshift=1.2cm] {$3*5$} ;
+	\node [block2] (N3)		[right=of N2,xshift=1.2cm] {$7*11$} ;
+	\node [block2] (N4)		[right=of N3,xshift=1.2cm] {$1$}  ;\pause	
+	
+	\node [block2] (N21) [below=of N1,xshift=+1.8cm] {$90$} edge [<-] (N1) edge [<-] (N2) ;	
+	\node [block2] (N22) [right=of N21,xshift=2cm] {$70$} edge [<-] (N3) edge [<-] (N4) ;	\pause
+
+	\node [block2] (P) [below=of N21,xshift=1.4cm] {$6930$} edge [<-] (N21) edge [<-] (N22);\pause
+	
+	\node [block2] (mod1) [below=of P,xshift=-3.2cm] {$\mod (90)^2 = 6930$}  edge [<-] (P); 
+	\node [block2] (mod2) [below=of P,xshift=3.2cm] {$\mod (70)^2 = 1001$}  edge [<-] (P);\pause
+	
+	\node [block2] (mod21)		[below=of mod1,xshift=-1.5cm] {$\mod 6^2 = 18$} edge [<-] (mod1);
+	\node [block2] (mod22)		[below=of mod1,xshift=1.5cm] {$\mod 15^2 = 180$} edge [<-] (mod1);
+	\node [block2] (mod23)		[below=of mod2,xshift=-1.5cm] {$\mod 77^2 = 1001$}  edge [<-] (mod2);
+	\node [block2] (mod24)		[below=of mod2,xshift=1.5cm] {$\mod 1^2 = -$}  edge [<-] (mod2);\pause
+
+	
+	\node [block2] (div1)		[below=of mod21] {$/6=3$} edge [<-] (mod21);
+	\node [block2] (div2)		[below=of mod22] {$/15=12$} edge [<-] (mod22);
+	\node [block2] (div3)		[below=of mod23] {$/77=13$}  edge [<-] (mod23);
+	\node [block2] (div4)		[below=of mod24] {$-$}  edge [<-] (mod24);\pause
+	
+	\node	[block2]	(gcd1) [below=of div1]	{$pgcd(3,6)=3$} edge [<-] (div1);
+	\node	[block2]	(gcd2) [below=of div2]		{$pgcd(12,15)=3$} edge [<-] (div2);
+	\node	[block2]	(gcd3) [below=of div3]		{$pgcd(13,77)=1$} edge [<-] (div3);
+	\node	[block2]	(gcd4) [below=of div4]	 	{$-$} edge [<-] (div4);\pause
+\end{scope}
+
+\end{tikzpicture}
+
+\end{center}
+}
+
+
+\frame{
+    \frametitle{Factorisation}
+    \framesubtitle{Algorithmes associés : Arbre des produits, Arbre des restes}
+    
+    \begin{columns}
+    		\begin{column}{.48\textwidth}
+
+\begin{algorithm}[H]
+ \scriptsize
+ \Entree{tableau des moduli : T}
+ \Sortie{Hauteur arbre, produits des moduli\\}
+ 
+ $v \leftarrow T$\;
+ $level \leftarrow 0$\;
+ \Tq{$|v|>1$}{
+  $tmp \leftarrow \emptyset$\;
+  \PourCh{$i \in \{0, .., |v| / 2\}$}{
+    $tmp[i] \leftarrow v[i\times2] \times v[i\times2 + 1]$\;
+  }
+  $storeProductLevel(v, level)$\;
+  $v \leftarrow tmp$\;
+  $level \leftarrow level + 1$\;
+ }
+ \Retour{level}
+
+\end{algorithm}
+
+
+    		\end{column}
+    		\hfill
+    		
+    		\begin{column}{.48\textwidth}
+
+
+\begin{algorithm}[H]
+ \scriptsize
+ \Entree{Hauteur de l'arbre : level}
+ \Sortie{PGCDs des moduli}
+ \Tq{$level>0$}{
+  $P \leftarrow getRemainderLevel(level)$\;
+  $v \leftarrow getProductLevel(level-1)$\;
+  \PourCh{$i \in \{0, .., |v|\}$}{
+    $v[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
+  }
+  $storeRemainderLevel(v, level)$\;
+  $v \leftarrow tmp$\;
+  $level \leftarrow level - 1$\; 
+ }
+ $w \leftarrow \emptyset$\;
+ \PourCh{$i \in \{0, .., |v|\}$}{
+    $w[i] \leftarrow P[i/2] \pmod{v[i]^2}$\;
+    $w[i] \leftarrow w[i] / v[i]$\;
+    $w[i] \leftarrow pgcd(w[i],v[i])$\;
+  }
+ \Retour{w}
+
+\end{algorithm}
+
+    		\end{column}  
+    \end{columns}
+
+
+}
+
+
+
 \frame{
     \frametitle{Factorisation -- Démonstration}
 
@@ -196,10 +355,77 @@
 }
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Entropie}
+\subsection{Entropie}
+\frame{
+\frametitle{Entropie}
+\framesubtitle{Définitions}
+
+
+\begin{block}{Générateur}
+\begin{itemize}
+
+\item problème aléatoire ;
+\item mesure de l'entropie $H(X) = - \sum_x P(X=x)*\log_2(P(X=x))	 $ ;
+\item entropie et moduli.
+
+\end{itemize}
+\end{block}
+	
+}
+
+
 \frame{
 \frametitle{Entropie}
 
+\begin{center}
+\begin{tikzpicture}[scale=0.75, every node/.style={scale=0.75},node distance=1.5cm]
+\node (donnees) [io,pattern=dots,pattern color=orange] {Données};
+\node (digit) [process, right of=donnees, xshift=4cm] {Digitalisation};
+\node (cond) [process, below of=digit,text width=3cm,yshift=-0.5cm] {Conditionnement (optionnel)};
+\node (bat) [process, right of=cond, xshift=4cm] {Batterie de tests}; 
+\node (dec) [decision, below of=cond,yshift=-1.2cm] {Sortie}; 
+\node (appli) [process, below of=dec, yshift=-1cm] {Application};
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(donnees)(digit)(cond)(bat)(dec), fill=yellow!5] (groupclient) {};
+\end{pgfonlayer}
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(donnees)(digit), fill=yellow!20] (groupclient) {};
+\end{pgfonlayer}
+
+\draw [arrow] (donnees) -- (digit);
+\draw [arrow] (digit) -- node[anchor=east] {out1}(cond);
+\draw [arrow] (cond) -- node[anchor=east] {out2} (dec);
+\draw [arrow] (digit) -| node[anchor=south] {out1} (bat);
+\draw [arrow] (cond) -- node[anchor=south] {out2} (bat);
+\draw [arrow] (bat) |- node[anchor=north] {true/false} (dec);
+\draw [arrow] (dec) -- node[anchor=east] {output/error} (appli);
+\end{tikzpicture}
+\end{center}
 }
+
+
+\frame{
+\frametitle{Entropie}
+
+\begin{block}{Tests}
+\begin{itemize}
+\item Tests trop anciens, \texttt{FIPS1} (1994), non mis à jour
+ 	\begin{itemize}
+ 	\item test monobit
+	\item test poker
+	\item test runs
+	\item test long runs
+	\end{itemize} 	 
+\item Autres tests proposés dans le rapport
+
+\end{itemize}
+\end{block}
+		
+	
+}
+
 
 %% MATHIEU (1 MIN)
 \frame{
@@ -311,8 +537,20 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 \subsection{Faiblesses identifiées}
 \frame{
 \frametitle{Faiblesses identifiées}
-
+\begin{block}{Critères}
+\begin{itemize}
+\item version du protocole
+\item \textit{ciphersuites} proposées par le client 
+\item courbes elliptiques supportées 
+\item algorithmes de signature 
+\item compression TLS
+\item activation ou non du ticket de session
+\end{itemize}
+\end{block}
 }
+
+
+
 
 %% 2 MIN 30 --  JULIEN
 \subsection{Implémentation}
