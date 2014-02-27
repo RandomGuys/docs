@@ -4,6 +4,7 @@
 \usepackage[francais]{babel} 
 \usepackage{lmodern}
 \usepackage{hyperref}
+\usepackage{pgfplots}
 \usepackage{tikz}
 \usepackage{algorithm2e}
 
@@ -63,7 +64,6 @@
 
 
 
-\usepackage{pgfplots}
 \usepackage{eurosym}
 \usepackage{rotating}
 \usepackage{array}
@@ -94,9 +94,14 @@
 \subsection{Sujet et problématique}
 \frame{
 \frametitle{Sujet et problématique}
-\begin{block}{Titre du bloc}
-	Contenu
+\begin{block}{Les clefs qui rôdent sur internet}
+	\begin{itemize}
+		\item clefs SSH (Port 22), SSL/TLS (Port 443)
+		\item taille des clefs + génération aléatoire\\
+	\end{itemize}
 \end{block}
+
+\includegraphics[height=7em]{images/random_number.png}
 }
 
 \frame{
@@ -393,7 +398,23 @@
 \subsection{Résultats}
 \frame{
     \frametitle{Résultats}
-    %% site : stats
+\begin{block}{Base de donnée}
+   	\begin{itemize}
+		\item Récupération des facteurs communs - clefs publique
+		\item Scripts perl + requêtes SQL \\
+	\end{itemize}
+\end{block}
+
+\begin{block}{Statistiques}
+   	\begin{itemize}
+		\item Les émetteurs
+		\item Outil de recherche
+		\begin{itemize}
+			\item taille de clef : 99.6\% (R) - 0.4\% (V)
+			\item émetteurs, sujet : CISCO - 6280 (R) - 40 (V)\\
+		\end{itemize}
+	\end{itemize}
+\end{block}
 }
 
 
@@ -671,5 +692,11 @@ Nous pouvons modifier la \textit{ciphersuite} du client avec la commande \texttt
 \section{Conclusion}
 \frame{
 \frametitle{Conclusion}
+\begin{block}{Bilan}
+	\begin{itemize}
+		\item Mise en évidence des clefs faibles
+		\item Évolution du code OpenSSL\\
+	\end{itemize}
+\end{block}
 }
 \end{document}
