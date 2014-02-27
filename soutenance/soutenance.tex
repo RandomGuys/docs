@@ -74,7 +74,7 @@
 \setbeamertemplate{sections/subsections in toc}[square]
 \setbeamertemplate{blocks}[square]%
 
-\author{Claire Smets -- William Boisseleau -- Pascal Edouard -- Mathieu Latimier -- Julien Legras}
+\author{Claire Smets -- William Boisseleau -- Pascal Edouard -- \\Mathieu Latimier -- Julien Legras}
 \title{Soutenance projet annuel - Audit des implantations SSL/TLS}
 \titlegraphic{\includegraphics[height=3em]{logo_univ.png}}
 \institute{Master 2 Sécurité des Systèmes Informatiques}
@@ -912,7 +912,59 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 \end{center}
 }
 
-%% 3 MIN -- MATHIEU
+%% 2 MIN -- MATHIEU
+\subsection{Qualis}
+\frame{
+\frametitle{Qualis SSL Labs}
+\begin{block}{Description}
+Qualis est une plateforme multi-sécurité :
+\begin{itemize}
+\item Sécurité Réseau
+\item Sécurité Web
+\item etc\newline
+\end{itemize}
+Le projet SSL Labs permet de :
+\begin{itemize}
+\item Tester l'implémentation SSL du navigateur.
+\item Tester la configuration et les certificats d'un serveur.
+\item Tester la configuration et les certificats d'un serveur.
+\item Lister les bonnes pratiques sur les déploiements SSL/TLS.
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\frametitle{Qualis SSL Labs}
+\begin{block}{Analyse des serveurs}
+L'analyse porte sur les points suivants :
+\begin{itemize}
+\item Contrôle du certificat
+\item Protocoles supportés
+\item Échange des clés
+\item Qualité de chiffrement 
+\item Système de notation
+\end{itemize} 
+\end{block}
+}
+
+\frame{
+\frametitle{Qualis SSL Labs}
+\begin{block}{Tests sur un certificat vulnérable}
+SSL Report : \texttt{spXXXX.XXXX.net} (\texttt{85.XXX.XXX.33})
+\begin{itemize}
+\item Notation : F
+\item Certificat non sûr $\rightarrow$ Non-confiance dans la chaîne de certification
+\item Sensible à une attaque de type CRIME
+\item Protocoles obsolètes $\rightarrow$ TLS\_RSA\_EXPORT\_WITH\_RC4\_40\_MD5
+\item Taille de clé insuffisante $\rightarrow$ RSA 1024 bits
+\item Re-négociation sécurisée non supportée.
+\item Compression TLS non-securisée
+\item Généré en Janvier 2014 - Expire en Janvier 2038
+\end{itemize} 
+\end{block}
+}
+
+%% 2 MIN -- MATHIEU
 \subsection{Démonstration}
 \frame{
 \frametitle{Démonstration}
