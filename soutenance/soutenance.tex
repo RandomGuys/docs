@@ -94,19 +94,36 @@
 \section*{Introduction}
 \subsection{Sujet et problématique}
 \frame{
-\frametitle{Sujet et problématique}
+\frametitle{Sujet et problématique I}
 
-\begin{block}{Les clefs d'internet}
+\begin{block}{Motivations}
 	\begin{itemize}
-		\item SSL/TLS (port 443);
-		\item évaluation du niveau de sécurité d'internet;
-		\item taille des clefs \& génération aléatoire.\\
+		\item incertitudes cryptographiques liées aux récents scandales ;
+		\item 2012 -- étude de l'Université du Michigan sur la sécurité d'internet : \textit{Mining your Ps and Qs: Widespread Weak Keys in Network Devices}
 	\end{itemize}
 \end{block}
 
 \begin{center}
 \includegraphics[height=7em]{images/random_number.png}
 \end{center}
+}
+
+\frame{
+\frametitle{Sujet et problématique II}
+\begin{block}{Projet}
+\begin{itemize}
+\item mesure de l'évolution par rapport à cette étude;
+\item identification des problèmes avérés;
+\item audit de la principale bibliothèque : OpenSSL.
+\end{itemize}
+\end{block}
+
+\begin{block}{Exigences du client}
+\begin{itemize}
+\item audit des certificats RSA;
+\item données importantes pour résultats représentatifs (500 000 certificats).
+\end{itemize}
+\end{block}
 }
 
 \frame{
@@ -123,12 +140,33 @@
 \subsubsection{Adresses}
 \frame{
     \frametitle{Récupération des adresses}
-    	\begin{block}{ZMAP}
+{\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start, fill=orange!30] (zmap) {ZMAP};
+\node[square,right=of zmap] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(start)(zmap)(IP)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+    \begin{block}{ZMAP}
 	\begin{itemize}
-		\item open source ;
-		\item outil de scan réseau ;
-		\item adresses IPv4 ;
-		\item paquets SYN sur le port 443.\\
+		\item open source dévoloppé par l'équipe de l'Université du Michigan ;
+		\item scanneur de ports : jusqu'à 1,4 millions de paquets SYN par seconde.\\
 	\end{itemize}
 	\end{block}
 }
@@ -136,105 +174,120 @@
 \subsubsection{Certificats}
 \frame	{
     \frametitle{Récupération des certificats I}
+    
+    {\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap, fill=green!30] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applirc)(clefs)(IP)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+    
+    
     %% Certificats + clefs
-    \begin{block}{Application Récupération de Certificats}
+    \begin{block}{Récupération des certificats}
 	\begin{itemize}
-		\item script perl ;
-		\item certificats SSL ;
-		\item stocker l'ensemble des empreintes dans un dossier : 
-		\begin{itemize}
-			\item certificats ;
-			\item clefs publiques RSA.\\
-		\end{itemize}	
+		\item commandes openssl pour établir la connexion SSL ;
+		\item enregistrement de la session;
+		\item extraction des certificats et des clefs RSA de la session SSL;
+		\item élimination des doublons.
 	\end{itemize}
 	\end{block}
 }
 
-\frame	{
-    \frametitle{Récupération des certificats II}
-    	\begin{block}{Algorithme}
-    		\tiny
-			\begin{algorithm}[H]
-				\label{alg:recupCertif}
-				 %\SetAlgoLined % For previous releases [?]
-				 \Entree{Fichier f, contenant les adresses ayant le port 443 ouvert}
-				 \Sortie{Certificats et clefs publiques RSA des adresses}
-				 
-				 \PourTous{adresses de f}{
-					Se connecter au serveur\;
-					\eSi{echec}{
-						\Si{le log contient \textit{protocol}}{
-					 		on incrémente le nombre d'échecs de protocoles\;
-					 	}
-					 	\Si{le log contient \textit{handshake}}{
-					 		on incrémente le nombre d'échecs de poignées de mains\;
-						}
-					}{
-					On capture la session (dont le certificat serveur)\;
-					\Si{!echec de capture de session}{
-						on extrait le certificat et la clef publique RSA\;
-					}	 
-					}
-				}
-				\Retour{certificats et clefs publiques RSA}
-				
-				\end{algorithm}
-				\vspace{0.7cm}	
-			\end{block}
-}
-
 \frame{
 \frametitle{Certificats récupérés}
-	\begin{block}{Failles}
+
+{\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap, fill=green!30] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applirc)(clefs)(IP)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+
+	\begin{block}{Certificats mal formés}
 		\begin{itemize}
-			\item pas de Common Name ;
-			\item que le Serial Number.\\
+			\item \textit{Common Name} vide : validation impossible au regard du nom de domaine ;
+			\item \textit{Serial Number} seul : absence d'informations sur le certificat.\\
 		\end{itemize}
 	\end{block}
 }
 
 \frame{
-    \frametitle{Gestion des doublons I}
-	\begin{block}{Gestion des doublons}
-	\begin{itemize}
-		\item script perl ;
-		\item si une empreinte déjà présente : on la stocke dans un autre dossier ;
-		\item liens symboliques.\\
-	\end{itemize}
-	\end{block}	
+    \frametitle{Gestion des doublons}
+    
+    {\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap, fill=green!30] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applirc)(clefs)(IP)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
 }
 
-\frame{
-    \frametitle{Gestion des doublons II}	
-	\begin{block}{Algorithme gestion des doublons}
-	\tiny
-		\begin{algorithm}[H]
-			\label{alg:clean}
-			 %\SetAlgoLined % For previous releases [?]
-			 \Entree{Pré-requis : Exécution de l'algorithme ssl\_collector \\
-			 Création d'un dossier D contenant les certificats à traiter}
-			 \Sortie{Dossiers : certs\_doublons, certs\_links; Fichier : moduli}
-			 certs\_doublons $\leftarrow$ dossier\_vide\;
-			 certs\_links $\leftarrow$ dossier\_vide\;
-			 moduli $\leftarrow$ fichier\_vide\;
-			 \PourTous{C $\in$ D}{
-			 	F $\leftarrow$ \textit{fingerprint}(C)\;
-			 	S $\leftarrow$ \textit{nom\_fichier}(C)\;
-			 	M $\leftarrow$ \textit{modulo}(C)\;
-			 	\Si{échec(F)}{
-			 		continue\;
-			 	}
-			 	\eSi{F $\in$ certs\_links}{
-			 		certs\_doublons/F $\leftarrow$ concat(certs\_doublons/F, S)\;
-			 	}{
-			 		moduli $\leftarrow$ concat(moduli, M)\;
-			 		certs\_links $\leftarrow$ F\;
-			 	}
-			 }
-		\end{algorithm}
-		\vspace{0.7cm}
-	\end{block}	
+	\begin{center}
+\begin{tikzpicture}[level 1/.style={sibling distance=30mm},level 2/.style={sibling distance=10mm}]
+\node {scan\_ssl}
+    child {node {certs}
+        child {node {ip.pem}}}
+    child {node {certs\_links}
+        child {node {hash}}}
+    child {node {certs\_doublons}
+        child {node {hash}}}
+;
+    
+\end{tikzpicture}
+\end{center}
 }
+
 
 %% 5 MIN
 % julien et william
