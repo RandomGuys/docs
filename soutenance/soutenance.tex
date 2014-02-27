@@ -101,7 +101,9 @@
 	\end{itemize}
 \end{block}
 
+\begin{center}
 \includegraphics[height=7em]{images/random_number.png}
+\end{center}
 }
 
 \frame{
@@ -118,7 +120,7 @@
 \subsection{Récupération}
 \subsubsection{Adresses}
 \frame{
-    \frametitle{Récupération des adresses 1}
+    \frametitle{Récupération des adresses}
     	\begin{block}{ZMAP}
 	\begin{itemize}
 		\item open source ;
@@ -131,7 +133,7 @@
 
 \subsubsection{Certificats}
 \frame	{
-    \frametitle{Récupération des certificats 1}
+    \frametitle{Récupération des certificats I}
     %% Certificats + clefs
     \begin{block}{Application Récupération de Certificats}
 	\begin{itemize}
@@ -146,8 +148,8 @@
 	\end{block}
 }
 
-\frame{
-    \frametitle{Récupération des certificats 2}
+\frame	{
+    \frametitle{Récupération des certificats II}
     	\begin{block}{Algorithme}
     		\tiny
 			\begin{algorithm}[H]
@@ -191,7 +193,7 @@
 }
 
 \frame{
-    \frametitle{Gestion des doublons 1}
+    \frametitle{Gestion des doublons I}
 	\begin{block}{Gestion des doublons}
 	\begin{itemize}
 		\item script perl ;
@@ -202,7 +204,7 @@
 }
 
 \frame{
-    \frametitle{Gestion des doublons 2}
+    \frametitle{Gestion des doublons II}	
 	\begin{block}{Algorithme gestion des doublons}
 	\tiny
 		\begin{algorithm}[H]
@@ -330,11 +332,9 @@
 \end{tikzpicture}
 
 \end{center}
-}
 
+\framebreak
 
-\frame{
-    \frametitle{Factorisation}
     \framesubtitle{Algorithmes associés : Arbre des produits, Arbre des restes}
     
     \begin{columns}
@@ -465,7 +465,7 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 		\item Récupération des facteurs communs - clefs publique
 		\item Scripts perl + requêtes SQL \\
 	\end{itemize}
-\end{block}\pause
+\end{block}
 
 \begin{block}{Statistiques}
    	\begin{itemize}
@@ -658,10 +658,9 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 \item Générateurs de clefs asymétriques, qui utilisent des fonctions à sens uniques, largement diffusées et ne devant délivrer aucune information sur le secret.
 \end{itemize}
 \end{block}
-}
 
-\frame{
-\frametitle{Génération des clefs}
+\framebreak
+
 \begin{block}{Audit : Diffie-Hellman Ephémère en mode FIPS}
 \begin{itemize}
 \item \textbf{Description} : Un attaquant écoutant une communication chiffré en SSL/TLS entre un client et un serveur peut déchiffrer tout les messages en forçant la génération d'un secret Diffie-Hellman prédictible.
@@ -680,10 +679,9 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 	\begin{block}{RSA-OAEP}
 		laïus RSA-OAEP (fonctionnement, +, -)
 	\end{block}
-}
 
-\frame{
-\frametitle{Chiffrement et protocoles II}
+\framebreak
+
 	\begin{block}{Manger's attack}
 		\begin{itemize}
 			\item OpenSSL 1.0.0 ;
@@ -696,7 +694,7 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 }
 
 \frame{
-\frametitle{Chiffrement et protocoles III}
+\frametitle{Chiffrement et protocoles II}
 \framesubtitle{CBC}
 
 	\begin{figure}[H]
@@ -711,9 +709,9 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 		\label{CBC_dechiff}
 	\end{figure}
 }
-
 \frame{
-\frametitle{Chiffrement et protocoles IV}
+\frametitle{Chiffrement et protocoles III}
+
 	\begin{block}{\textit{Man in the Middle}}
 		\begin{itemize}
 			\item attaque à clair choisi ;
@@ -739,7 +737,7 @@ Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut iden
 %% 2 MIN -- MATHIEU
 \subsection{Signature et authentification}
 \frame{
-\frametitle{Signature et authentification}
+\frametitle{Signature et authentification I}
 \begin{block}{Définition}
 \begin{itemize}
 \item Juridiquement, une signature électronique à même valeur qu'une signature manuscrite.
@@ -751,7 +749,7 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 }
 
 \frame{
-\frametitle{Signature et authentification}
+\frametitle{Signature et authentification II}
 \begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.}
 \begin{itemize}
 \item \textbf{Description} : L'attaque se fait sur des morceaux de la signature récupéré afin de récupérer la clé privée bit à bit.
@@ -762,7 +760,7 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 }
 
 \frame{
-\frametitle{Signature et authentification}
+\frametitle{Signature et authentification III}
 \begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.} 
 \begin{itemize}
 \item \textbf{Un problème dans le code OpenSSL?} : La fonction \texttt{Fixed\_Window\_Exponentiation} utilise des milliers de multiplications, qui est opération la plus sensible en cas de dégradation du micro-processeur.
@@ -958,10 +956,9 @@ Le projet SSL Labs permet de :
 \item Lister les bonnes pratiques sur les déploiements SSL/TLS.
 \end{itemize}
 \end{block}
-}
 
-\frame{
-\frametitle{Qualis SSL Labs}
+\framebreak
+
 \begin{block}{Analyse des serveurs}
 L'analyse porte sur les points suivants :
 \begin{itemize}
@@ -974,8 +971,8 @@ L'analyse porte sur les points suivants :
 \end{block}
 }
 
-\frame{
-\frametitle{Qualis SSL Labs}
+\framebreak
+
 \begin{block}{Tests sur un certificat vulnérable}
 SSL Report : \texttt{spXXXX.XXXX.net} (\texttt{85.XXX.XXX.33})
 \begin{itemize}
@@ -989,7 +986,6 @@ SSL Report : \texttt{spXXXX.XXXX.net} (\texttt{85.XXX.XXX.33})
 \item Généré en Janvier 2014 - Expire en Janvier 2038
 \end{itemize} 
 \end{block}
-}
 
 %% 2 MIN -- MATHIEU
 \subsection{Démonstration}
