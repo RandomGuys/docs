@@ -63,12 +63,12 @@
 \tikzstyle{arrow} = [thick,->,>=stealth]
 
 
-
 \usepackage{eurosym}
 \usepackage{rotating}
 \usepackage{array}
 \usepackage{multicol}
-
+\usepackage{etex}
+\usepackage{tikz-uml} 
 \usetheme{Antibes}
 \usecolortheme{beaver}
 \setbeamertemplate{sections/subsections in toc}[square]
@@ -388,6 +388,58 @@
 }
 
 
+\frame[allowframebreaks=1]{
+    \frametitle{Optimisations}
+\begin{block}{Parallélisation}
+En largeur avec 100 threads
+
+
+    \begin{center}
+\begin{tikzpicture}[level 1/.style={sibling distance=30mm},level 2/.style={sibling distance=10mm},scale=0.7,every node/.style={transform shape}]
+\node (root) {$P$}  [grow=up]
+  child {node {315}
+  	child  {node [circle,draw] {21}}
+  	child  {node [circle,draw] {15}}
+  }
+  child {node {?}
+  	child {node [circle,draw] {63}}
+  	child  {node [circle,draw] {22}}
+  }
+  child {node {?}
+  	child {node [circle,draw] {35}}
+  	child  {node [circle,draw] {91}}
+  }
+  child {node {2535}
+  	child {node [circle,draw] {39}}
+  	child  {node [circle,draw]{65}}
+  } 
+;
+\end{tikzpicture}
+\end{center}
+\end{block}
+
+\begin{alertblock}{Parallélisation}
+  En hauteur : ralentissement du traitement à cause de la dépendances entre les niveaux
+ \end{alertblock}
+
+\framebreak
+\begin{block}{Langage et bibliothèque}
+C \& \textit{libGMP}
+\end{block}
+
+\begin{block}{Stockage}
+\begin{itemize}
+\item programme initial : utilisation de fichiers pour stocker chaque niveau;
+\item programme amélioré : stockage de l'arbre des produits en RAM (4-5 Go pour 500 000 clefs).
+\item[] $\Rightarrow$ jusqu'à 10 fois plus rapide même avec un SSD
+\end{itemize}
+\end{block}
+
+\begin{block}{Calcul des carrés}
+Préférer la fonction d'exponentiation de GMP plutôt que la multiplication
+$\Rightarrow$ jusqu'à 5 fois plus rapide
+\end{block}
+}
 
 \frame{
     \frametitle{Factorisation -- Démonstration}
@@ -629,15 +681,84 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 
 %% 3 MIN -- JULIEN
 \subsection{Protocole SSL/TLS}
-\frame{
+\frame[allowframebreaks=1]{
 \frametitle{Protocole SSL/TLS}
+
+\begin{center}
+\begin{tikzpicture}[remember picture,scale=0.6,every node/.style={transform shape}]
+\begin{umlseqdiag} 
+\umlobject[class=Client SSL/TLS] {C};
+\umlobject[class=Serveur SSL/TLS,x=10] {S};
+
+\begin{umlcall}[op={hello client},return={hello serveur},padding=2]{C}{S}\end{umlcall}
+
+\begin{umlfragment}[type=alt, label=si certificat, inner xsep=10] 
+\begin{umlcall}[dt=5,padding=2,op={certificat serveur},return={}]{S}{C}\end{umlcall}
+\umlfpart[sinon]
+\begin{umlcall}[op={clef publique serveur},return={},padding=2]{S}{C}\end{umlcall}
+\end{umlfragment}
+
+\begin{umlcall}[dt=4,padding=3,op={${\{master key\}}_{pk\,serveur}$},return={}]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=4,padding=3,op={${\{id\,connexion\}}_{masterkey'}$},return={${\{challenge\,hello\,client\}}_{masterkey''}$}]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=4,padding=3,op={${\{id\,session\}}_{masterkey'''}$},return={}]{S}{C}\end{umlcall}
+
+\begin{umlcall}[dt=4,padding=3,op={Changement de l'algorithme de chiffrement du client},return={Changement de l'algorithme de chiffrement du serveur}]{C}{S}\end{umlcall}
+
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
+
+\framebreak
+
+\begin{block}{Historique}
+\begin{itemize}
+\item SSL 1.0 et 2.0 (1995) conçues par Netscape, 3.0 (1996) par l'IETF;
+\item TLS 1.0 (1999) : légère amélioration de SSL 3, ajout d'extensions;
+\item TLS 1.1 (2006) : protection contre les attaques contre CBC;
+\item TLS 1.2 (2008) : remplacement MD5/SHA1 par SHA256, ajout des modes GCM et CCM.
+\end{itemize}
+\end{block}
 
 }
 
-%% 2 MIN -- CLAIRE
+\frame{
+\frametitle{Failles notables d'OpenSSL}
+SSL 3 et TLS 1.0:
+\begin{itemize}
+\item 2002 - attaque sur le padding du mode CBC par Serge Vaudenay (reprise par Lucky Thirteen): \textit{timing attack};
+\end{itemize}
+TLS 1.1 :
+\begin{itemize}
+\item \textbf{2011} (CVE-2011-4576) - récupération d'informations sur un échange précédent : mémoire non réinialisée;
+\item \textbf{2013} (CVE-2013-0169)- Lucky Thirteen : \textit{timing attack}, $2^{23}$ sessions TLS pour retrouver un bloc en clair;
+\end{itemize}
+TLS 1.2 :
+\begin{itemize}
+\item \textbf{2013} (CVE-2013-6449) - déni de service en envoyant une structure mal formée causant un \textit{crash} dans la fonction \texttt{ssl\_get\_algorithm2}
+\end{itemize}
+}
+
+%% 2 MIN -- JULIEN
 \subsection{Ouverture}
 \frame{
 \frametitle{Ouverture}
+
+\begin{block}{Alternatives}
+\begin{itemize}
+\item CyaSSL;
+\item GnuTLS;
+\item MatrixSSL;
+\item Network Security Services	(Firefox);
+\item PolarSSL (pas de support du DTLS);
+\item Java Secure Socket Extension (pas de support du DTLS).
+\end{itemize}
+\end{block}
+
+\begin{alertblock}{Attention -- 25 février 2014}
+CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédiaires comme un certificat d'AC par défaut.
+\end{alertblock}
 
 }
 
@@ -646,7 +767,7 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 \section{Analyse dynamique du navigateur client}
 %% 2 MIN 30 -- WILLIAM
 \subsection{Faiblesses identifiées}
-\frame{
+\frame[allowframebreaks=1]{
 \frametitle{Faiblesses identifiées}
 \begin{block}{Critères}
 \begin{itemize}
@@ -658,6 +779,30 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 \item activation ou non du ticket de session
 \end{itemize}
 \end{block}
+
+\framebreak
+
+\begin{center}
+\begin{tikzpicture}[node distance=0cm]
+\node (Client) at (-5,0) {\includegraphics[width=1.5cm]{computer}};
+\node[below=of Client] (labC) {Client};
+\node (Serveur) at (0,0) {\includegraphics[width=1cm]{server}};
+\node[below=of Serveur] (labS) {Serveur};
+
+\draw (Client.north east) edge[->,bend left=20]  node[midway, anchor=south]{demande d'analyse} (Serveur.north west);
+
+%\draw (Serveur.east) edge[->, loop right = 90] node[midway, anchor=west]{analyse} (Serveur.east);
+
+\path (Serveur) edge[ out=30, in=-30
+                , loop
+                , distance=2cm, ->]
+            node[anchor=west] {analyse} (Serveur);
+            
+\draw (Client.south east) edge[<-,bend right=20]  node[midway, anchor=north]{page de résultats} (Serveur.south west);
+
+\end{tikzpicture}
+\end{center}
+
 }
 
 
@@ -665,9 +810,40 @@ Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérif
 
 %% 2 MIN 30 --  JULIEN
 \subsection{Implémentation}
-\frame{
+\frame[allowframebreaks=1]{
 \frametitle{Implémentation}
 
+\begin{block}{Architectures possibles}
+\begin{enumerate}
+\item journalisation de la connexion HTTPS avec une sonde IDS puis récupération des informations avec un langage tel que PHP $\rightarrow$ couche réseau;
+\item serveur HTTPS avec \textit{libssl} puis analyse de la structure de la session $\rightarrow$ couche applicative.
+\end{enumerate}
+\end{block}
+\framebreak
+\begin{center}
+\begin{tikzpicture}[remember picture,scale=0.58,every node/.style={transform shape}]
+\begin{umlseqdiag} 
+\umlobject[class=Navigateur] {C};
+\umlobject[class=Serveur HTTPS,x=7] {S};
+
+\begin{umlcall}[dt=4,op={TCP connect},return={TCP accept},padding=4]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=4,op={SSL connect},return={SSL accept},padding=4]{C}{S}\end{umlcall}
+
+\begin{umlcall}[dt=4,op={GET /site/analyze HTTP/1.0},return={code HTML}]{C}{S}
+
+\begin{umlcallself}[op={Récupérer version du protocole}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer support de la compression TLS}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer ciphersuite cliente}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer algorithmes de signature clients}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer courbes elliptiques clientes}]{S}\end{umlcallself} 
+\begin{umlcallself}[op={Récupérer support ticket TLS}]{S}\end{umlcallself} 
+
+\end{umlcall}
+
+\end{umlseqdiag} 
+\end{tikzpicture}
+\end{center}
 }
 
 %% 3 MIN -- MATHIEU
