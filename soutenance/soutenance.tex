@@ -98,14 +98,57 @@
 \subsection{Récupération}
 \subsubsection{Adresses}
 \frame{
-    \frametitle{Récupération des adresses}
-
+    \frametitle{Récupération des adresses 1}
+    	\begin{block}{ZMAP}
+	\begin{itemize}
+		\item open source ;
+		\item outil de scan réseau ;
+		\item adresses IPv4 ;
+		\item paquets SYN sur le port 443.\\
+	\end{itemize}
+	\end{block}
 }
 
 \subsubsection{Certificats}
-\frame{
-    \frametitle{Récupération des certificats}
+\frame	{
+    \frametitle{Récupération des certificats 1}
     %% Certificats + clefs
+    \begin{block}{Application Récupération de Certificats}
+	\begin{itemize}
+		\item script perl ;
+		\item certificats SSL ;
+		\item stocker l'ensemble des empreintes dans un dossier : 
+		\begin{itemize}
+			\item certificats ;
+			\item clefs de session.\\
+		\end{itemize}	
+	\end{itemize}
+	\end{block}
+}
+
+\frame{
+    \frametitle{Récupération des certificats 2}
+    	\begin{block}{Algorithme}
+		algo de récupération des certificats	
+	\end{block}
+}
+
+\frame{
+    \frametitle{Gestion des doublons 1}
+	\begin{block}{Gestion des doublons}
+	\begin{itemize}
+		\item script perl ;
+		\item si une empreinte de trouve déjà dans le dossier : on la stocke dans un autre dossier, celui des doublons ;
+		\item liens symboliques.\\
+	\end{itemize}
+	\end{block}	
+}
+
+\frame{
+    \frametitle{Gestion des doublons 2}
+	\begin{block}{Algorithme gestion des doublons}
+		algo de gestion des doublons
+	\end{block}	
 }
 
 %% 5 MIN
@@ -133,7 +176,23 @@
 \frame{
 %% 1 MIN -- CLAIRE
 \frametitle{Introduction}
-
+	\begin{block}{Contexte}
+	\begin{itemize}
+		\item récent scandal sur la NSA ;
+		\item beaucoup d'outils utilisés. \\
+	\end{itemize}
+	Mais à qui peut-on faire confiance?
+	\end{block}
+	\begin{block}{Audit d'OpenSSL}
+		Cinq grands axes : 
+		\begin{itemize}
+			\item l'entropie ;
+			\item la génération des clefs ;
+			\item le chiffrement et les protocoles ;
+			\item les signatures et les authentifications ;
+			\item les protocoles SSL et TLS.\\
+		\end{itemize}
+	\end{block}
 }
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Entropie}
@@ -145,14 +204,47 @@
 %% MATHIEU (1 MIN)
 \frame{
 \frametitle{Entropie -- Démonstration}
-
+\begin{block}{Faille Debian 4.0 sous OpenSSL 0.9.8}
+Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut identifier rapidement ceux qui ont étés générés durant la faille Debian/OpenSSL entre 2006 et 2008.\\
+\begin{itemize}
+\item \textbf{Durée de l'attaque} : quelques heures
+\item \textbf{Conséquences} : forger de faux certificats, de fausses signatures et déchiffrer des messages privées.
+\item \textbf{Qui?} : grandes entreprises (e.g. IBM, CISCO), routeurs, universités, etc.
+\item \textbf{Fin de validité de certificats} : Entre 2020 et 2030.
+\end{itemize}
+\end{block}
 }
 
 %% 2 MIN -- MATHIEU
 \subsection{Génération des clefs}
 \frame{
 \frametitle{Génération des clefs}
+\begin{block}{Principes de Kerchkoff}
+	\begin{itemize}
+	\item Le \textit{secret} réside dans la clef ;
+	\item Les algorithmes de génération de clés ne doivent donner aucune information sur la clé.
+	\end{itemize}
+\end{block}
 
+\begin{block}{Deux grands types de générateur de clés}
+\begin{itemize}
+\item Générateurs de bits aléatoires (RGB) pour les clés privées de certains algorithmes (i.e. AES, DSA) ou pour le salage (i.e. \textit{seed} de RSA)
+\item Générateurs de clefs asymétriques, qui utilisent des fonctions à sens uniques, largement diffusées et ne devant délivrer aucune information sur le secret.
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\frametitle{Génération des clefs}
+\begin{block}{Audit : Diffie-Hellman Ephémère en mode FIPS}
+\begin{itemize}
+\item \textbf{Description} : Un attaquant écoutant une communication chiffré en SSL/TLS entre un client et un serveur peut déchiffrer tout les messages en forçant la génération d'un secret Diffie-Hellman prédictible.
+\item \textbf{Comment?} : En modifiant le trafic réseau par exemple.
+\item \textbf{Pourquoi?} : L'activation du mode FIPS ne rejette pas les paramètres P/Q faibles pour les algorithmes EDH/DHE.
+\item \textbf{Où?} : Dans \texttt{crypto/dh/dh\_key.c} une partie de code génère un faux positif dans certains cas (sur une condition de test).
+\item \textbf{Solution :} Logiciel \textit{Nessus Vulnerability Scanner} pour tester la configuration des serveurs.
+\end{itemize}
+\end{block}
 }
 
 %% 2 MIN -- CLAIRE
@@ -166,7 +258,36 @@
 \subsection{Signature et authentification}
 \frame{
 \frametitle{Signature et authentification}
+\begin{block}{Définition}
+\begin{itemize}
+\item Juridiquement, une signature électronique à même valeur qu'une signature manuscrite.
+\item Elle \textbf{DOIT} assurer l'intégrité, l'authentification et la non-répudiation d'un message.
+\end{itemize}
+\end{block}
 
+Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérification de messages signés, ou des fuites d'informations sur la clé privée ayant servi à chiffrer.
+}
+
+\frame{
+\frametitle{Signature et authentification}
+\begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.}
+\begin{itemize}
+\item \textbf{Description} : L'attaque se fait sur des morceaux de la signature récupéré afin de récupérer la clé privée bit à bit.
+\item \textbf{Comment?} : Du bon matériel, surtout au niveau de la mémoire vive (i.e. Système Linux avec une architecture SPARC) et un oracle (e.g. système de prédictions) permettant de fabriquer la clé.
+\item \textbf{Temps de l'attaque} : une centaine d'heure.
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\frametitle{Signature et authentification}
+\begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.} 
+\begin{itemize}
+\item \textbf{Un problème dans le code OpenSSL?} : La fonction \texttt{Fixed\_Window\_Exponentiation} utilise des milliers de multiplications, qui est opération la plus sensible en cas de dégradation du micro-processeur.
+\item \textbf{Solution :} Aucune! On pourrait utiliser la technique du \texttt{square\_and\_multiply} mais elle a l'inconvénient d'être vulnérable à une attaque par \textit{timing}.
+\item \textbf{Conséquences :} A moins que l'attaquant n'ai accès physiquement à votre machine les risques sont faibles. Cependant l'Université du Michigan cherche un moyen de faire des injections à distance à base d'\texttt{impulsions lasers}.
+\end{itemize}
+\end{block}
 }
 
 %% 3 MIN -- JULIEN
@@ -204,9 +325,18 @@
 \subsection{Démonstration}
 \frame{
 \frametitle{Démonstration}
+\begin{block}{Analyse de la sécurité des navigateurs clients}
+\begin{itemize}
 %% Chrome
-%% Lynx 
-%% s_client
+\item Sous le navigateur graphique \texttt{Chrome} : le plus utilisé dans le monde.
+%% Lynx  
+\item Sous le navigateur console \texttt{lynx} : apprécié chez les développeurs.\newline
+\end{itemize}
+\end{block}
+
+\begin{block}{Modification manuelle}
+Nous pouvons modifier la \textit{ciphersuite} du client avec la commande \texttt{s\_client}.
+\end{block}
 }
 
 %% 2 MIN -- PASCAL
