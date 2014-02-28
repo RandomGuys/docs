@@ -77,8 +77,17 @@
 \setbeamertemplate{sections/subsections in toc}[square]
 \setbeamertemplate{blocks}[square]%
 
+\setbeamercolor{footline}{fg=black}
+\setbeamerfont{footline}{series=\bfseries}
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
 \author{Claire Smets -- William Boisseleau -- Pascal Edouard -- \\Mathieu Latimier -- Julien Legras}
-\title{Soutenance projet annuel - Audit des implantations SSL/TLS}
+\title{Soutenance projet annuel\\ Audit des implantations SSL/TLS}
 \titlegraphic{\includegraphics[height=3em]{logo_univ.png}}
 \institute{Master 2 Sécurité des Systèmes Informatiques}
 
@@ -168,7 +177,7 @@
 }
     \begin{block}{ZMAP}
 	\begin{itemize}
-		\item open source dévoloppé par l'équipe de l'Université du Michigan ;
+		\item open source dévoloppé en 2013 par l'équipe de l'Université du Michigan ;
 		\item scanneur de ports : jusqu'à 1,4 millions de paquets SYN par seconde.\\
 	\end{itemize}
 	\end{block}
@@ -214,40 +223,7 @@
 	\end{block}
 }
 
-\frame{
-\frametitle{Certificats récupérés}
 
-{\footnotesize
-\begin{center}
-\begin{tikzpicture}[node distance=1.5cm]
-
-\node[draw=none] (start) {};
-\node[square, right=of start] (zmap) {ZMAP};
-\node[square,right=of zmap, fill=green!30] (applirc) {Appli RC};
-\node[square,right=of applirc] (applif) {Appli F};
-\node[draw=none] at (10,0) (end) {};
-
-\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
-\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
-\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
-\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
-\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
-
-\begin{pgfonlayer}{background}
-\node[punkt, fit=(applirc)(clefs)(IP)] {};
-\end{pgfonlayer}
-
-\end{tikzpicture}
-\end{center}
-}
-
-	\begin{block}{Certificats malformés}
-		\begin{itemize}
-			\item \textit{Common Name} vide : validation impossible au regard du nom de domaine ;
-			\item \textit{Serial Number} seul : absence totale d'informations sur le certificat.\\
-		\end{itemize}
-	\end{block}
-}
 
 \frame{
     \frametitle{Gestion des doublons}
@@ -289,6 +265,41 @@
     
 \end{tikzpicture}
 \end{center}
+}
+
+\frame{
+\frametitle{Certificats récupérés}
+
+{\footnotesize
+\begin{center}
+\begin{tikzpicture}[node distance=1.5cm]
+
+\node[draw=none] (start) {};
+\node[square, right=of start] (zmap) {ZMAP};
+\node[square,right=of zmap, fill=green!30] (applirc) {Appli RC};
+\node[square,right=of applirc] (applif) {Appli F};
+\node[draw=none] at (10,0) (end) {};
+
+\draw (start) edge[->] node[midway,anchor=south] {port 443} (zmap);
+\draw (zmap) edge[->] node[midway,anchor=south] (IP) {liste IP} (applirc);
+\draw (applirc) edge[->] node[midway,anchor=south] (clefs) {clefs} (applif);
+\draw (applif) edge[->] node[midway,anchor=south] {facteurs} (end);
+\draw (applif) edge[] node[midway,anchor=north] {communs} (end);
+
+\begin{pgfonlayer}{background}
+\node[punkt, fit=(applirc)(clefs)(IP)] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{center}
+}
+
+	\begin{block}{Certificats malformés}
+		\begin{itemize}
+			\item \textit{Common Name} vide : validation impossible au regard du nom de domaine ;
+			\item \textit{Serial Number} seul : absence totale d'informations sur le certificat.\\
+		\end{itemize}
+	\end{block}
 }
 
 
@@ -628,28 +639,6 @@ API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
 }
 
 
-\frame[containsverbatim]{
-\frametitle{OpenSSL}
-
-	    \begin{alertblock}{Points négatifs}
-	        \begin{itemize}
-	        \item documentation peu fournie;
-	        \item développement en mode réactif;
-	        \item illisibilité du code :
-	        \begin{verbatim}
-				n=((p[0]&0x7f)<<8)|p[1];				
-			\end{verbatim}
-	        \end{itemize}
-	    \end{alertblock}
-	\begin{exampleblock}{Poins positifs}
-		\begin{itemize}
-			\item nom des fichiers standardisé : 
-			\verb+s3_+ ;
-			\item commentaires des commits.\\
-		\end{itemize}
-	\end{exampleblock}
-}
-
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Générateur aléatoire}
 %% 2 MIN -- MATHIEU
@@ -746,8 +735,9 @@ API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
 	\item test poker;
 	\item test runs;
 	\item test long runs.
-	\end{itemize} 	 
-\item autres tests proposés dans le rapport.
+	\end{itemize}
+\item[$\hookrightarrow$] adaptation des tests obsolètes (20 000 à 8 000 000 bits) développés par l'équipe d'OpenSSL;
+\item autres tests proposés dans le rapport (NIST).  
 
 \end{itemize}
 \end{block}
@@ -757,134 +747,61 @@ API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
 
 
 %% MATHIEU (1 MIN)
-\frame{
+\frame[containsverbatim]{
 \frametitle{Entropie -- Démonstration}
-\begin{block}{Faille Debian 4.0 sous OpenSSL 0.9.8}
-Après avoir récupéré l'ensemble des certificats sur l'Internet, on peut identifier rapidement ceux qui ont étés générés durant la faille Debian/OpenSSL entre 2006 et 2008.\\
+\begin{block}{Faille générateur d'aléatoire sur clefs RSA}
 \begin{itemize}
-\item \textbf{durée de l'attaque} : quelques heures;
-\item \textbf{conséquences} : forger de faux certificats, de fausses signatures et déchiffrer des messages privées;
-\item \textbf{qui?} : grandes entreprises (e.g. IBM, CISCO), routeurs, universités, etc. ;
-\item \textbf{fin de validité de certificats} : 2020 -- 2030.
+\item version : OpenSSL 0.9.8 (2008) sous Debian 4.0;
+\item but : retrouver la clef privée d'un certificat;
+\item moyens : bibliothèque OpenSSL, \verb+openssl-vulnkey+, liste des 250 000 facteurs premiers possibles;
+\item cause : suppression d'une grande source d'entropie dans \verb+crypto/rand/md_rand.c+;
+\item impactés : IBM \& CISCO (sur le premier scan).
+\end{itemize}
+\end{block}
+
+\begin{block}{Failles similaires -- 2013}
+\begin{itemize}
+\item Android / Linux Mint Debian Edition
+\item NetBSD 6.0 et OpenSSH
 \end{itemize}
 \end{block}
 }
 
 \subsection{Génération des clefs I}
 
-\frame{
+\frame[containsverbatim]{
 \frametitle{Génération des clefs II}
-\begin{block}{Audit : Diffie-Hellman Ephémère en mode FIPS}
+\begin{block}{Attaque Man in the middle sur Diffie-Hellman}
 \begin{itemize}
-\item \textbf{Description} : Un attaquant écoutant une communication chiffré en SSL/TLS entre un client et un serveur peut déchiffrer tout les messages en forçant la génération d'un secret Diffie-Hellman prédictible.
-\item \textbf{Comment?} : En modifiant le trafic réseau par exemple.
-\item \textbf{Pourquoi?} : L'activation du mode FIPS ne rejette pas les paramètres P/Q faibles pour les algorithmes EDH/DHE.
-\item \textbf{Où?} : Dans \texttt{crypto/dh/dh\_key.c} une partie de code génère un faux positif dans certains cas (sur une condition de test).
-\item \textbf{Solution :} Logiciel \textit{Nessus Vulnerability Scanner} pour tester la configuration des serveurs.
+\item but : déchiffrer les messages entre un client et un serveur en forçant la génération d'un secret DH;
+\item moyens : 
+\begin{itemize}
+\item mode FIPS activé sous OpenSSL;
+\item écoute active sur le réseau.
 \end{itemize}
-\end{block}
-}
-
-%% 2 MIN -- CLAIRE
-\subsection{Chiffrement et protocoles}
-\frame{
-\frametitle{Chiffrement et protocoles I}
-	\begin{block}{RSA-OAEP}
-		laïus RSA-OAEP (fonctionnement, +, -)
-	\end{block}
-
-\framebreak
-
-	\begin{block}{Manger's attack}
-		\begin{itemize}
-			\item OpenSSL 1.0.0 ;
-			\item OAEP : défaillant ?
-			\item contrôler la taille des paramètres à hacher ;
-			\item sur serveur : variations de délais ;
-			\item systèmes embarqués : plus problématique. \\
-		\end{itemize}
-	\end{block}
-}
-
-\frame{
-\frametitle{Chiffrement et protocoles II}
-\framesubtitle{CBC}
-
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=7cm]{CBC_chiff.png}
-		\label{CBC_chiff}
-	\end{figure}
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=7cm]{CBC_dechiff.png}
-		\label{CBC_dechiff}
-	\end{figure}
-}
-\frame{
-\frametitle{Chiffrement et protocoles III}
-
-	\begin{block}{\textit{Man in the Middle}}
-		\begin{itemize}
-			\item attaque à clair choisi ;
-			\item récupérer cookies de session.\\
-		\end{itemize}
-	\end{block}
-	\begin{block}{Problème}
-		\begin{itemize}
-			\item SSL/TLS chiffre un canal de communication ;
-			\item problème d'IV.\\
-		\end{itemize}
-	\end{block}
-	
-	\begin{block}{Recommandations}
-		\begin{itemize}
-			\item ne pas utiliser CBC ;
-			\item concaténer tous les objets.\\
-		\end{itemize}
-	\end{block}
-	
-}
-
-%% 2 MIN -- MATHIEU
-\subsection{Signature et authentification}
-\frame{
-\frametitle{Signature et authentification I}
-\begin{block}{Définition}
-\begin{itemize}
-\item Juridiquement, une signature électronique a même valeur qu'une signature manuscrite.
-\item Elle \textbf{DOIT} assurer l'intégrité, l'authentification et la non-répudiation d'un message.
-\end{itemize}
-\end{block}
-
-Des anciennes versions d'OpenSSL ont des vulnérabilités au niveau de la vérification de messages signés, ou des fuites d'informations sur la clef privée ayant servi à chiffrer.
-}
-
-\frame{
-\frametitle{Signature et authentification II}
-\begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.}
-\begin{itemize}
-\item \textbf{Description} : L'attaque se fait sur des morceaux de la signature afin de récupérer la clef privée bit à bit.
-\item \textbf{Comment?} : Du bon matériel, surtout au niveau de la mémoire vive (i.e. Système Linux avec une architecture SPARC) et un oracle (e.g. système de prédictions) permettant de fabriquer la clef.
-\item \textbf{Temps de l'attaque} : une centaine d'heures.
-\end{itemize}
-\end{block}
-}
-
-\frame{
-\frametitle{Signature et authentification III}
-\begin{block}{Audit : Attaque par injection de fautes sur les certificats RSA.} 
-\begin{itemize}
-\item \textbf{un problème dans le code OpenSSL?} : la fonction \texttt{Fixed\_Window\_Exponentiation} utilise des milliers de multiplications, qui est l'opération la plus sensible en cas de dégradation du micro-processeur.
-\item \textbf{solution :} Aucune! On pourrait utiliser la technique du \texttt{square\_and\_multiply} mais elle a l'inconvénient d'être vulnérable à une attaque par \textit{timing}.
-\item \textbf{conséquences :} à moins que l'attaquant n'ait accès physiquement à votre machine les risques sont faibles. Cependant l'Université du Michigan cherche un moyen de faire des injections à distance à base d'\texttt{impulsions lasers}.
+\item causes : génération d'un faux positif lors d'un test dans \verb+crypto/dh/dh_key.c+
 \end{itemize}
 \end{block}
 }
 
 %% 3 MIN -- JULIEN
-\subsection{Protocole SSL/TLS}
+\subsection{Chiffrement et protocole SSL/TLS}
+\frame[containsverbatim]{
+\frametitle{Chiffrement}
+\begin{block}{Timing attack sur RSA-OAEP}
+\begin{itemize}
+\item version : OpenSSL 1.0.0 (2010);
+\item but : retrouver la clef privée d'un certificat en contrôlant la taille des paramètres à hacher;
+\item moyens : RSA-OAEP, variations de délais;
+\item impact :
+\begin{itemize}
+\item théorique sur les serveurs;
+\item pratique sur les systèmes embarqués.
+\end{itemize} 
+\end{itemize}
+\end{block}
+}
+
 \frame[allowframebreaks=1]{
 \frametitle{Protocole SSL/TLS}
 
@@ -944,8 +861,42 @@ TLS 1.2 :
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{Attaque à clair choisi en man in the middle}
+\begin{block}{Attaque à clair choisi en man in the middle}
+\begin{itemize}
+\item versions : toutes;
+\item but : déchiffrement du cookie de session;
+\item moyens : \textit{cipersuite} en TLS 1.0 ou SSL 3.0 en mode de chiffrement CBC;
+\item logiciel : BEAST.
+\end{itemize}
+\end{block}
+}
+
 %% 2 MIN -- JULIEN
 \subsection{Ouverture}
+\frame[containsverbatim]{
+\frametitle{Remarques}
+
+	    \begin{alertblock}{Points négatifs}
+	        \begin{itemize}
+	        \item documentation peu fournie;
+	        \item développement en mode réactif;
+	        \item illisibilité du code :
+	        \begin{verbatim}
+				n=((p[0]&0x7f)<<8)|p[1];				
+			\end{verbatim}
+	        \end{itemize}
+	    \end{alertblock}
+	\begin{exampleblock}{Poins positifs}
+		\begin{itemize}
+			\item nom des fichiers standardisé : 
+			\verb+s3_+ ;
+			\item commentaires des commits.\\
+		\end{itemize}
+	\end{exampleblock}
+}
+
 \frame{
 \frametitle{Ouverture}
 
@@ -1048,55 +999,6 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 }
 
 %% 2 MIN -- MATHIEU
-\subsection{Qualys}
-\frame{
-\frametitle{Qualys SSL Labs}
-\begin{block}{Description}
-\begin{itemize}
-\item Qualys est une plateforme multi-sécurité :
-\item Le projet SSL Labs permet de :
-\begin{itemize}
-\item tester l'implémentation SSL du navigateur;
-\item tester la configuration et les certificats d'un serveur;
-\item lister les bonnes pratiques sur les déploiements SSL/TLS.
-\end{itemize}
-\end{itemize}
-\end{block}
-
-}
-
-
-\frame{
-\frametitle{Qualys SSL Labs}
-\begin{block}{Analyse des serveurs}
-L'analyse porte sur les points suivants :
-\begin{itemize}
-\item contrôle du certificat;
-\item protocoles supportés;
-\item échange des clés;
-\item qualité de chiffrement; 
-\item système de notation.
-\end{itemize} 
-\end{block}
-}
-
-\framebreak
-
-\begin{block}{Tests sur un certificat vulnérable}
-SSL Report : \texttt{spXXXX.XXXX.net} (\texttt{85.XXX.XXX.33})
-\begin{itemize}
-\item Notation : F
-\item Certificat non sûr $\rightarrow$ Non-confiance dans la chaîne de certification
-\item Sensible à une attaque de type CRIME
-\item Protocoles obsolètes $\rightarrow$ TLS\_RSA\_EXPORT\_WITH\_RC4\_40\_MD5
-\item Taille de clé insuffisante $\rightarrow$ RSA 1024 bits
-\item Re-négociation sécurisée non supportée.
-\item Compression TLS non-securisée
-\item Généré en Janvier 2014 - Expire en Janvier 2038
-\end{itemize} 
-\end{block}
-
-%% 2 MIN -- MATHIEU
 \subsection{Démonstration}
 \frame{
 \frametitle{Démonstration}
@@ -1118,10 +1020,16 @@ Nous pouvons modifier la \textit{ciphersuite} du client avec la commande \texttt
 \section{Conclusion}
 \frame{
 \frametitle{Conclusion}
-\begin{block}{Bilan du projet}
+\begin{block}{Bilan du projet -- \url{https://github.com/RandomGuys/}}
 	\begin{itemize}
-		\item mise en évidence des clefs faibles;
-		\item évaluation du code OpenSSL.\\
+		\item Appli RC : récupération de certificats RSA;
+		\item Appli F : factorisation de clefs RSA;
+		\item site web :
+		\begin{itemize}
+		    \item statistiques;
+		    \item analyse dynamique navigateur.
+		\end{itemize}
+		\item rapport d'audit.
 	\end{itemize}
 \end{block}
 
