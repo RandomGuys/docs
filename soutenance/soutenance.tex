@@ -297,7 +297,7 @@
 	\begin{block}{Certificats malformés}
 		\begin{itemize}
 			\item \textit{Common Name} vide : validation impossible au regard du nom de domaine ;
-			\item \textit{Serial Number} seul : absence totale d'informations sur le certificat.\\
+			\item \textit{Serial Number} seul : absence totale d'information sur le certificat.\\
 		\end{itemize}
 	\end{block}
 }
@@ -377,7 +377,7 @@
 \item Algorithme naïf :
 \begin{itemize}
 \item calcul de PGCD deux à deux;
-\item complexité : $O(n!)$.
+\item complexité : $O(n^2)$.
 \end{itemize}
 \item Algorithme de Bernstein \textit{How to find smooth parts of integers?}
 \begin{itemize}
@@ -586,6 +586,13 @@ $\Rightarrow$ jusqu'à 5 fois plus rapide
 
 %% PARTIE 2 - 16 MIN
 \section{Audit d'OpenSSL}
+
+\frame{
+\centering
+\huge
+Audit d'OpenSSL
+}
+
 \frame{
 %% 1 MIN -- CLAIRE
 \frametitle{Introduction I}
@@ -641,33 +648,6 @@ API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
 
 %% 4 MIN -- WILLIAM (3 MIN)
 \subsection{Générateur aléatoire}
-%% 2 MIN -- MATHIEU
-
-\frame{
-\frametitle{Génération des clefs}
-\begin{block}{Principes de Kerckhoffs}
-	\begin{itemize}
-	\item le \textit{secret} réside dans la clef ;
-	\item les algorithmes de génération de clefs ne doivent donner aucune information sur la clef.
-	\end{itemize}
-\end{block}
-
-\begin{center}
-\begin{tikzpicture}[node distance=.1cm]
-\node[draw, text width=2cm] (genalea1) {Générateur aléatoire};
-\node[below=of genalea1, yshift=-1cm] (clefsym) {Clef symétrique};
-\draw (genalea1) edge[->] (clefsym) ;
-
-\node[draw, text width=2cm, right=of genalea1, xshift=1cm] (genalea2) {Générateur aléatoire};
-\node[right=of genalea2] (plus) {+};
-\node[draw, text width=3cm,right=of plus] {Structure mathématique};
-\node[below=of plus, yshift=-1.2cm] (clefasym) {Clef asymétrique};
-\draw (plus) edge[->] (clefasym);
-
-\end{tikzpicture}
-\end{center}
-
-}
 
 \frame{
 \frametitle{Générateur aléatoire}
@@ -747,6 +727,33 @@ API libre implémentant des primitives cryptographiques et le protocole SSL/TLS.
 
 
 %% MATHIEU (1 MIN)
+%% 2 MIN -- MATHIEU
+
+\frame{
+\frametitle{Génération des clefs}
+\begin{block}{Principes de Kerckhoffs}
+	\begin{itemize}
+	\item le \textit{secret} réside dans la clef ;
+	\item les algorithmes de génération de clefs ne doivent donner aucune information sur la clef.
+	\end{itemize}
+\end{block}
+
+\begin{center}
+\begin{tikzpicture}[node distance=.1cm]
+\node[draw, text width=2cm] (genalea1) {Générateur aléatoire};
+\node[below=of genalea1, yshift=-1cm] (clefsym) {Clef symétrique};
+\draw (genalea1) edge[->] (clefsym) ;
+
+\node[draw, text width=2cm, right=of genalea1, xshift=1cm] (genalea2) {Générateur aléatoire};
+\node[right=of genalea2] (plus) {+};
+\node[draw, text width=3cm,right=of plus] {Structure mathématique};
+\node[below=of plus, yshift=-1.2cm] (clefasym) {Clef asymétrique};
+\draw (plus) edge[->] (clefasym);
+
+\end{tikzpicture}
+\end{center}
+
+}
 \frame[containsverbatim]{
 \frametitle{Entropie -- Démonstration}
 \begin{block}{Faille générateur d'aléatoire sur clefs RSA}
@@ -920,6 +927,11 @@ CVE-2014-1959 dans GnuTLS : validation de certificat (X509 version 1) intermédi
 
 %% PARTIE 3  - 8 MIN
 \section{Analyse dynamique du navigateur client}
+\frame{
+\centering
+\huge
+Analyse dynamique du navigateur client
+}
 %% 2 MIN 30 -- WILLIAM
 \subsection{Faiblesses identifiées}
 \frame[allowframebreaks=1]{
